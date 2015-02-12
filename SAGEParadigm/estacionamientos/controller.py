@@ -10,7 +10,6 @@ import datetime
 # con el horario inicio y fin de las reservas
 # [[(horaIn,horaOut),(horaIn,horaOut)],[],....]
 
-# chequeo de horarios de extended
 
 def calcularEstadia(hora_entrada, hora_salida):
 	hora_entrada = datetime.datetime(1,1,1,hora_entrada.hour,hora_entrada.minute)
@@ -24,22 +23,25 @@ def calcularEstadia(hora_entrada, hora_salida):
 def costoHorasCompletas(horas,tarifa):
 	return horas*tarifa
 
+# Esquema tarifario 1
 def costoFraccionHoraEsquema1(fraccion,tarifa):
 	if fraccion == 0: return 0
 	return tarifa
 
+# Esquema tarifario 2
 def costoFraccionHoraEsquema2(fraccion,tarifa):
 	if fraccion == 0: return 0
 	else :
 		if fraccion <= 30: return (tarifa/2)
 		return tarifa 
 
+# Esquema tarifario 3
 def costoFraccionHoraEsquema3(fraccion,tarifa):
 	if fraccion == 0: return 0
 	return fraccion*(tarifa/60)
 
-def HorarioEstacionamiento(HoraInicio, HoraFin, ReservaInicio, ReservaFin):
 
+def HorarioEstacionamiento(HoraInicio, HoraFin, ReservaInicio, ReservaFin):
 	if HoraInicio >= HoraFin:
 		return (False, 'El horario de apertura debe ser menor al horario de cierre')
 	if ReservaInicio >= ReservaFin:
