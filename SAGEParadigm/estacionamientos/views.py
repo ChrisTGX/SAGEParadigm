@@ -148,14 +148,14 @@ def estacionamiento_reserva(request, _id):
                                         FinalReserva = final_reserva
                                     )
                     reservaFinal.save()
-                    tarifa = estacion.Tarifa
+                    tarifa = int(estacion.Tarifa)
                     horas_completas,fraccion_hora = calcularEstadia(inicio_reserva, final_reserva)
                     total = costoHorasCompletas(horas_completas, tarifa)
-                    if estacion.Esquema_tarifario == 1:
+                    if estacion.Esquema_tarifario == '1':
                         total += costoFraccionHoraEsquema1(fraccion_hora, tarifa)
-                    elif estacion.Esquema_tarifario == 2:
+                    elif estacion.Esquema_tarifario == '2':
                         total += costoFraccionHoraEsquema2(fraccion_hora, tarifa)
-                    elif estacion.Esquema_tarifario == 3:
+                    elif estacion.Esquema_tarifario == '3':
                         total += costoFraccionHoraEsquema3(fraccion_hora, tarifa)
                     return render(request, 'templateMensaje.html', {'color':'green', 'mensaje':'Se realizo la reserva exitosamente. El monto de la reserva es: '+ str(total)})
                 else:
