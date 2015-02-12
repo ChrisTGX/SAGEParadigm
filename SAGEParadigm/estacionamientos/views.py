@@ -9,7 +9,6 @@ from estacionamientos.forms import EstacionamientoForm
 from estacionamientos.forms import EstacionamientoReserva
 from estacionamientos.models import Estacionamiento, ReservasModel
 
-
 listaReserva = []
 
 # Usamos esta vista para procesar todos los estacionamientos
@@ -93,6 +92,7 @@ def estacionamiento_detail(request, _id):
 
 
 def estacionamiento_reserva(request, _id):
+
     _id = int(_id)
     # Verificamos que el objeto exista antes de continuar
     try:
@@ -148,7 +148,7 @@ def estacionamiento_reserva(request, _id):
                                         FinalReserva = final_reserva
                                     )
                     reservaFinal.save()
-                    tarifa = int(estacion.Tarifa)
+                    tarifa = float(estacion.Tarifa)
                     horas_completas,fraccion_hora = calcularEstadia(inicio_reserva, final_reserva)
                     total = costoHorasCompletas(horas_completas, tarifa)
                     if estacion.Esquema_tarifario == '1':
@@ -157,7 +157,7 @@ def estacionamiento_reserva(request, _id):
                         total += costoFraccionHoraEsquema2(fraccion_hora, tarifa)
                     elif estacion.Esquema_tarifario == '3':
                         total += costoFraccionHoraEsquema3(fraccion_hora, tarifa)
-                    return render(request, 'templateMensaje.html', {'color':'green', 'mensaje':'Se realizo la reserva exitosamente. El monto de la reserva es: '+ str(total)})
+                    return render(request, 'templateMensaje.html', {'color':'green', 'mensaje':'Se realizo la reserva exitosamente. El monto de la reserva es: %.2f' % total})
                 else:
                     return render(request, 'templateMensaje.html', {'color':'red', 'mensaje':'No hay un puesto disponible para ese horario'})
     else:
