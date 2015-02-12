@@ -78,6 +78,7 @@ def estacionamiento_detail(request, _id):
                     return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1]})
 
                 estacion.Tarifa = form.cleaned_data['tarifa']
+                estacion.Esquema_tarifario = form.cleaned_data['esquema_tarifario']
                 estacion.Apertura = hora_in
                 estacion.Cierre = hora_out
                 estacion.Reservas_Inicio = reserva_in
