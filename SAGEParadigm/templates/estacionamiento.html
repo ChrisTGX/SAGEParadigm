@@ -162,6 +162,10 @@
         <tr><td><b><i class="fa fa-money"></i></i> Tarifa:</b></td></tr>
         <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
       {% endif %}
+      {% if estacionamiento.Esquema_tarifario %}
+        <tr><td><b><i class="fa fa-money"></i></i> Tarifa:</b></td></tr>
+        <tr><td>{{estacionamiento.Esquema_tarifario}}</td></tr>
+      {% endif %}
       
       
         </tbody>
