@@ -66,8 +66,8 @@ class EstacionamientoExtendedForm(forms.Form):
                                     regex = '\d{1,3}',
                                     message = esq_tarif_message
                                 )
-    horarioin = forms.TimeField(required = True, label = 'Horario Apertura')
-    horarioout = forms.TimeField(required = True, label = 'Horario Cierre')
+    horarioin = forms.TimeField(required = True, label = 'Horario Apertura', widget=forms.TimeInput(format='%H:%M'))
+    horarioout = forms.TimeField(required = True, label = 'Horario Cierre', widget=forms.TimeInput(format='%H:%M'))
 
     horario_reserin = forms.TimeField(required = True, label = 'Horario Inicio Reserva')
     horario_reserout = forms.TimeField(required = True, label = 'Horario Fin Reserva')
