@@ -9,7 +9,6 @@ CANT_ESQ_TARIFARIOS = 3
 
 
 def esquema_tarifario_validator(value):
-    value = int(value)
     if value < 1 or value > CANT_ESQ_TARIFARIOS:
         raise ValidationError('Solo existen %d esquemas tarifarios.' % CANT_ESQ_TARIFARIOS)
 
