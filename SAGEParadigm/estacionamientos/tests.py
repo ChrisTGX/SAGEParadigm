@@ -7,7 +7,6 @@ import unittest
 
 from estacionamientos.controller import *
 from estacionamientos.forms import *
-from estacionamientos.forms import *
 
 
 ###################################################################
@@ -1256,8 +1255,56 @@ class SimpleFormTestCase(TestCase):
 		
 	
 class EsquemasTarifariosTests(unittest.TestCase):
-	pass
 	
+	
+    def testcostoHorasCompletas(self):
+        self.assertEqual(costoHorasCompletas(4,5),20)
+        
+    def testcostoFraccionHoraEsquema1(self):
+        self.assertEqual(costoFraccionHoraEsquema1(0, 0), 0)
+        self.assertEqual(costoFraccionHoraEsquema1(0, 5), 0)
+        self.assertEqual(costoFraccionHoraEsquema1(5, 0), 0)    
+        
+        self.assertEqual(costoFraccionHoraEsquema1(0.01, 0), 0)
+        self.assertEqual(costoFraccionHoraEsquema1(0.01, 5), 5)
+        self.assertEqual(costoFraccionHoraEsquema1(5, 0.01), 0.01) 
+        
+    def testcostoFraccionHoraEsquema2(self):
+        # si la fraccion es igual a 0
+
+        self.assertEqual(costoFraccionHoraEsquema2(0, 0), 0)
+        self.assertEqual(costoFraccionHoraEsquema2(0, 5), 0)   
+        
+        self.assertEqual(costoFraccionHoraEsquema2(0.01, 0), 0)
+        self.assertEqual(costoFraccionHoraEsquema2(0.01, 5), 2.5)   
+        # si la fraccion es menor o igual que 30
+        
+        self.assertEqual(costoFraccionHoraEsquema2(25, 0), 0) 
+        self.assertEqual(costoFraccionHoraEsquema2(25, 5), 2.5) 
+        
+        self.assertEqual(costoFraccionHoraEsquema2(29.9, 0), 0) 
+        self.assertEqual(costoFraccionHoraEsquema2(29.9, 5), 2.5) 
+        
+        self.assertEqual(costoFraccionHoraEsquema2(30, 0), 0)
+        self.assertEqual(costoFraccionHoraEsquema2(30, 10), 5)
+        
+        self.assertEqual(costoFraccionHoraEsquema2(30.01, 0), 0)
+        self.assertEqual(costoFraccionHoraEsquema2(30.01, 10), 10)
+                  
+    def testcostoFraccionHoraEsquema3(self):
+    
+        #si la fraccion es igual a 0
+        self.assertEqual(costoFraccionHoraEsquema3(0, 0), 0)
+        self.assertEqual(costoFraccionHoraEsquema3(0, 5), 0)
+        self.assertEqual(costoFraccionHoraEsquema3(5, 0), 0)
+        
+        self.assertEqual(costoFraccionHoraEsquema3(0.01, 0), 0)
+        self.assertEqual(costoFraccionHoraEsquema3(0.01, 5), 0.01*(5/60))
+        self.assertEqual(costoFraccionHoraEsquema3(5, 0.01), 5*(0.01/60))
+        #si la fraccion es diferente a 0
+        
+        self.assertEqual(costoFraccionHoraEsquema3(10, 120), 20)
+    
 	
 	
 	
