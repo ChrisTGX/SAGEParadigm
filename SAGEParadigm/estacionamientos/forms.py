@@ -67,10 +67,8 @@ class EstacionamientoExtendedForm(forms.Form):
                         regex = '^([0-9]+(\.[0-9]+)?)$',
                         message = 'Sólo debe contener dígitos.'
                     )
-    esquema_tarifario_regex_validator = RegexValidator(
-                                        regex = '[0-9]{1,3}$',
-                                        message = esq_tarif_message
-                                    )
+    esquema_tarifario = forms.IntegerField(required = True, 
+                                           validators = [esquema_tarifario_validator])
     horarioin = forms.TimeField(required = True, label = 'Horario Apertura', 
                                 widget=forms.TimeInput(format='%H:%M'))
     horarioout = forms.TimeField(required = True, label = 'Horario Cierre', 
@@ -80,9 +78,6 @@ class EstacionamientoExtendedForm(forms.Form):
     horario_reserout = forms.TimeField(required = True, label = 'Horario Fin Reserva')
 
     tarifa = forms.CharField(required = True, validators = [tarifa_validator])
-    esquema_tarifario = forms.CharField(required = True, 
-                                        validators = [esquema_tarifario_regex_validator,
-                                                      esquema_tarifario_validator])
 
 
 
