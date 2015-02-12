@@ -2,11 +2,16 @@
 
 from django import forms
 from django.core.validators import RegexValidator
-
+from django.core.exceptions import ValidationError
 
 # Cantidad de esquemas tarifarios presentes en SAGE
 CANT_ESQ_TARIFARIOS = 3
 
+
+def esquema_tarifario_validator(value):
+    value = int(value)
+    if value < 1 or value > CANT_ESQ_TARIFARIOS:
+        raise ValidationError('Solo existen %d esquemas tarifarios.' % CANT_ESQ_TARIFARIOS)
 
 
 class EstacionamientoForm(forms.Form):
@@ -62,18 +67,22 @@ class EstacionamientoExtendedForm(forms.Form):
                         regex = '^([0-9]+(\.[0-9]+)?)$',
                         message = 'Sólo debe contener dígitos.'
                     )
-    esquema_tarifario_validator = RegexValidator(
-                                    regex = '\d{1,3}',
-                                    message = esq_tarif_message
-                                )
-    horarioin = forms.TimeField(required = True, label = 'Horario Apertura', widget=forms.TimeInput(format='%H:%M'))
-    horarioout = forms.TimeField(required = True, label = 'Horario Cierre', widget=forms.TimeInput(format='%H:%M'))
+    esquema_tarifario_regex_validator = RegexValidator(
+                                        regex = '[0-9]{1,3}$',
+                                        message = esq_tarif_message
+                                    )
+    horarioin = forms.TimeField(required = True, label = 'Horario Apertura', 
+                                widget=forms.TimeInput(format='%H:%M'))
+    horarioout = forms.TimeField(required = True, label = 'Horario Cierre', 
+                                 widget=forms.TimeInput(format='%H:%M'))
 
     horario_reserin = forms.TimeField(required = True, label = 'Horario Inicio Reserva')
     horario_reserout = forms.TimeField(required = True, label = 'Horario Fin Reserva')
 
     tarifa = forms.CharField(required = True, validators = [tarifa_validator])
-    esquema_tarifario = forms.CharField(required = True, validators = [esquema_tarifario_validator])
+    esquema_tarifario = forms.CharField(required = True, 
+                                        validators = [esquema_tarifario_regex_validator,
+                                                      esquema_tarifario_validator])
 
 
 
