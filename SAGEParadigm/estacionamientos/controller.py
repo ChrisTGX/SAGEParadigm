@@ -45,7 +45,7 @@ def HorarioEstacionamiento(HoraInicio, HoraFin, ReservaInicio, ReservaFin):
 	if ReservaInicio >= ReservaFin:
 		return (False, 'El horario de inicio de reserva debe ser menor al horario de cierre')
 	if ReservaInicio < HoraInicio:
-		return (False, 'El horario de inicio de reserva debe mayor o igual al horario de apertura del estacionamiento')
+		return (False, 'El horario de inicio de reserva debe set mayor o igual al horario de apertura del estacionamiento')
 	if ReservaInicio > HoraFin:
 		return (False, 'El horario de comienzo de reserva debe ser menor al horario de cierre del estacionamiento')
 	if ReservaFin < HoraInicio:
