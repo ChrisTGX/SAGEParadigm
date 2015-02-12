@@ -4,6 +4,11 @@ from django import forms
 from django.core.validators import RegexValidator
 
 
+# Cantidad de esquemas tarifarios presentes en SAGE
+CANT_ESQ_TARIFARIOS = 3
+
+
+
 class EstacionamientoForm(forms.Form):
 
     phone_validator = RegexValidator(
@@ -45,16 +50,22 @@ class EstacionamientoForm(forms.Form):
                     ]
                 )
 
-class EstacionamientoExtendedForm(forms.Form):
 
+
+class EstacionamientoExtendedForm(forms.Form):
+    global CANT_ESQ_TARIFARIOS
+    esq_tarif_message = 'Solo existen ', str(CANT_ESQ_TARIFARIOS) ,' esquemas tarifarios.'
 
     puestos = forms.IntegerField(min_value = 0, label = 'Número de Puestos')
 
     tarifa_validator = RegexValidator(
-                            regex = '^([0-9]+(\.[0-9]+)?)$',
-                            message = 'Sólo debe contener dígitos.'
-                        )
-
+                        regex = '^([0-9]+(\.[0-9]+)?)$',
+                        message = 'Sólo debe contener dígitos.'
+                    )
+    esquema_tarifario_validator = RegexValidator(
+                                    regex = '\d{1,3}',
+                                    message = esq_tarif_message
+                                )
     horarioin = forms.TimeField(required = True, label = 'Horario Apertura')
     horarioout = forms.TimeField(required = True, label = 'Horario Cierre')
 
@@ -62,6 +73,9 @@ class EstacionamientoExtendedForm(forms.Form):
     horario_reserout = forms.TimeField(required = True, label = 'Horario Fin Reserva')
 
     tarifa = forms.CharField(required = True, validators = [tarifa_validator])
+    esquema_tarifario = forms.CharField(required = True, validators = [esquema_tarifario_validator])
+
+
 
 class EstacionamientoReserva(forms.Form):
     inicio = forms.TimeField(label = 'Horario Inicio Reserva')
