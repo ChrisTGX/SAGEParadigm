@@ -846,7 +846,7 @@ class SimpleFormTestCase(TestCase):
 		lista = []
 		lista.append([Hora1In, Hora1Out])
 		lista.append([Hora2In, Hora2Out])
-		estacionamiento = [lista for x in range(2)]
+		estacionamiento = [lista for _ in range(2)]
 		HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
 		HoraOut = datetime.time(hour = 12, minute = 0, second = 0)
 		x = buscar(HoraIn, HoraOut, estacionamiento)
@@ -861,7 +861,7 @@ class SimpleFormTestCase(TestCase):
 		lista = []
 		lista.append([Hora1In, Hora1Out])
 		lista.append([Hora2In, Hora2Out])
-		estacionamiento = [lista for x in range(2)]
+		estacionamiento = [lista for _ in range(2)]
 		HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
 		HoraOut = datetime.time(hour = 6, minute = 0, second = 0)
 		x = buscar(HoraIn, HoraOut, estacionamiento)
@@ -879,7 +879,7 @@ class SimpleFormTestCase(TestCase):
 		lista.append([Hora1In, Hora1Out])
 		lista.append([Hora3In, Hora3Out])
 		lista.append([Hora2In, Hora2Out])
-		estacionamiento = [lista for x in range(2)]
+		estacionamiento = [lista for _ in range(2)]
 		HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
 		HoraOut = datetime.time(hour = 12, minute = 0, second = 0)
 		x = buscar(HoraIn, HoraOut, estacionamiento)
@@ -921,7 +921,7 @@ class SimpleFormTestCase(TestCase):
 		lista.append([Hora1In, Hora1Out])
 		lista.append([Hora3In, Hora3Out])
 		lista.append([Hora2In, Hora2Out])
-		estacionamiento = [lista for x in range(2)]
+		estacionamiento = [lista for _ in range(2)]
 		HoraIn = None
 		HoraOut = datetime.time(hour = 12, minute = 0, second = 0)
 		x = buscar(HoraIn, HoraOut, estacionamiento)
@@ -939,7 +939,7 @@ class SimpleFormTestCase(TestCase):
 		lista.append([Hora1In, Hora1Out])
 		lista.append([Hora3In, Hora3Out])
 		lista.append([Hora2In, Hora2Out])
-		estacionamiento = [lista for x in range(2)]
+		estacionamiento = [lista for _ in range(2)]
 		HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
 		HoraOut = None
 		x = buscar(HoraIn, HoraOut, estacionamiento)
@@ -957,7 +957,7 @@ class SimpleFormTestCase(TestCase):
 		lista.append([Hora1In, Hora1Out])
 		lista.append([Hora3In, Hora3Out])
 		lista.append([Hora2In, Hora2Out])
-		estacionamiento = [lista for x in range(2)]
+		estacionamiento = [lista for _ in range(2)]
 		HoraIn = 'String'
 		HoraOut = datetime.time(hour = 12, minute = 0, second = 0)
 		x = buscar(HoraIn, HoraOut, estacionamiento)
@@ -1094,7 +1094,7 @@ class SimpleFormTestCase(TestCase):
 		lista = []
 		lista.append((Hora1In, Hora1Out))
 		lista.append((Hora2In, Hora2Out))
-		estacionamiento = [lista for x in range(2)]
+		estacionamiento = [lista for _ in range(2)]
 		lista2 = []
 		lista2.append((Hora1In, Hora1Out))
 		lista2.append((Hora3In, Hora3Out))
@@ -1117,7 +1117,7 @@ class SimpleFormTestCase(TestCase):
 		lista.append((Hora1In, Hora1Out))
 		lista.append((Hora3In, Hora3Out))
 		lista.append((Hora2In, Hora2Out))
-		estacionamiento = [lista for x in range(2)]
+		estacionamiento = [lista for _ in range(2)]
 		x = reservar(Hora3In, Hora3Out, estacionamiento)
 		self.assertEqual(x, 1)
 
@@ -1172,7 +1172,7 @@ class SimpleFormTestCase(TestCase):
 		lista = []
 		lista.append((Hora1In, Hora1Out))
 		lista.append((Hora2In, Hora2Out))
-		estacionamiento = [lista for x in range(2)]
+		estacionamiento = [lista for _ in range(2)]
 		lista2 = []
 		lista2.append((Hora1In, Hora1Out))
 		lista2.append((Hora3In, Hora3Out))
@@ -1194,7 +1194,7 @@ class SimpleFormTestCase(TestCase):
 		lista = []
 		lista.append((Hora1In, Hora1Out))
 		lista.append((Hora2In, Hora2Out))
-		estacionamiento = [lista for x in range(2)]
+		estacionamiento = [lista for _ in range(2)]
 		lista2 = []
 		lista2.append((Hora1In, Hora1Out))
 		lista2.append((Hora3In, Hora3Out))
@@ -1216,7 +1216,7 @@ class SimpleFormTestCase(TestCase):
 		lista = []
 		lista.append((Hora1In, Hora1Out))
 		lista.append((Hora2In, Hora2Out))
-		estacionamiento = [lista for x in range(2)]
+		estacionamiento = [lista for _ in range(2)]
 		lista2 = []
 		lista2.append((Hora1In, Hora1Out))
 		lista2.append((Hora3In, Hora3Out))
@@ -1238,7 +1238,7 @@ class SimpleFormTestCase(TestCase):
 		lista = []
 		lista.append((Hora1In, Hora1Out))
 		lista.append((Hora2In, Hora2Out))
-		estacionamiento = [lista for x in range(2)]
+		estacionamiento = [lista for _ in range(2)]
 		lista2 = []
 		lista2.append((Hora1In, Hora1Out))
 		lista2.append((Hora3In, Hora3Out))
