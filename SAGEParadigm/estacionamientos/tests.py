@@ -279,6 +279,17 @@ class SimpleFormTestCase(TestCase):
         form = EstacionamientoExtendedForm(data = form_data)
         self.assertEqual(form.is_valid(), True) 
 
+    def test_EstacionamientoExtendedForm_EsquemaTarifarioInexsitente(self):
+        form_data = { 'puestos': 2,
+                                'horarioin': datetime.time(6, 0),
+                                'horarioout': datetime.time(19, 0),
+                                'horario_reserin': datetime.time(7, 0),
+                                'horario_reserout': datetime.time(7, 0),
+                                'tarifa': '12',
+                                'esquema_tarifario': '1000000'}
+        form = EstacionamientoExtendedForm(data = form_data)
+        self.assertEqual(form.is_valid(), False)
+
     # malicia
     def test_EstacionamientoExtendedForm_StringEnPuesto(self):
         form_data = { 'puestos': 'hola',
@@ -323,6 +334,18 @@ class SimpleFormTestCase(TestCase):
                                 'horario_reserin': datetime.time(7, 0),
                                 'horario_reserout': datetime.time(14, 0),
                                 'tarifa': None}
+        form = EstacionamientoExtendedForm(data = form_data)
+        self.assertEqual(form.is_valid(), False)
+        
+    # malicia
+    def test_EstacionamientoExtendedForm_NoneEsquemaTarifario(self):
+        form_data = { 'puestos': 2,
+                                'horarioin': datetime.time(6, 0),
+                                'horarioout': datetime.time(19, 0),
+                                'horario_reserin': datetime.time(7, 0),
+                                'horario_reserout': datetime.time(14, 0),
+                                'tarifa': '12',
+                                'esquema_tarifario':None}
         form = EstacionamientoExtendedForm(data = form_data)
         self.assertEqual(form.is_valid(), False)
 
