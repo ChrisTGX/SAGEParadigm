@@ -11,6 +11,7 @@ from estacionamientos.models import Estacionamiento, ReservasModel
 
 listaReserva = []
 
+
 # Usamos esta vista para procesar todos los estacionamientos
 def estacionamientos_all(request):
     global listaReserva
@@ -50,6 +51,8 @@ def estacionamientos_all(request):
         form = EstacionamientoForm()
 
     return render(request, 'base.html', {'form': form, 'estacionamientos': estacionamientos})
+
+
 
 def estacionamiento_detail(request, _id):
     _id = int(_id)
@@ -105,7 +108,6 @@ def estacionamiento_detail(request, _id):
 
 
 def estacionamiento_reserva(request, _id):
-
     _id = int(_id)
     # Verificamos que el objeto exista antes de continuar
     try:
@@ -118,7 +120,6 @@ def estacionamiento_reserva(request, _id):
     # Antes de entrar en la reserva, si la lista esta vacia, agregamos los
     # valores predefinidos
     if len(listaReserva) < 1:
-
         Puestos = ReservasModel.objects.filter(Estacionamiento = estacion).values_list('Puesto', 'InicioReserva', 'FinalReserva')
         elem1 = (estacion.Apertura, estacion.Apertura)
         elem2 = (estacion.Cierre, estacion.Cierre)

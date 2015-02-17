@@ -4,8 +4,6 @@ from django import forms
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 
-# Cantidad de esquemas tarifarios presentes en SAGE
-CANT_ESQ_TARIFARIOS = 4
 
 class EstacionamientoForm(forms.Form):
 
@@ -51,9 +49,6 @@ class EstacionamientoForm(forms.Form):
 
 
 class EstacionamientoExtendedForm(forms.Form):
-    global CANT_ESQ_TARIFARIOS
-    esq_tarif_message = 'Solo existen ', str(CANT_ESQ_TARIFARIOS) ,' esquemas tarifarios.'
-
     puestos = forms.IntegerField(required = False, min_value = 0, label = 'Número de Puestos')
 
     tarifa_validator = RegexValidator(
