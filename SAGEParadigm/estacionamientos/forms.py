@@ -66,8 +66,10 @@ class EstacionamientoExtendedForm(forms.Form):
                         regex = '^([0-9]+(\.[0-9]+)?)$',
                         message = 'Sólo debe contener dígitos.'
                     )
-    esquema_tarifario = forms.IntegerField(required = True, 
-                                           validators = [esquema_tarifario_validator])
+    #esquema_tarifario = forms.IntegerField(required = True, 
+    #                                       validators = [esquema_tarifario_validator])
+    
+    
     horarioin = forms.TimeField(required = True, label = 'Horario Apertura', 
                                 widget=forms.TimeInput(format='%H:%M'))
     horarioout = forms.TimeField(required = True, label = 'Horario Cierre', 
@@ -75,7 +77,13 @@ class EstacionamientoExtendedForm(forms.Form):
 
     horario_reserin = forms.TimeField(required = True, label = 'Horario Inicio Reserva')
     horario_reserout = forms.TimeField(required = True, label = 'Horario Fin Reserva')
-
+    
+    esquema_tarifario = forms.ChoiceField(required = True,
+                                          choices=[(1, "Por hora"), 
+                                                   (2, "Por hora y fracción"), 
+                                                   (3, "Por minuto")]
+                                          )
+    
     tarifa = forms.CharField(required = True, validators = [tarifa_validator])
 
 

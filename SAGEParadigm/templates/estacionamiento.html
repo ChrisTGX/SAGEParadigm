@@ -120,6 +120,8 @@
 
 			<tr><td><b><i class="fa fa-circle"></i> RIF:</b></td></tr>
 			<tr><td>{{estacionamiento.Rif}}</td></tr>
+			
+			
           
         </tbody>
       </table>
@@ -192,7 +194,15 @@
               {% for field in form %}
                 <div class="control-group">
                   <div class="controls">
-                    <input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}"><p>
+                  	{% ifequal field.name "esquema_tarifario" %}
+                  		<select class="form-control" name="{{field.name}}" for="id_{{field.name}}">
+							{% for choice in form.esquema_tarifario.field.choices %}
+						        <option value="{{choice.0}}">{{choice.1}}</option>
+						    {% endfor %}
+						</select><p>
+                  	{% else %}
+                    	<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}"><p>
+                    {% endifequal %}
                     {{ field.errors }}
                   </div>
                 </div> 
