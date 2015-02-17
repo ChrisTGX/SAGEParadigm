@@ -1335,7 +1335,6 @@ class EsquemasTarifariosTests(unittest.TestCase):
         self.assertEqual(costoFraccionHoraEsquema1(59, 2**30), 2**30) 
         
     def testcostoFraccionHoraEsquema2DecimalCeroMinutos(self):
-        # si la fraccion es igual a 0
         self.assertEqual(costoFraccionHoraEsquema2(0, 0.1), 0)
     def testcostoFraccionHoraEsquema2DecimalMinutoUnitario(self):
         self.assertEqual(costoFraccionHoraEsquema2(1, 0.1), Decimal(0.1)/Decimal(2))
