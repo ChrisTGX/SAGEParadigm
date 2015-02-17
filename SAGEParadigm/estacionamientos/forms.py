@@ -76,7 +76,7 @@ class EstacionamientoExtendedForm(forms.Form):
                                                    (4, "Diferenciado por hora")]
                                           )
     
-    tarifa = forms.CharField(required = False, validators = [tarifa_validator])
+    tarifa = forms.DecimalField(required = False, max_digits=6, decimal_places=2)
 
 
 
