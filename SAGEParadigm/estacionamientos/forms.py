@@ -5,13 +5,7 @@ from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 
 # Cantidad de esquemas tarifarios presentes en SAGE
-CANT_ESQ_TARIFARIOS = 3
-
-
-def esquema_tarifario_validator(value):
-    if value < 1 or value > CANT_ESQ_TARIFARIOS:
-        raise ValidationError('Solo existen %d esquemas tarifarios.' % CANT_ESQ_TARIFARIOS)
-
+CANT_ESQ_TARIFARIOS = 4
 
 class EstacionamientoForm(forms.Form):
 
@@ -60,31 +54,29 @@ class EstacionamientoExtendedForm(forms.Form):
     global CANT_ESQ_TARIFARIOS
     esq_tarif_message = 'Solo existen ', str(CANT_ESQ_TARIFARIOS) ,' esquemas tarifarios.'
 
-    puestos = forms.IntegerField(min_value = 0, label = 'Número de Puestos')
+    puestos = forms.IntegerField(required = False, min_value = 0, label = 'Número de Puestos')
 
     tarifa_validator = RegexValidator(
                         regex = '^([0-9]+(\.[0-9]+)?)$',
                         message = 'Sólo debe contener dígitos.'
                     )
-    #esquema_tarifario = forms.IntegerField(required = True, 
-    #                                       validators = [esquema_tarifario_validator])
     
-    
-    horarioin = forms.TimeField(required = True, label = 'Horario Apertura', 
+    horarioin = forms.TimeField(required = False, label = 'Horario Apertura', 
                                 widget=forms.TimeInput(format='%H:%M'))
-    horarioout = forms.TimeField(required = True, label = 'Horario Cierre', 
+    horarioout = forms.TimeField(required = False, label = 'Horario Cierre', 
                                  widget=forms.TimeInput(format='%H:%M'))
 
-    horario_reserin = forms.TimeField(required = True, label = 'Horario Inicio Reserva')
-    horario_reserout = forms.TimeField(required = True, label = 'Horario Fin Reserva')
+    horario_reserin = forms.TimeField(required = False, label = 'Horario Inicio Reserva')
+    horario_reserout = forms.TimeField(required = False, label = 'Horario Fin Reserva')
     
-    esquema_tarifario = forms.ChoiceField(required = True,
+    esquema_tarifario = forms.ChoiceField(required = False,
                                           choices=[(1, "Por hora"), 
                                                    (2, "Por hora y fracción"), 
-                                                   (3, "Por minuto")]
+                                                   (3, "Por minuto"),
+                                                   (4, "Diferenciado por hora")]
                                           )
     
-    tarifa = forms.CharField(required = True, validators = [tarifa_validator])
+    tarifa = forms.CharField(required = False, validators = [tarifa_validator])
 
 
 

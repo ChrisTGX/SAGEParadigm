@@ -66,25 +66,38 @@ def estacionamiento_detail(request, _id):
             # Leemos el formulario
             form = EstacionamientoExtendedForm(request.POST)
             # Si el formulario
-            if form.is_valid():
-                hora_in = form.cleaned_data['horarioin']
-                hora_out = form.cleaned_data['horarioout']
-                reserva_in = form.cleaned_data['horario_reserin']
-                reserva_out = form.cleaned_data['horario_reserout']
+            if form.is_valid() and len(form.changed_data) > 1:
+                
+                if ('horarioin' in form.changed_data and 
+                    'horarioout' in form.changed_data and 
+                    'horario_reserin' in form.changed_data and 
+                    'horario_reserout' in form.changed_data):
+                    
+                    hora_in = form.cleaned_data['horarioin']
+                    hora_out = form.cleaned_data['horarioout']
+                    reserva_in = form.cleaned_data['horario_reserin']
+                    reserva_out = form.cleaned_data['horario_reserout']
+                    
+                    estacion.Apertura = hora_in
+                    estacion.Cierre = hora_out
+                    estacion.Reservas_Inicio = reserva_in
+                    estacion.Reservas_Cierre = reserva_out
+                    
+                    m_validado = HorarioEstacionamiento(hora_in, hora_out, reserva_in, reserva_out)
+                    if not m_validado[0]:
+                        return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1]})
+                
+                else:
+                    return render(request, 'templateMensaje.html', 
+                                  {'color':'red', 
+                                   'mensaje': 'Deben especificarse juntos los horarios de Apertura, Cierre, Inicio y Fin de Reserva.'})
 
-                m_validado = HorarioEstacionamiento(hora_in, hora_out, reserva_in, reserva_out)
-                if not m_validado[0]:
-                    return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1]})
-
-                estacion.Tarifa = form.cleaned_data['tarifa']
-                estacion.Esquema_tarifario = form.cleaned_data['esquema_tarifario']
-                estacion.Apertura = hora_in
-                estacion.Cierre = hora_out
-                estacion.Reservas_Inicio = reserva_in
-                estacion.Reservas_Cierre = reserva_out
-                estacion.NroPuesto = form.cleaned_data['puestos']
+                if 'tarifa' in form.changed_data: estacion.Tarifa = form.cleaned_data['tarifa']
+                if 'esquema_tarifario' in form.changed_data: estacion.Esquema_tarifario = form.cleaned_data['esquema_tarifario']
+                if 'puestos' in form.changed_data: estacion.NroPuesto = form.cleaned_data['puestos']
 
                 estacion.save()
+                
     else:
         form = EstacionamientoExtendedForm()
 
