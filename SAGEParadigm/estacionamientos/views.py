@@ -172,7 +172,13 @@ def estacionamiento_reserva(request, _id):
                         total += costoFraccionHoraEsquema2(fraccion_hora, tarifa)
                     elif estacion.Esquema_tarifario == '3':
                         total += costoFraccionHoraEsquema3(fraccion_hora, tarifa)
-                        
+                     
+                    return render(request, 
+                              'templateMensaje.html', 
+                              {'color':'green', 
+                               'mensaje':'Pagado: %.2f' % total
+                              }
+                    )
                     return redirect('pagarReserva', 
                                     context = {'total':total,
                                                'reserva_object':reservaFinal

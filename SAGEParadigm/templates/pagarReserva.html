@@ -70,11 +70,21 @@
             <!--center-right-->
           <!--/col-span-6-->
      
-       <div class="col-md-8" style="color:{{color}}"> 
-			{{mensaje}}
-	   
+       <div class="col-md-8" style="color:{{color}}">
+            {{context['mensaje']}}
+			{{context['reserva_object']}}
+			
+			<form action="./pagar" method="post" class="form form-vertical">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">
+                    Pagar
+                </button>
+            </form>
+
+
       <hr>              
-    </div><div class="col-md-4">
+        </div>
+        <div class="col-md-4">
 
     
           
