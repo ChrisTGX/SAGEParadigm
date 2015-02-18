@@ -197,24 +197,44 @@ def estacionamiento_reserva(request, _id):
                   {'form': form, 'estacionamiento': estacion})
 
 
-
-def pagar_reserva(request, context):
+context_global = {}
+def pagar_reserva(request, context = None):
+    global context_global
     # Si tenemos un GET -> acbamos de llegar desde estacionamiento_reserva
     if request.method == 'GET':
+        context_global = context
+        context['form'] = PagarReservaForm()
         context['color'] = 'green'
         context['mensaje'] = 'Se realizó la reserva exitosamente. El monto de la reserva es: %.2f' % context['total'],
-        return render(request, 'pagarReserva.html', context = context)
-    
+        return render(request, 'pagarReserva.html', context)
+
     # Si tenemos un POST -> el usuario esta decidiendo si quiere o no pagar la reserva
     elif request.method == 'POST':
+        context = context_global
         form = PagarReservaForm(request.POST)
         if form.is_valid():
             context['reserva_object'].Pagada = True
             context['reserva_object'].save()
+            context['form'] = form
             context['color'] = 'green'
-            context['mensaje'] = 'Reserva pagada satisfactoriamente. Su codigo de pago es %i' % context['reserva_object'].primary_key
-            return render(request, 'templateMensaje.html', context = context)
+            context['mensaje'] = 'Reserva pagada satisfactoriamente. Su codigo de pago es %i' % context['reserva_object'].id
+            return render(request, 'templateMensaje.html', context)
         else:
-            return redirect('estacionamientos_all')
+            return render(request,
+                          'pagarReserva.html',
+                          {'form':form})
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
