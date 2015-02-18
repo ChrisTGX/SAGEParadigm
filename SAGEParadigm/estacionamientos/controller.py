@@ -1,5 +1,6 @@
 # Archivo con funciones de control para SAGE
 import datetime
+from decimal import Decimal
 
 # Las Tuplas de cada puesto deben tener los horarios de inicio y de cierre para que
 # pueda funcionar [(7:00,7:00), (19:00,19:00)]
@@ -17,28 +18,28 @@ def calcularEstadia(hora_entrada, hora_salida):
 	estadia = hora_salida - hora_entrada
 	horas_completas = estadia.seconds // 3600
 	fraccion_hora = int(int(estadia.seconds%3600)/60) 
-	return horas_completas,fraccion_hora
+	return horas_completas, fraccion_hora
 
 
 def costoHorasCompletas(horas,tarifa):
-	return horas*tarifa
+	return Decimal(horas) * Decimal(tarifa)
 
 # Esquema tarifario 1
 def costoFraccionHoraEsquema1(fraccion,tarifa):
 	if fraccion == 0: return 0
-	return tarifa
+	return Decimal(tarifa)
 
 # Esquema tarifario 2
 def costoFraccionHoraEsquema2(fraccion,tarifa):
 	if fraccion == 0: return 0
 	else :
-		if fraccion <= 30: return (tarifa/2)
-		return tarifa 
+		if fraccion <= 30: return Decimal(tarifa) / Decimal(2)
+		return Decimal(tarifa)
 
 # Esquema tarifario 3
 def costoFraccionHoraEsquema3(fraccion,tarifa):
-	if fraccion == 0: return 0
-	return fraccion*(tarifa/60)
+	if fraccion == 0: return Decimal(0)
+	return Decimal(fraccion) * (Decimal(tarifa) / Decimal(60))
 
 
 def HorarioEstacionamiento(HoraInicio, HoraFin, ReservaInicio, ReservaFin):

@@ -1295,13 +1295,13 @@ class EsquemasTarifariosTests(unittest.TestCase):
         self.assertEqual(costoHorasCompletas(1,5),5)
         
     def testcostoHorasCompletasTarifaDecimal(self):    
-        self.assertEqual(costoHorasCompletas(4,0.1),0.4)
+        self.assertEqual(costoHorasCompletas(4,0.1),Decimal(0.1)*Decimal(4))
     def testcostoHorasCompletasTarifaDecimalCeroHoras(self):    
         self.assertEqual(costoHorasCompletas(0,0.1),0)
     def testcostoHorasCompletasTarifaDecimalMaximoDeHoras(self):
-        self.assertEqual(costoHorasCompletas(23,0.1),0.23)
+        self.assertEqual(costoHorasCompletas(23,0.1),Decimal(23)*Decimal(0.1))
     def testcostoHorasCompletasTarifaDecimalHoraUnitaria(self):
-        self.assertEqual(costoHorasCompletas(1,0.1),0.1)
+        self.assertEqual(costoHorasCompletas(1,0.1),Decimal(1)*Decimal(0.1))
         
     def testcostoHorasCompletasTarifaAlta(self):    
         self.assertEqual(costoHorasCompletas(4,2**30),4*2**30)
@@ -1335,10 +1335,9 @@ class EsquemasTarifariosTests(unittest.TestCase):
         self.assertEqual(costoFraccionHoraEsquema1(59, 2**30), 2**30) 
         
     def testcostoFraccionHoraEsquema2DecimalCeroMinutos(self):
-        # si la fraccion es igual a 0
         self.assertEqual(costoFraccionHoraEsquema2(0, 0.1), 0)
     def testcostoFraccionHoraEsquema2DecimalMinutoUnitario(self):
-        self.assertEqual(costoFraccionHoraEsquema2(1, 0.1), 0.05)
+        self.assertEqual(costoFraccionHoraEsquema2(1, 0.1), Decimal(0.1)/Decimal(2))
     def testcostoFraccionHoraEsquema2DecimalMinutoMaximo(self):    
         self.assertEqual(costoFraccionHoraEsquema2(59, 0.1), 0.1)
             
@@ -1359,20 +1358,20 @@ class EsquemasTarifariosTests(unittest.TestCase):
     def testcostoFraccionHoraEsquema3DecimalCeroMinutos(self):
         self.assertEqual(costoFraccionHoraEsquema3(0, 0.1), 0)
     def testcostoFraccionHoraEsquema3DecimalMinutoUnitario(self):
-        self.assertEqual(costoFraccionHoraEsquema3(1, 0.1), (0.1)/60)
+        self.assertEqual(costoFraccionHoraEsquema3(1, 0.1), Decimal((0.1))/Decimal(60))
     def testcostoFraccionHoraEsquema3DecimalMaximoMinuto(self):
-        self.assertEqual(costoFraccionHoraEsquema3(59, 0.1), 0.1-(0.1)/60)
+        self.assertEqual(costoFraccionHoraEsquema3(59, 0.1), Decimal(0.1)-Decimal((0.1))/Decimal(60))
     
     def testcostoFraccionHoraEsquema3SimpleCeroMinutos(self):        
         self.assertEqual(costoFraccionHoraEsquema3(0, 5), 0)
     def testcostoFraccionHoraEsquema3SimpleMinutoUnitario(self):
-        self.assertEqual(costoFraccionHoraEsquema3(1, 5), 5/60)
+        self.assertEqual(costoFraccionHoraEsquema3(1, 5), Decimal(5)/Decimal(60))
     def testcostoFraccionHoraEsquema3SimpleMaximoMinuto(self):    
-        self.assertEqual(costoFraccionHoraEsquema3(59, 5), 5-(5/60)) 
+        self.assertEqual(costoFraccionHoraEsquema3(59, 5), Decimal(5)-(Decimal(5)/Decimal(60))) 
         
     def testcostoFraccionHoraEsquema3TarifaAltaCeroMinutos(self):    
         self.assertEqual(costoFraccionHoraEsquema3(0, 2**30), 0)
     def testcostoFraccionHoraEsquema3TarifaAltaMinutoUnitario(self):
-        self.assertEqual(costoFraccionHoraEsquema3(1, 2**30), (2**30)/60)
+        self.assertEqual(costoFraccionHoraEsquema3(1, 2**30), (Decimal(2)**Decimal(30))/Decimal(60))
     def testcostoFraccionHoraEsquema3TarifaAltaMaximoMinuto(self):    
-        self.assertEqual(costoFraccionHoraEsquema3(59, 2**30), 2**30-(2**30)/60)
+        self.assertEqual(costoFraccionHoraEsquema3(59, 2**30), Decimal(2)**Decimal(30) - (Decimal(2)**Decimal(30)) / Decimal(60))

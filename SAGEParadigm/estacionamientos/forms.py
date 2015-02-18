@@ -4,11 +4,8 @@ from django import forms
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 
-# Cantidad de esquemas tarifarios presentes en SAGE
-CANT_ESQ_TARIFARIOS = 4
 
 class EstacionamientoForm(forms.Form):
-
     phone_validator = RegexValidator(
                             regex = '^((0212)|(0412)|(0416)|(0414)|(0424)|(0426))-?\d{7}',
                             message = 'Debe introducir un formato válido.'
@@ -51,9 +48,6 @@ class EstacionamientoForm(forms.Form):
 
 
 class EstacionamientoExtendedForm(forms.Form):
-    global CANT_ESQ_TARIFARIOS
-    esq_tarif_message = 'Solo existen ', str(CANT_ESQ_TARIFARIOS) ,' esquemas tarifarios.'
-
     puestos = forms.IntegerField(required = False, min_value = 0, label = 'Número de Puestos')
 
     tarifa_validator = RegexValidator(
@@ -76,7 +70,7 @@ class EstacionamientoExtendedForm(forms.Form):
                                                    (4, "Diferenciado por hora")]
                                           )
     
-    tarifa = forms.CharField(required = False, validators = [tarifa_validator])
+    tarifa = forms.DecimalField(required = False, max_digits=6, decimal_places=2)
 
 
 

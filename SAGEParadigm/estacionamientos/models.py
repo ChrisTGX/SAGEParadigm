@@ -21,7 +21,7 @@ class Estacionamiento(models.Model):
 	Rif = models.CharField(max_length = 12)
 
 	Esquema_tarifario = models.CharField(max_length = 4, blank = True, null = True)
-	Tarifa = models.CharField(max_length = 50, blank = True, null = True)
+	Tarifa = models.DecimalField(max_length = 50, max_digits=6, decimal_places=2, blank = True, null = True)
 	Apertura = models.TimeField(blank = True, null = True)
 	Cierre = models.TimeField(blank = True, null = True)
 	Reservas_Inicio = models.TimeField(blank = True, null = True)
