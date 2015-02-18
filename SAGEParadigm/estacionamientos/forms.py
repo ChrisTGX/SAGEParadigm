@@ -80,4 +80,20 @@ class EstacionamientoReserva(forms.Form):
 
 
 class PagarReservaForm(forms.form):
-    pass
+    nro_tarjeta_credito = forms.CharField(
+                            required = True,
+                            label = "Tarjeta de crédito",
+                            validators = [
+                                          RegexValidator(
+                                                regex = '^\d{16}$',
+                                                message = 'Introduzca un número de tarjeta de crédito con un formato válido.'
+                                                )
+                                          ]
+                            )
+    proveedor_credito = forms.ChoiceField(required = False,
+                                          choices=[(1, "Vista"), 
+                                                   (2, "Mister"), 
+                                                   (3, "Xpres")]
+                                          )
+    
+

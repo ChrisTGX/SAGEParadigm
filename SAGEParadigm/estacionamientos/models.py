@@ -47,6 +47,7 @@ class Estacionamiento(models.Model):
 # class PuestosModel(models.Model):
 # 	estacionamiento = models.ForeignKey(ExtendedModel)
 
+
 class ReservasModel(models.Model):
 	Estacionamiento = models.ForeignKey(Estacionamiento)
 	Puesto = models.IntegerField()
