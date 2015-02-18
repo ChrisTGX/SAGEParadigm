@@ -83,7 +83,7 @@ class EstacionamientoReserva(forms.Form):
 class PagarReservaForm(forms.Form):
     nro_tarjeta_credito = forms.CharField(
                             required = True,
-                            label = "Tarjeta de crédito",
+                            label = "Nro. de Tarjeta",
                             validators = [
                                           RegexValidator(
                                                 regex = '^\d{16}$',

@@ -19,9 +19,9 @@
             <span class="icon-toggle">
             </span>
           </button>
-          <div class="navbar-brand" href="#">
+          <a class="navbar-brand" href="..">
             SAGE
-          </div>
+          </a>
         </div>
         <div class="navbar-collapse collapse">
 
@@ -72,16 +72,24 @@
      
        <div class="col-md-8" style="color:{{color}}">
             {{mensaje}}
-			
+			<p>
 			<form action="./pagar_reserva" method="post" class="form form-vertical">
                 {% csrf_token %}
                 {% for field in form %}
                 	<div class="control-group">
 	                  <div class="controls">
-	                  	<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}"><p>
+	                  	{% ifequal field.name "proveedor_credito" %}
+	                  		<select class="form-control" name="{{field.name}}" for="id_{{field.name}}">
+								{% for choice in form.proveedor_credito.field.choices %}
+							        <option value="{{choice.0}}">{{choice.1}}</option>
+							    {% endfor %}
+							</select><p>
+	                  	{% else %}
+	                    	<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}"><p>
+	                    {% endifequal %}
 	                    {{ field.errors }}
 	                  </div>
-	                </div>
+	                </div> 
                 {% endfor %}
                 
 				<div class="control-group">

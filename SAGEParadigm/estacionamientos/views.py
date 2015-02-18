@@ -92,7 +92,10 @@ def estacionamiento_detail(request, _id):
                     if not m_validado[0]:
                         return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1]})
                 
-                else:
+                elif ('horarioin' in form.changed_data or 
+                    'horarioout' in form.changed_data or 
+                    'horario_reserin' in form.changed_data or 
+                    'horario_reserout' in form.changed_data):
                     return render(request, 'templateMensaje.html', 
                                   {'color':'red', 
                                    'mensaje': 'Deben especificarse juntos los horarios de Apertura, Cierre, Inicio y Fin de Reserva.'})
