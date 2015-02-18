@@ -175,9 +175,10 @@ def estacionamiento_reserva(request, _id):
                         total += costoFraccionHoraEsquema3(fraccion_hora, tarifa)
                      
                     request.method = 'GET'
-                    pagar_reserva(request, context={'total':total,
-                                     'reserva_object':reservaFinal
-                                    }
+                    return pagar_reserva(request, 
+                                  context={'total':total,
+                                           'reserva_object':reservaFinal
+                                          }
                     )
 
                 else:
@@ -199,7 +200,8 @@ def estacionamiento_reserva(request, _id):
 def pagar_reserva(request, context):
     # Si tenemos un GET -> acbamos de llegar desde estacionamiento_reserva
     if request.method == 'GET':
-        return render('pagarReserva.html',
+        return render(request,
+                      'pagarReserva.html',
                       {'color':'green', 
                        'mensaje':'Se realizó la reserva exitosamente. El monto de la reserva es: %.2f' % context['total'],
                        'monto_decimal':context['total']
@@ -211,7 +213,8 @@ def pagar_reserva(request, context):
         if form.is_valid():
             context['reserva_object'].Pagada = True
             context['reserva_object'].save()
-            return render('templateMensaje.html',
+            return render(request,
+                          'templateMensaje.html',
                           {'color':'green',
                            'mensaje':'Reserva pagada satisfactoriamente. Su codigo de pago es %i' % context['reserva_object'].primary_key
                           }
