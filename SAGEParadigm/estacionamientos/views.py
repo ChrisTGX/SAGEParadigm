@@ -210,6 +210,7 @@ def pagarReserva(request, context):
         form = PagarReservaForm(request.POST)
         if form.is_valid():
             context['reserva_object'].Pagada = True
+            context['reserva_object'].save()
             return render('templateMensaje.html',
                           {'color':'green',
                            'mensaje':'Reserva pagada satisfactoriamente. Su codigo de pago es %i' % context['reserva_object'].primary_key
