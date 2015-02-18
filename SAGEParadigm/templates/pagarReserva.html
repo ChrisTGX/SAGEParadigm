@@ -74,7 +74,7 @@
             {{mensaje}}
 			{{reserva_object}}
 			
-			<form action="./pagar" method="post" class="form form-vertical">
+			<form action="./pagar_reserva" method="post" class="form form-vertical">
                 {% csrf_token %}
                 {% for field in form %}
                 	<div class="control-group">
