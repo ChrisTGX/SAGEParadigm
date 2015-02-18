@@ -159,7 +159,8 @@ def estacionamiento_reserva(request, _id):
                                         Estacionamiento = estacion,
                                         Puesto = x[0],
                                         InicioReserva = inicio_reserva,
-                                        FinalReserva = final_reserva
+                                        FinalReserva = final_reserva,
+                                        Pagada = False
                                     )
                     reservaFinal.save()
                     tarifa = float(estacion.Tarifa)
@@ -171,16 +172,20 @@ def estacionamiento_reserva(request, _id):
                         total += costoFraccionHoraEsquema2(fraccion_hora, tarifa)
                     elif estacion.Esquema_tarifario == '3':
                         total += costoFraccionHoraEsquema3(fraccion_hora, tarifa)
-                    return render(request, 
-                                  'pagarReserva.html',
-                                  {'color':'green', 
-                                   'mensaje':'Se realizo la reserva exitosamente. El monto de la reserva es: %.2f' % total,
-                                   'monto_decimal':total 
-                                  })
+                    return redirect('pagarReserva', total=total)
+                                  #{'color':'green', 
+                                   #'mensaje':'Se realizo la reserva exitosamente. El monto de la reserva es: %.2f' % total,
+                                   #'monto_decimal':total 
+                                  #})
                 else:
                     return render(request, 'templateMensaje.html', {'color':'red', 'mensaje':'No hay un puesto disponible para ese horario'})
     else:
         form = EstacionamientoReserva()
 
     return render(request, 'estacionamientoReserva.html', {'form': form, 'estacionamiento': estacion})
+
+
+
+def pagarReserva(request, monto):
+    pass
 
