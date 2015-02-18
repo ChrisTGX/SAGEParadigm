@@ -9,6 +9,7 @@ from estacionamientos.forms import EstacionamientoExtendedForm
 from estacionamientos.forms import EstacionamientoForm, PagarReservaForm
 from estacionamientos.forms import EstacionamientoReserva
 from estacionamientos.models import Estacionamiento, ReservasModel
+from aptdaemon.logger import GREEN
 
 listaReserva = []
 
@@ -176,9 +177,9 @@ def estacionamiento_reserva(request, _id):
                      
                     request.method = 'GET'
                     return pagar_reserva(request, 
-                                  context={'total':total,
-                                           'reserva_object':reservaFinal
-                                          }
+                                  context = {'total':total,
+                                             'reserva_object':reservaFinal
+                                            }
                     )
 
                 else:
@@ -200,25 +201,19 @@ def estacionamiento_reserva(request, _id):
 def pagar_reserva(request, context):
     # Si tenemos un GET -> acbamos de llegar desde estacionamiento_reserva
     if request.method == 'GET':
-        return render(request,
-                      'pagarReserva.html',
-                      {'color':'green', 
-                       'mensaje':'Se realizó la reserva exitosamente. El monto de la reserva es: %.2f' % context['total'],
-                       'monto_decimal':context['total']
-                       }
-        )
+        context['color'] = 'green'
+        context['mensaje'] = 'Se realizó la reserva exitosamente. El monto de la reserva es: %.2f' % context['total'],
+        return render(request, 'pagarReserva.html', context = context)
+    
     # Si tenemos un POST -> el usuario esta decidiendo si quiere o no pagar la reserva
     elif request.method == 'POST':
         form = PagarReservaForm(request.POST)
         if form.is_valid():
             context['reserva_object'].Pagada = True
             context['reserva_object'].save()
-            return render(request,
-                          'templateMensaje.html',
-                          {'color':'green',
-                           'mensaje':'Reserva pagada satisfactoriamente. Su codigo de pago es %i' % context['reserva_object'].primary_key
-                          }
-            )
+            context['color'] = 'green'
+            context['mensaje'] = 'Reserva pagada satisfactoriamente. Su codigo de pago es %i' % context['reserva_object'].primary_key
+            return render(request, 'templateMensaje.html', context = context)
         else:
             return redirect('estacionamientos_all')
 
