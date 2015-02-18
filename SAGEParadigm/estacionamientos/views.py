@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.shortcuts import redirect
@@ -173,10 +174,10 @@ def estacionamiento_reserva(request, _id):
                     elif estacion.Esquema_tarifario == '3':
                         total += costoFraccionHoraEsquema3(fraccion_hora, tarifa)
                      
-                    return redirect('pagarReserva',
-                                    context = {'total':total,
-                                               'reserva_object':reservaFinal
-                                               }
+                    request.method = 'GET'
+                    pagar_reserva(request, context={'total':total,
+                                     'reserva_object':reservaFinal
+                                    }
                     )
 
                 else:
@@ -195,13 +196,13 @@ def estacionamiento_reserva(request, _id):
 
 
 
-def pagarReserva(request, context):
+def pagar_reserva(request, context):
     # Si tenemos un GET -> acbamos de llegar desde estacionamiento_reserva
     if request.method == 'GET':
         return render('pagarReserva.html',
                       {'color':'green', 
                        'mensaje':'Se realizó la reserva exitosamente. El monto de la reserva es: %.2f' % context['total'],
-                       'monto_decimal':total
+                       'monto_decimal':context['total']
                        }
         )
     # Si tenemos un POST -> el usuario esta decidiendo si quiere o no pagar la reserva

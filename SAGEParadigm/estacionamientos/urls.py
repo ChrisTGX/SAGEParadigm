@@ -9,5 +9,5 @@ urlpatterns = patterns('',
     url(r'^$', views.estacionamientos_all, name = 'estacionamientos_all'),
     url(r'^(?P<_id>\d+)/$', views.estacionamiento_detail, name = 'estacionamiento_detail'),
     url(r'^(?P<_id>\d+)/reserva$', views.estacionamiento_reserva, name = 'estacionamiento_reserva'),
-    url(r'^\d+/reserva/pagar$', views.pagarReserva, name = 'pagarReserva'),
+    url(r'^\d+/reserva/pagar_reserva', views.pagar_reserva, name = 'pagar_reserva'),
 )
