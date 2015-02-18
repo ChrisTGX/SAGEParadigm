@@ -76,9 +76,24 @@
 			
 			<form action="./pagar" method="post" class="form form-vertical">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-primary">
-                    Pagar
-                </button>
+                {% for field in form %}
+                	<div class="control-group">
+	                  <div class="controls">
+	                  	<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}"><p>
+	                    {{ field.errors }}
+	                  </div>
+	                </div>
+                {% endfor %}
+                
+				<div class="control-group">
+                  <label>
+                  </label>
+                  <div class="controls">
+                    <button type="submit" class="btn btn-primary">
+                      Pagar
+                    </button>
+                  </div>
+                </div>
             </form>
 
 
