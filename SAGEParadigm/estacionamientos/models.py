@@ -52,3 +52,5 @@ class ReservasModel(models.Model):
 	Puesto = models.IntegerField()
 	InicioReserva = models.TimeField()
 	FinalReserva = models.TimeField()
+	Estatus = models.BooleanField(blank = True, null = True)
+

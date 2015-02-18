@@ -77,3 +77,7 @@ class EstacionamientoExtendedForm(forms.Form):
 class EstacionamientoReserva(forms.Form):
     inicio = forms.TimeField(label = 'Horario Inicio Reserva')
     final = forms.TimeField(label = 'Horario Final Reserva')
+
+
+class PagarReservaForm(forms.form):
+    pass
