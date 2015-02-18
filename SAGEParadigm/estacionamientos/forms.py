@@ -91,10 +91,9 @@ class PagarReservaForm(forms.form):
                                                 )
                                           ]
                             )
-    proveedor_credito = forms.ChoiceField(required = False,
+    proveedor_credito = forms.ChoiceField(required = True,
                                           choices=[(1, "Vista"), 
                                                    (2, "Mister"), 
                                                    (3, "Xpres")]
                                           )
-    
 

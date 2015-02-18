@@ -5,7 +5,7 @@ from django.shortcuts import render
 
 from estacionamientos.controller import *
 from estacionamientos.forms import EstacionamientoExtendedForm
-from estacionamientos.forms import EstacionamientoForm
+from estacionamientos.forms import EstacionamientoForm, pagarReservaForm
 from estacionamientos.forms import EstacionamientoReserva
 from estacionamientos.models import Estacionamiento, ReservasModel
 
@@ -172,13 +172,19 @@ def estacionamiento_reserva(request, _id):
                         total += costoFraccionHoraEsquema2(fraccion_hora, tarifa)
                     elif estacion.Esquema_tarifario == '3':
                         total += costoFraccionHoraEsquema3(fraccion_hora, tarifa)
-                    return redirect('pagarReserva', total=total)
-                                  #{'color':'green', 
-                                   #'mensaje':'Se realizo la reserva exitosamente. El monto de la reserva es: %.2f' % total,
-                                   #'monto_decimal':total 
-                                  #})
+                        
+                    return redirect('pagarReserva', 
+                                    context = {
+                                               'total':total,
+                                               'reserva_object':reservaFinal
+                    })
+                
                 else:
-                    return render(request, 'templateMensaje.html', {'color':'red', 'mensaje':'No hay un puesto disponible para ese horario'})
+                    return render(request, 
+                                  'templateMensaje.html', 
+                                  {'color':'red', 
+                                   'mensaje':'No hay un puesto disponible para ese horario'
+                    })
     else:
         form = EstacionamientoReserva()
 
@@ -186,6 +192,24 @@ def estacionamiento_reserva(request, _id):
 
 
 
-def pagarReserva(request, monto):
-    pass
+def pagarReserva(request, context):
+    # Si tenemos un GET -> acbamos de llegar desde estacionamiento_reserva
+    if request.method == 'GET':
+        return render('pagarReserva.html',
+                      {'color':'green', 
+                       'mensaje':'Se realizó la reserva exitosamente. El monto de la reserva es: %.2f' % total,
+                       'monto_decimal':total 
+                      }
+                    )
+    # Si tenemos un POST -> el usuario esta decidiendo si quiere o no pagar la reserva
+    elif request.method == 'POST':
+        form = pagarReservaForm(request.POST)
+        if form.is_valid():
+            context['reserva_object'].pagada = True
+            return render('templateMensaje.html',
+                          {'color':'green',
+                           'mensaje':'Reserva pagada satisfactoriamente.'})
+        else:
+            return redirect('estacionamientos_all')
+
 
