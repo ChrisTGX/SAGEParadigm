@@ -2,10 +2,10 @@
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
-
+from django.shortcuts import redirect
 from estacionamientos.controller import *
 from estacionamientos.forms import EstacionamientoExtendedForm
-from estacionamientos.forms import EstacionamientoForm, pagarReservaForm
+from estacionamientos.forms import EstacionamientoForm, PagarReservaForm
 from estacionamientos.forms import EstacionamientoReserva
 from estacionamientos.models import Estacionamiento, ReservasModel
 
@@ -174,21 +174,24 @@ def estacionamiento_reserva(request, _id):
                         total += costoFraccionHoraEsquema3(fraccion_hora, tarifa)
                         
                     return redirect('pagarReserva', 
-                                    context = {
-                                               'total':total,
+                                    context = {'total':total,
                                                'reserva_object':reservaFinal
-                    })
+                                               }
+                    )
                 
                 else:
                     return render(request, 
                                   'templateMensaje.html', 
                                   {'color':'red', 
                                    'mensaje':'No hay un puesto disponible para ese horario'
-                    })
+                                  }
+                    )
     else:
         form = EstacionamientoReserva()
 
-    return render(request, 'estacionamientoReserva.html', {'form': form, 'estacionamiento': estacion})
+    return render(request, 
+                  'estacionamientoReserva.html', 
+                  {'form': form, 'estacionamiento': estacion})
 
 
 
@@ -197,18 +200,20 @@ def pagarReserva(request, context):
     if request.method == 'GET':
         return render('pagarReserva.html',
                       {'color':'green', 
-                       'mensaje':'Se realizó la reserva exitosamente. El monto de la reserva es: %.2f' % total,
-                       'monto_decimal':total 
-                      }
-                    )
+                       'mensaje':'Se realizó la reserva exitosamente. El monto de la reserva es: %.2f' % context['total'],
+                       'monto_decimal':total
+                       }
+        )
     # Si tenemos un POST -> el usuario esta decidiendo si quiere o no pagar la reserva
     elif request.method == 'POST':
-        form = pagarReservaForm(request.POST)
+        form = PagarReservaForm(request.POST)
         if form.is_valid():
-            context['reserva_object'].pagada = True
+            context['reserva_object'].Pagada = True
             return render('templateMensaje.html',
                           {'color':'green',
-                           'mensaje':'Reserva pagada satisfactoriamente.'})
+                           'mensaje':'Reserva pagada satisfactoriamente. Su codigo de pago es %i' % context['reserva_object'].primary_key
+                          }
+            )
         else:
             return redirect('estacionamientos_all')
 
