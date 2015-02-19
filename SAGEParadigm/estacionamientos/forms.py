@@ -84,16 +84,12 @@ class PagarReservaForm(forms.Form):
     nro_tarjeta_credito = forms.CharField(
                             required = True,
                             label = "Nro. de Tarjeta",
-                            validators = [
-                                          RegexValidator(
+                            validators = [RegexValidator(
                                                 regex = '^\d{16}$',
                                                 message = 'Introduzca un número de tarjeta de crédito con un formato válido.'
-                                                )
-                                          ]
-                            )
+                                                )])
     proveedor_credito = forms.ChoiceField(required = True,
-                                          choices=[(1, "Vista"), 
-                                                   (2, "Mister"), 
-                                                   (3, "Xpres")]
-                                          )
+                                          choices=[("Vista", "Vista"), 
+                                                   ("Mister", "Mister"), 
+                                                   ("Xpres", "Xpres")])
 
