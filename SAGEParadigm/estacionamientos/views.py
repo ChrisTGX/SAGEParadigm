@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
+from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
-
+from django.shortcuts import redirect
 from estacionamientos.controller import *
 from estacionamientos.forms import EstacionamientoExtendedForm
-from estacionamientos.forms import EstacionamientoForm
+from estacionamientos.forms import EstacionamientoForm, PagarReservaForm
 from estacionamientos.forms import EstacionamientoReserva
 from estacionamientos.models import Estacionamiento, ReservasModel
+from aptdaemon.logger import GREEN
 
 listaReserva = []
 
@@ -90,7 +92,10 @@ def estacionamiento_detail(request, _id):
                     if not m_validado[0]:
                         return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1]})
                 
-                else:
+                elif ('horarioin' in form.changed_data or 
+                    'horarioout' in form.changed_data or 
+                    'horario_reserin' in form.changed_data or 
+                    'horario_reserout' in form.changed_data):
                     return render(request, 'templateMensaje.html', 
                                   {'color':'red', 
                                    'mensaje': 'Deben especificarse juntos los horarios de Apertura, Cierre, Inicio y Fin de Reserva.'})
@@ -152,16 +157,16 @@ def estacionamiento_reserva(request, _id):
 
                 # Si esta en un rango valido, procedemos a buscar en la lista
                 # el lugar a insertar
-                x = buscar(inicio_reserva, final_reserva, listaReserva)
-                if x[2] == True :
+                sources = ReservasModel.objects.filter(Estacionamiento = estacion).values_list('InicioReserva', 'FinalReserva', 'Puesto')
+                if AceptarReservacion(inicio_reserva, final_reserva, estacion.NroPuesto, sources):
                     reservar(inicio_reserva, final_reserva, listaReserva)
                     reservaFinal = ReservasModel(
                                         Estacionamiento = estacion,
-                                        Puesto = x[0],
+                                        Puesto = encontrarPuesto(sources, inicio_reserva, final_reserva, estacion.NroPuesto),
                                         InicioReserva = inicio_reserva,
-                                        FinalReserva = final_reserva
+                                        FinalReserva = final_reserva,
+                                        Pagada = False
                                     )
-                    reservaFinal.save()
                     tarifa = float(estacion.Tarifa)
                     horas_completas,fraccion_hora = calcularEstadia(inicio_reserva, final_reserva)
                     total = costoHorasCompletas(horas_completas, tarifa)
@@ -171,11 +176,65 @@ def estacionamiento_reserva(request, _id):
                         total += costoFraccionHoraEsquema2(fraccion_hora, tarifa)
                     elif estacion.Esquema_tarifario == '3':
                         total += costoFraccionHoraEsquema3(fraccion_hora, tarifa)
-                    return render(request, 'pagarReserva.html', {'color':'green', 'mensaje': total})
+                     
+                    request.method = 'GET'
+                    return pagar_reserva(request, 
+                                  context = {'total':total,
+                                             'reserva_object':reservaFinal})
+
                 else:
-                    return render(request, 'templateMensaje.html', {'color':'red', 'mensaje':'No hay un puesto disponible para ese horario'})
+                    return render(request, 
+                                  'templateMensaje.html', 
+                                  {'color':'red', 
+                                   'mensaje':'No hay un puesto disponible para ese horario'})
     else:
         form = EstacionamientoReserva()
 
-    return render(request, 'estacionamientoReserva.html', {'form': form, 'estacionamiento': estacion})
+    return render(request, 
+                  'estacionamientoReserva.html', 
+                  {'form': form, 'estacionamiento': estacion})
+
+
+context_global = {}
+def pagar_reserva(request, context = None):
+    global context_global
+    # Si tenemos un GET -> acbamos de llegar desde estacionamiento_reserva
+    if request.method == 'GET':
+        context_global = context
+        context['form'] = PagarReservaForm()
+        context['color'] = 'green'
+        context['mensaje'] = 'El monto de la reserva es: %.2f' % context['total']
+        return render(request, 'pagarReserva.html', context)
+
+    # Si tenemos un POST -> el usuario esta decidiendo que quiere pagar la reserva
+    elif request.method == 'POST':
+        context = context_global
+        form = PagarReservaForm(request.POST)
+        if form.is_valid():
+            print(context)
+            context['reserva_object'].Pagada = True
+            context['reserva_object'].save()
+            context['form'] = form
+            context['color'] = 'green'
+            context['mensaje'] = 'Reserva pagada satisfactoriamente. Su codigo de pago es %i' % context['reserva_object'].id
+            context['reserva_object'].save()
+            return render(request, 'templateMensaje.html', context)
+        else:
+            return render(request,
+                          'pagarReserva.html',
+                          {'form':form})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
