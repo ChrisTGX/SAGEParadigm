@@ -203,7 +203,7 @@ def pagar_reserva(request, context = None):
         context_global = context
         context['form'] = PagarReservaForm()
         context['color'] = 'green'
-        context['mensaje'] = 'Se realizó la reserva exitosamente. El monto de la reserva es: %.2f' % context['total'],
+        context['mensaje'] = 'El monto de la reserva es: %.2f' % context['total']
         return render(request, 'pagarReserva.html', context)
 
     # Si tenemos un POST -> el usuario esta decidiendo que quiere pagar la reserva
@@ -211,12 +211,13 @@ def pagar_reserva(request, context = None):
         context = context_global
         form = PagarReservaForm(request.POST)
         if form.is_valid():
+            print(context)
             context['reserva_object'].Pagada = True
             context['reserva_object'].save()
             context['form'] = form
             context['color'] = 'green'
             context['mensaje'] = 'Reserva pagada satisfactoriamente. Su codigo de pago es %i' % context['reserva_object'].id
-            reservaFinal.save()
+            context['reserva_object'].save()
             return render(request, 'templateMensaje.html', context)
         else:
             return render(request,
