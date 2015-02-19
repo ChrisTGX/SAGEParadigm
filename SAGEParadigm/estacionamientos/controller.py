@@ -11,6 +11,67 @@ from decimal import Decimal
 # con el horario inicio y fin de las reservas
 # [[(horaIn,horaOut),(horaIn,horaOut)],[],....]
 
+def encontrarPuesto(sources, ini, fin, nropuestos):
+	nodisp = []
+	for elem in sources:
+		if (ini.hour*100+ini.minute) in range(elem[0].hour*100+elem[0].minute,elem[1].hour*100+elem[1].minute+1) or (fin.hour*100+fin.minute) in range(elem[0].hour*100+elem[0].minute,elem[1].hour*100+elem[1].minute+1):
+			nodisp.append(elem[2])
+	for i in range(nropuestos):
+		if not i in nodisp:
+			return i
+	return -1
+def obtenerClave(item):
+	return item[0]
+
+def ordenar(tabla):
+	return sorted(tabla, key = obtenerClave)
+
+def ViabilidadReservacion(tabla, x, y):
+	# Devuelve True si un solapamiento se encuentra dentro del rango de una reservacion
+	# False en caso contrario
+	def SolapamientoEnRangoReserva(x,y,inicio,fin):
+		if ((x in range(inicio,fin+1)) or (y in range(inicio,fin+1))):
+			return True
+		return False
+	
+	tipo = 0
+	offset = 1
+	best = 0
+	cnt = 0
+	beststart = 0
+	bestend = 0
+	for i in range(0,len(tabla)):
+		cnt = cnt - tabla[i][offset]
+		if (cnt > best) and (tabla[i][tipo] != tabla[i+1][tipo]) :
+			best = cnt
+			beststart = tabla[i][tipo]
+			bestend = tabla[i+1][tipo]
+		elif (cnt == best) and SolapamientoEnRangoReserva(x, y,tabla[i][tipo],tabla[i+1][tipo]):
+			best = cnt
+			beststart = tabla[i][tipo]
+			bestend = tabla[i+1][tipo]
+	return best,beststart,bestend
+
+
+def AceptarReservacion(x, y, capacidad, sources):
+	tabla = []
+	for elem in sources:
+		tabla.append([elem[0].hour*100+elem[0].minute, -1])
+		tabla.append([elem[1].hour*100+elem[1].minute, 1])
+	tabla = ordenar(tabla)
+	print(tabla)
+	best,beststart,bestend = ViabilidadReservacion(tabla, x, y)
+	print(str(best) + " " + str(beststart) + " " + str(bestend))
+	if best < capacidad: 
+		return True
+	elif best == capacidad:
+		# Si el rango del solapamiento intersecta el de la reservacion, no se acepta esta ultima
+		print(x, y)
+		if (((x.hour*100+x.minute) in range(beststart+1,bestend) or ((y.hour*100+y.minute) in range(beststart,bestend+1)))):
+			return False
+		else:
+			return True
+	return False
 
 def calcularEstadia(hora_entrada, hora_salida):
 	hora_entrada = datetime.datetime(1,1,1,hora_entrada.hour,hora_entrada.minute)
