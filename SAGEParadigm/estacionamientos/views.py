@@ -157,17 +157,16 @@ def estacionamiento_reserva(request, _id):
 
                 # Si esta en un rango valido, procedemos a buscar en la lista
                 # el lugar a insertar
-                x = buscar(inicio_reserva, final_reserva, listaReserva)
-                if x[2] == True :
+                sources = ReservasModel.objects.filter(Estacionamiento = estacion).values_list('InicioReserva', 'FinalReserva', 'Puesto')
+                if AceptarReservacion(inicio_reserva, final_reserva, estacion.NroPuesto, sources):
                     reservar(inicio_reserva, final_reserva, listaReserva)
                     reservaFinal = ReservasModel(
                                         Estacionamiento = estacion,
-                                        Puesto = x[0],
+                                        Puesto = encontrarPuesto(sources, inicio_reserva, final_reserva, estacion.NroPuesto),
                                         InicioReserva = inicio_reserva,
                                         FinalReserva = final_reserva,
                                         Pagada = False
                                     )
-                    reservaFinal.save()
                     tarifa = float(estacion.Tarifa)
                     horas_completas,fraccion_hora = calcularEstadia(inicio_reserva, final_reserva)
                     total = costoHorasCompletas(horas_completas, tarifa)
@@ -181,17 +180,13 @@ def estacionamiento_reserva(request, _id):
                     request.method = 'GET'
                     return pagar_reserva(request, 
                                   context = {'total':total,
-                                             'reserva_object':reservaFinal
-                                            }
-                    )
+                                             'reserva_object':reservaFinal})
 
                 else:
                     return render(request, 
                                   'templateMensaje.html', 
                                   {'color':'red', 
-                                   'mensaje':'No hay un puesto disponible para ese horario'
-                                  }
-                    )
+                                   'mensaje':'No hay un puesto disponible para ese horario'})
     else:
         form = EstacionamientoReserva()
 
@@ -211,7 +206,7 @@ def pagar_reserva(request, context = None):
         context['mensaje'] = 'Se realizó la reserva exitosamente. El monto de la reserva es: %.2f' % context['total'],
         return render(request, 'pagarReserva.html', context)
 
-    # Si tenemos un POST -> el usuario esta decidiendo si quiere o no pagar la reserva
+    # Si tenemos un POST -> el usuario esta decidiendo que quiere pagar la reserva
     elif request.method == 'POST':
         context = context_global
         form = PagarReservaForm(request.POST)
@@ -221,6 +216,7 @@ def pagar_reserva(request, context = None):
             context['form'] = form
             context['color'] = 'green'
             context['mensaje'] = 'Reserva pagada satisfactoriamente. Su codigo de pago es %i' % context['reserva_object'].id
+            reservaFinal.save()
             return render(request, 'templateMensaje.html', context)
         else:
             return render(request,
