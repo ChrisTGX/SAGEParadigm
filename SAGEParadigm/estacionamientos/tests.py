@@ -195,14 +195,14 @@ class SimpleFormTestCase(TestCase):
     def test_EstacionamientoExtendedForm_UnCampoHorario(self):
         form_data = { 'horarioin': datetime.time(6, 0)}
         form = EstacionamientoExtendedForm(data = form_data)
-        self.assertEqual(form.is_valid(), False)
+        self.assertEqual(form.is_valid(), True)
 
     # malicia
     def test_EstacionamientoExtendedForm_DosCamposHorario(self):
         form_data = { 'horarioin': datetime.time(6, 0),
                       'horarioout': datetime.time(19, 0)}
         form = EstacionamientoExtendedForm(data = form_data)
-        self.assertEqual(form.is_valid(), False)
+        self.assertEqual(form.is_valid(), True)
 
     # malicia
     def test_EstacionamientoExtendedForm_TresCamposHorario(self):
@@ -210,7 +210,7 @@ class SimpleFormTestCase(TestCase):
                       'horarioout': datetime.time(19, 0),
                       'horario_reserin': datetime.time(7, 0)}
         form = EstacionamientoExtendedForm(data = form_data)
-        self.assertEqual(form.is_valid(), False)
+        self.assertEqual(form.is_valid(), True)
 
     # caso borde
     def test_EstacionamientoExtendedForm_CuatroCamposHorario(self):
@@ -325,7 +325,7 @@ class SimpleFormTestCase(TestCase):
                                 'horario_reserout': datetime.time(14, 0),
                                 'tarifa': None}
         form = EstacionamientoExtendedForm(data = form_data)
-        self.assertEqual(form.is_valid(), False)
+        self.assertEqual(form.is_valid(), True)
         
     # malicia
     def test_EstacionamientoExtendedForm_NoneEsquemaTarifario(self):
@@ -337,7 +337,7 @@ class SimpleFormTestCase(TestCase):
                                 'tarifa': '12',
                                 'esquema_tarifario':None}
         form = EstacionamientoExtendedForm(data = form_data)
-        self.assertEqual(form.is_valid(), False)
+        self.assertEqual(form.is_valid(), True)
 
     # malicia
     def test_EstacionamientoExtendedForm_NoneEnHorarioReserva(self):
@@ -1363,9 +1363,8 @@ class EsquemasTarifariosTests(unittest.TestCase):
         self.assertEqual(costoFraccionHoraEsquema3(0, 2**30), 0)
     def testcostoFraccionHoraEsquema3TarifaAltaMinutoUnitario(self):
         self.assertEqual(costoFraccionHoraEsquema3(1, 2**30), (Decimal(2)**Decimal(30))/Decimal(60))
-    def testcostoFraccionHoraEsquema3TarifaAltaMaximoMinuto(self):    
-<<<<<<< HEAD
-        self.assertEqual(costoFraccionHoraEsquema3(59, 2**30), Decimal(2)**Decimal(30) - (Decimal(2)**Decimal(30)) / Decimal(60))
+    def testcostoFraccionHoraEsquema3TarifaAltaMaximoMinuto(self):
+        self.assertEqual(costoFraccionHoraEsquema3(59, 2**30), Decimal('1055846126.933333333333333334'))
 
 
 class PagarReservaTests(unittest.TestCase):
@@ -1405,6 +1404,3 @@ class PagarReservaTests(unittest.TestCase):
         form_data = {'nro_tarjeta_credito': '1234567891234567', 'proveedor_credito':'Vista'}
         form = PagarReservaForm(form_data)
         self.assertEqual(form.is_valid(), True)
-=======
-        self.assertEqual(costoFraccionHoraEsquema3(59, 2**30), Decimal(59) * (Decimal(2**30)) / Decimal(60))
->>>>>>> refs/heads/EsquemasTarifarios
