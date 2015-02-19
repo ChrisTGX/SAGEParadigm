@@ -192,44 +192,34 @@ class SimpleFormTestCase(TestCase):
 ###################################################################
 
     # malicia
-    def test_EstacionamientoExtendedForm_UnCampo(self):
-        form_data = { 'puestos': 2}
+    def test_EstacionamientoExtendedForm_UnCampoHorario(self):
+        form_data = { 'horarioin': datetime.time(6, 0)}
         form = EstacionamientoExtendedForm(data = form_data)
         self.assertEqual(form.is_valid(), False)
 
     # malicia
-    def test_EstacionamientoExtendedForm_DosCampos(self):
-        form_data = { 'puestos': 2,
-                                'horarioin': datetime.time(6, 0)}
+    def test_EstacionamientoExtendedForm_DosCamposHorario(self):
+        form_data = { 'horarioin': datetime.time(6, 0),
+                      'horarioout': datetime.time(19, 0)}
         form = EstacionamientoExtendedForm(data = form_data)
         self.assertEqual(form.is_valid(), False)
 
     # malicia
-    def test_EstacionamientoExtendedForm_TresCampos(self):
-        form_data = { 'puestos': 2,
-                                'horarioin': datetime.time(6, 0),
-                                'horarioout': datetime.time(19, 0)}
-        form = EstacionamientoExtendedForm(data = form_data)
-        self.assertEqual(form.is_valid(), False)
-
-    # malicia
-    def test_EstacionamientoExtendedForm_CuatroCampos(self):
-        form_data = { 'puestos': 2,
-                                'horarioin': datetime.time(6, 0),
-                                'horarioout': datetime.time(19, 0),
-                                'horario_reserin': datetime.time(7, 0)}
+    def test_EstacionamientoExtendedForm_TresCamposHorario(self):
+        form_data = { 'horarioin': datetime.time(6, 0),
+                      'horarioout': datetime.time(19, 0),
+                      'horario_reserin': datetime.time(7, 0)}
         form = EstacionamientoExtendedForm(data = form_data)
         self.assertEqual(form.is_valid(), False)
 
     # caso borde
-    def test_EstacionamientoExtendedForm_CincoCampos(self):
-        form_data = { 'puestos': 2,
-                                'horarioin': datetime.time(6, 0),
-                                'horarioout': datetime.time(19, 0),
-                                'horario_reserin': datetime.time(7, 0),
-                                'horario_reserout': datetime.time(14, 0)}
+    def test_EstacionamientoExtendedForm_CuatroCamposHorario(self):
+        form_data = { 'horarioin': datetime.time(6, 0),
+                      'horarioout': datetime.time(19, 0),
+                      'horario_reserin': datetime.time(7, 0),
+                      'horario_reserout': datetime.time(14, 0)}
         form = EstacionamientoExtendedForm(data = form_data)
-        self.assertEqual(form.is_valid(), False)
+        self.assertEqual(form.is_valid(), True)
 
     # caso borde
     def test_EstacionamientoExtendedForm_TodosCamposBien(self):
@@ -1367,13 +1357,14 @@ class EsquemasTarifariosTests(unittest.TestCase):
     def testcostoFraccionHoraEsquema3SimpleMinutoUnitario(self):
         self.assertEqual(costoFraccionHoraEsquema3(1, 5), Decimal(5)/Decimal(60))
     def testcostoFraccionHoraEsquema3SimpleMaximoMinuto(self):    
-        self.assertEqual(costoFraccionHoraEsquema3(59, 5), Decimal(5)-(Decimal(5)/Decimal(60))) 
+        self.assertEqual(costoFraccionHoraEsquema3(59, 5), Decimal(59)*(Decimal(5)/Decimal(60))) 
         
     def testcostoFraccionHoraEsquema3TarifaAltaCeroMinutos(self):    
         self.assertEqual(costoFraccionHoraEsquema3(0, 2**30), 0)
     def testcostoFraccionHoraEsquema3TarifaAltaMinutoUnitario(self):
         self.assertEqual(costoFraccionHoraEsquema3(1, 2**30), (Decimal(2)**Decimal(30))/Decimal(60))
     def testcostoFraccionHoraEsquema3TarifaAltaMaximoMinuto(self):    
+<<<<<<< HEAD
         self.assertEqual(costoFraccionHoraEsquema3(59, 2**30), Decimal(2)**Decimal(30) - (Decimal(2)**Decimal(30)) / Decimal(60))
 
 
@@ -1414,3 +1405,6 @@ class PagarReservaTests(unittest.TestCase):
         form_data = {'nro_tarjeta_credito': '1234567891234567', 'proveedor_credito':'Vista'}
         form = PagarReservaForm(form_data)
         self.assertEqual(form.is_valid(), True)
+=======
+        self.assertEqual(costoFraccionHoraEsquema3(59, 2**30), Decimal(59) * (Decimal(2**30)) / Decimal(60))
+>>>>>>> refs/heads/EsquemasTarifarios

@@ -67,10 +67,15 @@ class EstacionamientoExtendedForm(forms.Form):
                                           choices=[(1, "Por hora"), 
                                                    (2, "Por hora y fracción"), 
                                                    (3, "Por minuto"),
-                                                   (4, "Diferenciado por hora")]
+                                                   (4, "Diferenciado por hora")],
+                                          label = 'Esquema Tarifario'
                                           )
     
-    tarifa = forms.DecimalField(required = False, max_digits=6, decimal_places=2)
+    horapico_inicio = forms.TimeField(required = False, label = 'Inicio de Hora Pico')
+    horapico_fin = forms.TimeField(required = False, label = 'Fin de Hora Pico')
+        
+    tarifa = forms.DecimalField(required = False, max_digits=6, decimal_places=2, label = 'Tarifa')
+    tarifa_pico = forms.DecimalField(required = False, max_digits=6, decimal_places=2, label = 'Tarifa de Hora Pico')
 
 
 

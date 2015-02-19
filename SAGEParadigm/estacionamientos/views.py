@@ -71,7 +71,7 @@ def estacionamiento_detail(request, _id):
             # Leemos el formulario
             form = EstacionamientoExtendedForm(request.POST)
             # Si el formulario
-            if form.is_valid() and len(form.changed_data) > 1:
+            if form.is_valid() and len(form.changed_data) > 0:
                 
                 if ('horarioin' in form.changed_data and 
                     'horarioout' in form.changed_data and 

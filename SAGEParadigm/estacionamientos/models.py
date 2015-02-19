@@ -21,11 +21,16 @@ class Estacionamiento(models.Model):
 	Rif = models.CharField(max_length = 12)
 
 	Esquema_tarifario = models.CharField(max_length = 4, blank = True, null = True)
-	Tarifa = models.DecimalField(max_length = 50, max_digits=6, decimal_places=2, blank = True, null = True)
+	Tarifa = models.DecimalField(max_digits=6, decimal_places=2, blank = True, null = True)
+	HoraPicoInicio = models.TimeField(blank = True, null = True)
+	HoraPicoFin = models.TimeField(blank = True, null = True)
+	TarifaPico = models.DecimalField(max_digits=6, decimal_places=2, blank = True, null = True)
+	
 	Apertura = models.TimeField(blank = True, null = True)
 	Cierre = models.TimeField(blank = True, null = True)
 	Reservas_Inicio = models.TimeField(blank = True, null = True)
 	Reservas_Cierre = models.TimeField(blank = True, null = True)
+	
 	NroPuesto = models.IntegerField(blank = True, null = True)
 
 	def __str__(self):
