@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
+from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
-
+from django.shortcuts import redirect
 from estacionamientos.controller import *
 from estacionamientos.forms import EstacionamientoExtendedForm
-from estacionamientos.forms import EstacionamientoForm
+from estacionamientos.forms import EstacionamientoForm, PagarReservaForm
 from estacionamientos.forms import EstacionamientoReserva
 from estacionamientos.models import Estacionamiento, ReservasModel
+from aptdaemon.logger import GREEN
 
 listaReserva = []
+
 
 # Usamos esta vista para procesar todos los estacionamientos
 def estacionamientos_all(request):
@@ -51,6 +54,8 @@ def estacionamientos_all(request):
 
     return render(request, 'base.html', {'form': form, 'estacionamientos': estacionamientos})
 
+
+
 def estacionamiento_detail(request, _id):
     _id = int(_id)
     # Verificamos que el objeto exista antes de continuar
@@ -66,25 +71,41 @@ def estacionamiento_detail(request, _id):
             # Leemos el formulario
             form = EstacionamientoExtendedForm(request.POST)
             # Si el formulario
-            if form.is_valid():
-                hora_in = form.cleaned_data['horarioin']
-                hora_out = form.cleaned_data['horarioout']
-                reserva_in = form.cleaned_data['horario_reserin']
-                reserva_out = form.cleaned_data['horario_reserout']
+            if form.is_valid() and len(form.changed_data) > 0:
+                
+                if ('horarioin' in form.changed_data and 
+                    'horarioout' in form.changed_data and 
+                    'horario_reserin' in form.changed_data and 
+                    'horario_reserout' in form.changed_data):
+                    
+                    hora_in = form.cleaned_data['horarioin']
+                    hora_out = form.cleaned_data['horarioout']
+                    reserva_in = form.cleaned_data['horario_reserin']
+                    reserva_out = form.cleaned_data['horario_reserout']
+                    
+                    estacion.Apertura = hora_in
+                    estacion.Cierre = hora_out
+                    estacion.Reservas_Inicio = reserva_in
+                    estacion.Reservas_Cierre = reserva_out
+                    
+                    m_validado = HorarioEstacionamiento(hora_in, hora_out, reserva_in, reserva_out)
+                    if not m_validado[0]:
+                        return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1]})
+                
+                elif ('horarioin' in form.changed_data or 
+                    'horarioout' in form.changed_data or 
+                    'horario_reserin' in form.changed_data or 
+                    'horario_reserout' in form.changed_data):
+                    return render(request, 'templateMensaje.html', 
+                                  {'color':'red', 
+                                   'mensaje': 'Deben especificarse juntos los horarios de Apertura, Cierre, Inicio y Fin de Reserva.'})
 
-                m_validado = HorarioEstacionamiento(hora_in, hora_out, reserva_in, reserva_out)
-                if not m_validado[0]:
-                    return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1]})
-
-                estacion.Tarifa = form.cleaned_data['tarifa']
-                estacion.Esquema_tarifario = form.cleaned_data['esquema_tarifario']
-                estacion.Apertura = hora_in
-                estacion.Cierre = hora_out
-                estacion.Reservas_Inicio = reserva_in
-                estacion.Reservas_Cierre = reserva_out
-                estacion.NroPuesto = form.cleaned_data['puestos']
+                if 'tarifa' in form.changed_data: estacion.Tarifa = form.cleaned_data['tarifa']
+                if 'esquema_tarifario' in form.changed_data: estacion.Esquema_tarifario = form.cleaned_data['esquema_tarifario']
+                if 'puestos' in form.changed_data: estacion.NroPuesto = form.cleaned_data['puestos']
 
                 estacion.save()
+                
     else:
         form = EstacionamientoExtendedForm()
 
@@ -92,7 +113,6 @@ def estacionamiento_detail(request, _id):
 
 
 def estacionamiento_reserva(request, _id):
-
     _id = int(_id)
     # Verificamos que el objeto exista antes de continuar
     try:
@@ -105,7 +125,6 @@ def estacionamiento_reserva(request, _id):
     # Antes de entrar en la reserva, si la lista esta vacia, agregamos los
     # valores predefinidos
     if len(listaReserva) < 1:
-
         Puestos = ReservasModel.objects.filter(Estacionamiento = estacion).values_list('Puesto', 'InicioReserva', 'FinalReserva')
         elem1 = (estacion.Apertura, estacion.Apertura)
         elem2 = (estacion.Cierre, estacion.Cierre)
@@ -138,16 +157,16 @@ def estacionamiento_reserva(request, _id):
 
                 # Si esta en un rango valido, procedemos a buscar en la lista
                 # el lugar a insertar
-                x = buscar(inicio_reserva, final_reserva, listaReserva)
-                if x[2] == True :
+                sources = ReservasModel.objects.filter(Estacionamiento = estacion).values_list('InicioReserva', 'FinalReserva', 'Puesto')
+                if AceptarReservacion(inicio_reserva, final_reserva, estacion.NroPuesto, sources):
                     reservar(inicio_reserva, final_reserva, listaReserva)
                     reservaFinal = ReservasModel(
                                         Estacionamiento = estacion,
-                                        Puesto = x[0],
+                                        Puesto = encontrarPuesto(sources, inicio_reserva, final_reserva, estacion.NroPuesto),
                                         InicioReserva = inicio_reserva,
-                                        FinalReserva = final_reserva
+                                        FinalReserva = final_reserva,
+                                        Pagada = False
                                     )
-                    reservaFinal.save()
                     tarifa = float(estacion.Tarifa)
                     horas_completas,fraccion_hora = calcularEstadia(inicio_reserva, final_reserva)
                     total = costoHorasCompletas(horas_completas, tarifa)
@@ -157,11 +176,65 @@ def estacionamiento_reserva(request, _id):
                         total += costoFraccionHoraEsquema2(fraccion_hora, tarifa)
                     elif estacion.Esquema_tarifario == '3':
                         total += costoFraccionHoraEsquema3(fraccion_hora, tarifa)
-                    return render(request, 'templateMensaje.html', {'color':'green', 'mensaje':'Se realizo la reserva exitosamente. El monto de la reserva es: %.2f' % total})
+                     
+                    request.method = 'GET'
+                    return pagar_reserva(request, 
+                                  context = {'total':total,
+                                             'reserva_object':reservaFinal})
+
                 else:
-                    return render(request, 'templateMensaje.html', {'color':'red', 'mensaje':'No hay un puesto disponible para ese horario'})
+                    return render(request, 
+                                  'templateMensaje.html', 
+                                  {'color':'red', 
+                                   'mensaje':'No hay un puesto disponible para ese horario'})
     else:
         form = EstacionamientoReserva()
 
-    return render(request, 'estacionamientoReserva.html', {'form': form, 'estacionamiento': estacion})
+    return render(request, 
+                  'estacionamientoReserva.html', 
+                  {'form': form, 'estacionamiento': estacion})
+
+
+context_global = {}
+def pagar_reserva(request, context = None):
+    global context_global
+    # Si tenemos un GET -> acbamos de llegar desde estacionamiento_reserva
+    if request.method == 'GET':
+        context_global = context
+        context['form'] = PagarReservaForm()
+        context['color'] = 'green'
+        context['mensaje'] = 'El monto de la reserva es: %.2f' % context['total']
+        return render(request, 'pagarReserva.html', context)
+
+    # Si tenemos un POST -> el usuario esta decidiendo que quiere pagar la reserva
+    elif request.method == 'POST':
+        context = context_global
+        form = PagarReservaForm(request.POST)
+        if form.is_valid():
+            print(context)
+            context['reserva_object'].Pagada = True
+            context['reserva_object'].save()
+            context['form'] = form
+            context['color'] = 'green'
+            context['mensaje'] = 'Reserva pagada satisfactoriamente. Su codigo de pago es %i' % context['reserva_object'].id
+            context['reserva_object'].save()
+            return render(request, 'templateMensaje.html', context)
+        else:
+            return render(request,
+                          'pagarReserva.html',
+                          {'form':form})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

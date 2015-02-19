@@ -23,9 +23,9 @@
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
           <span class="icon-toggle"></span>
       </button>
-          <div class="navbar-brand" href="#">
+          <a class="navbar-brand" href="..">
             SAGE
-          </div>
+          </a>
     </div>
   </div><!-- /container -->
 </div>
@@ -125,13 +125,10 @@
           
         </tbody>
       </table>
-      
-      <hr>  
+        
       <hr>
       
-   
 
-    
     </div>
     <div class="col-md-4">
        
@@ -152,6 +149,14 @@
         <tr><td><b><i class="fa fa-clock-o"></i> Horario fin de reserva:</b></td></tr>
         <tr><td>{{estacionamiento.Reservas_Cierre}}</td></tr>
       {% endif %}
+      {% if estacionamiento.HoraPicoInicio and estacionamiento.Esquema_tarifario == "4" %}
+        <tr><td><b><i class="fa fa-money"></i></i> Tarifa:</b></td></tr>
+        <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
+      {% endif %}
+      {% if estacionamiento.HoraPicoFin and estacionamiento.Esquema_tarifario == "4" %}
+        <tr><td><b><i class="fa fa-money"></i></i> Tarifa:</b></td></tr>
+        <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
+      {% endif %}
       {% if estacionamiento.Apertura %}
         <tr><td><b><i class="fa fa-clock-o"></i> Horario apertura:</b></td></tr>
         <tr><td>{{estacionamiento.Apertura}}</td></tr>
@@ -160,18 +165,34 @@
         <tr><td><b><i class="fa fa-clock-o"></i> Horario cierre:</b></td></tr>
         <tr><td>{{estacionamiento.Cierre}}</td></tr>
       {% endif %}
+      {% if estacionamiento.Esquema_tarifario %}
+        <tr><td><b><i class="fa fa-money"></i></i> Esquema Tarifario:</b></td></tr>
+        <tr><td>
+        	{% if estacionamiento.Esquema_tarifario == "1" %}
+        		Por hora
+        	{% elif estacionamiento.Esquema_tarifario == "2" %}
+        		Por hora y fracción
+        	{% elif estacionamiento.Esquema_tarifario == "3" %}
+        		Por minuto
+        	{% elif estacionamiento.Esquema_tarifario == "4" %}
+        		Diferenciado por hora
+        	{% endif %}
+        </td></tr>
+      {% endif %}
  	  {% if estacionamiento.Tarifa %}
         <tr><td><b><i class="fa fa-money"></i></i> Tarifa:</b></td></tr>
         <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
       {% endif %}
-      {% if estacionamiento.Esquema_tarifario %}
-        <tr><td><b><i class="fa fa-money"></i></i> Esquema Tarifario:</b></td></tr>
-        <tr><td>{{estacionamiento.Esquema_tarifario}}</td></tr>
+      {% if estacionamiento.TarifaPico and estacionamiento.Esquema_tarifario == "4" %}
+        <tr><td><b><i class="fa fa-money"></i></i> Tarifa:</b></td></tr>
+        <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
       {% endif %}
-      
       
         </tbody>
       </table>
+      
+      <hr>
+      
     </div><div class="col-md-4">
 
     
@@ -199,10 +220,17 @@
 							{% for choice in form.esquema_tarifario.field.choices %}
 						        <option value="{{choice.0}}">{{choice.1}}</option>
 						    {% endfor %}
-						</select><p>
+						</select>
                   	{% else %}
-                    	<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}"><p>
+                    	{% if field.name == "horapico_inicio" or field.name == "horapico_fin" or field.name == "tarifa_pico" %}
+                    		{% ifequal estacionamiento.Esquema_tarifario "4" %}
+                    			<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}">
+                    		{% endifequal %}
+                    	{% else %}
+                    		<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}">
+                    	{% endif %}
                     {% endifequal %}
+                    <p>
                     {{ field.errors }}
                   </div>
                 </div> 

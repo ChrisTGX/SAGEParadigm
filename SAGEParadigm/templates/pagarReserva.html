@@ -53,20 +53,7 @@
               </a>
             </li>
           </ul>
-
- <!--           <ul class="nav nav-stacked">
-            <li>
-              <a href="./hola">
-                <i class="fa fa-bus"></i>
-                blabla
-              </a>
-            </li>
-          </ul> -->
-
-
-          
           <hr>
-          
         </div>
         <!-- /span-3 -->
 <div class="col-sm-10">
@@ -83,10 +70,43 @@
             <!--center-right-->
           <!--/col-span-6-->
      
-       <div class="col-md-8" style="color:{{color}}"> 
-			{{mensaje}}
+       <div class="col-md-8" style="color:{{color}}">
+            {{mensaje}}
+			<p>
+			<form action="./pagar_reserva" method="post" class="form form-vertical">
+                {% csrf_token %}
+                {% for field in form %}
+                	<div class="control-group">
+	                  <div class="controls">
+	                  	{% ifequal field.name "proveedor_credito" %}
+	                  		<select class="form-control" name="{{field.name}}" for="id_{{field.name}}">
+								{% for choice in form.proveedor_credito.field.choices %}
+							        <option value="{{choice.0}}">{{choice.1}}</option>
+							    {% endfor %}
+							</select><p>
+	                  	{% else %}
+	                    	<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}"><p>
+	                    {% endifequal %}
+	                    {{ field.errors }}
+	                  </div>
+	                </div> 
+                {% endfor %}
+                
+				<div class="control-group">
+                  <label>
+                  </label>
+                  <div class="controls">
+                    <button type="submit" class="btn btn-primary">
+                      Pagar
+                    </button>
+                  </div>
+                </div>
+            </form>
+
+
       <hr>              
-    </div><div class="col-md-4">
+        </div>
+        <div class="col-md-4">
 
     
           
