@@ -1375,3 +1375,42 @@ class EsquemasTarifariosTests(unittest.TestCase):
         self.assertEqual(costoFraccionHoraEsquema3(1, 2**30), (Decimal(2)**Decimal(30))/Decimal(60))
     def testcostoFraccionHoraEsquema3TarifaAltaMaximoMinuto(self):    
         self.assertEqual(costoFraccionHoraEsquema3(59, 2**30), Decimal(2)**Decimal(30) - (Decimal(2)**Decimal(30)) / Decimal(60))
+
+
+class PagarReservaTests(unittest.TestCase):
+    def test_CamposVacios(self):
+        form_data = {}
+        form = PagarReservaForm(form_data)
+        self.assertEqual(form.is_valid(), False)
+    def test_NroTarjetaVacia(self):
+        form_data = {'nro_tarjeta_credito': '', 'proveedor_credito':'Mister'}
+        form = PagarReservaForm(form_data)
+        self.assertEqual(form.is_valid(), False)
+    def test_NroTarjetaMenosDigitos(self):
+        form_data = {'nro_tarjeta_credito': '1', 'proveedor_credito':'Mister'}
+        form = PagarReservaForm(form_data)
+        self.assertEqual(form.is_valid(), False)
+    def test_NroTarjetaNegativa(self):
+        form_data = {'nro_tarjeta_credito': '-1234567891234567', 'proveedor_credito':'Mister'}
+        form = PagarReservaForm(form_data)
+        self.assertEqual(form.is_valid(), False)
+    def test_NroTarjetaMasDigitos(self):
+        form_data = {'nro_tarjeta_credito': '12345678912345678', 'proveedor_credito':'Mister'}
+        form = PagarReservaForm(form_data)
+        self.assertEqual(form.is_valid(), False)
+    def test_SinProveedor(self):
+        form_data = {'nro_tarjeta_credito': '1234567891234567', 'proveedor_credito':''}
+        form = PagarReservaForm(form_data)
+        self.assertEqual(form.is_valid(), False)
+    def test_NroTarjetaConLetras(self):
+        form_data = {'nro_tarjeta_credito': 'Hola, soy TeRuEl', 'proveedor_credito':''}
+        form = PagarReservaForm(form_data)
+        self.assertEqual(form.is_valid(), False)
+    def test_NroTarjetaConUnaLetra(self):
+        form_data = {'nro_tarjeta_credito': '1234567890123456h', 'proveedor_credito':''}
+        form = PagarReservaForm(form_data)
+        self.assertEqual(form.is_valid(), False)
+    def test_Correcto(self):
+        form_data = {'nro_tarjeta_credito': '1234567891234567', 'proveedor_credito':'Vista'}
+        form = PagarReservaForm(form_data)
+        self.assertEqual(form.is_valid(), True)
