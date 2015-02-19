@@ -151,12 +151,13 @@ def estacionamiento_reserva(request, _id):
 
                 # Si esta en un rango valido, procedemos a buscar en la lista
                 # el lugar a insertar
-                x = buscar(inicio_reserva, final_reserva, listaReserva)
-                if x[2] == True :
+                sources = ReservasModel.objects.filter(Estacionamiento = estacion).values_list('InicioReserva', 'FinalReserva', 'Puesto')
+                x = AceptarReservacion(inicio_reserva, final_reserva, estacion.NroPuesto, sources)
+                if x == True :
                     reservar(inicio_reserva, final_reserva, listaReserva)
                     reservaFinal = ReservasModel(
                                         Estacionamiento = estacion,
-                                        Puesto = x[0],
+                                        Puesto = encontrarPuesto(sources, inicio_reserva, final_reserva, estacion.NroPuesto),
                                         InicioReserva = inicio_reserva,
                                         FinalReserva = final_reserva
                                     )

@@ -28,6 +28,8 @@ class Estacionamiento(models.Model):
 	Reservas_Cierre = models.TimeField(blank = True, null = True)
 	NroPuesto = models.IntegerField(blank = True, null = True)
 
+	def __str__(self):
+		return "Estacionamiento " + self.Nombre
 
 # class ExtendedModel(models.Model):
 # 	Estacionamiento = models.ForeignKey(Estacionamiento, primary_key = True)
@@ -52,3 +54,6 @@ class ReservasModel(models.Model):
 	Puesto = models.IntegerField()
 	InicioReserva = models.TimeField()
 	FinalReserva = models.TimeField()
+	
+	def __str__(self):
+		return "Reserva del puesto " + str(self.Puesto) + " en " + self.Estacionamiento.Nombre + " de " + str(self.InicioReserva) + " a " + str(self.FinalReserva)
