@@ -9,7 +9,7 @@ from estacionamientos.forms import EstacionamientoExtendedForm
 from estacionamientos.forms import EstacionamientoForm, PagarReservaForm
 from estacionamientos.forms import EstacionamientoReserva
 from estacionamientos.models import Estacionamiento, ReservasModel
-from aptdaemon.logger import GREEN
+
 
 listaReserva = []
 
@@ -69,10 +69,10 @@ def estacionamiento_detail(request, _id):
     
     if request.method == 'GET':
         form = EstacionamientoExtendedForm(initial={'NroPuesto': estacion.NroPuesto,
-                                                    'Apertura': estacion.Apertura,
-                                                    'Cierre': estacion.Cierre,
-                                                    'Reservas_Inicio': estacion.Reservas_Inicio,
-                                                    'Reservas_Cierre': estacion.Reservas_Cierre,
+                                                    'Apertura': estacion.Apertura.strftime('%H:%M'),
+                                                    'Cierre': estacion.Cierre.strftime('%H:%M'),
+                                                    'Reservas_Inicio': estacion.Reservas_Inicio.strftime('%H:%M'),
+                                                    'Reservas_Cierre': estacion.Reservas_Cierre.strftime('%H:%M'),
                                                     'Tarifa': estacion.Tarifa,
                                                     'Esquema_tarifario:': estacion.Esquema_tarifario})
         #return render(request, 'estacionamiento.html', {'form': form, 'estacionamiento': estacion})
