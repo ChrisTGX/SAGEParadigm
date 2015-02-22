@@ -30,7 +30,7 @@ def ordenar(tabla):
 	
 	return sorted(tabla, key = obtenerClave)
 
-def solapamientoEnRangoReserva(inicio_reseeva,fin_reserva,inicio,fin):
+def solapamientoEnRangoReserva(inicio_reserva,fin_reserva,inicio,fin):
     reserva_range = range(inicio_reserva,fin_reserva)
     solapamiento_range = range(inicio,fin)
     reserva_set = set(reserva_range)
