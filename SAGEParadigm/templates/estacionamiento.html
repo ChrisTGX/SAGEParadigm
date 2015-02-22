@@ -55,7 +55,7 @@
           </ul>
 
           <br>
-          {% if estacionamiento.NroPuesto %}
+          {% if estacionamiento.Apertura and estacionamiento.Cierre and estacionamiento.Reservas_Inicio and estacionamiento.Reservas_Cierre and estacionamiento.NroPuesto and estacionamiento.Tarifa %}
             <ul class="nav nav-stacked">
               <li>
                 <a href="./reserva">
@@ -83,10 +83,10 @@
           
         </thead>
         <tbody>
-			<tr><td><b><i class="fa fa-car"></i> Nombre del estacionamiento:</b></td></tr>
+			<tr><td><b><i class="fa fa-car"></i> Nombre del Estacionamiento:</b></td></tr>
 			<tr><td>{{estacionamiento.Nombre}}</td></tr>
 
-			<tr><td><b><i class="fa fa-user"></i> Nombre del propietario:</b></td></tr>
+			<tr><td><b><i class="fa fa-user"></i> Nombre del Propietario:</b></td></tr>
 			<tr><td>{{estacionamiento.Propietario}}</td></tr>
 
 			<tr><td><b><i class="fa fa-home"></i> Dirección:</b></td></tr>
@@ -138,24 +138,32 @@
         </thead>
         <tbody>
       {% if estacionamiento.NroPuesto %}
-        <tr><td><b><i class="fa fa-car"></i> Puestos:</b></td></tr>
+        <tr><td><b><i class="fa fa-car"></i> Número de Puestos:</b></td></tr>
         <tr><td>{{estacionamiento.NroPuesto}}</td></tr>
       {% endif %}
-      {% if estacionamiento.Reservas_Inicio %}
-        <tr><td><b><i class="fa fa-clock-o"></i> Horario inicio de reserva:</b></td></tr>
-        <tr><td>{{estacionamiento.Reservas_Inicio}}</td></tr>
-      {% endif %}
-      {% if estacionamiento.Reservas_Cierre %}
-        <tr><td><b><i class="fa fa-clock-o"></i> Horario fin de reserva:</b></td></tr>
-        <tr><td>{{estacionamiento.Reservas_Cierre}}</td></tr>
-      {% endif %}
       {% if estacionamiento.Apertura %}
-        <tr><td><b><i class="fa fa-clock-o"></i> Horario apertura:</b></td></tr>
+        <tr><td><b><i class="fa fa-clock-o"></i> Horario de Apertura:</b></td></tr>
         <tr><td>{{estacionamiento.Apertura}}</td></tr>
       {% endif %}
       {% if estacionamiento.Cierre %}
-        <tr><td><b><i class="fa fa-clock-o"></i> Horario cierre:</b></td></tr>
+        <tr><td><b><i class="fa fa-clock-o"></i> Horario de Cierre:</b></td></tr>
         <tr><td>{{estacionamiento.Cierre}}</td></tr>
+      {% endif %}
+      {% if estacionamiento.Reservas_Inicio %}
+        <tr><td><b><i class="fa fa-clock-o"></i> Horario Inicio de reserva:</b></td></tr>
+        <tr><td>{{estacionamiento.Reservas_Inicio}}</td></tr>
+      {% endif %}
+      {% if estacionamiento.Reservas_Cierre %}
+        <tr><td><b><i class="fa fa-clock-o"></i> Horario Fin de reserva:</b></td></tr>
+        <tr><td>{{estacionamiento.Reservas_Cierre}}</td></tr>
+      {% endif %}
+      {% if estacionamiento.HoraPicoInicio and estacionamiento.Esquema_tarifario == "4" %}
+        <tr><td><b><i class="fa fa-money"></i></i> Inicio de Hora Pico:</b></td></tr>
+        <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
+      {% endif %}
+      {% if estacionamiento.HoraPicoFin and estacionamiento.Esquema_tarifario == "4" %}
+        <tr><td><b><i class="fa fa-money"></i></i> Fin de Hora Pico:</b></td></tr>
+        <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
       {% endif %}
       {% if estacionamiento.Esquema_tarifario %}
         <tr><td><b><i class="fa fa-money"></i></i> Esquema Tarifario:</b></td></tr>
@@ -175,7 +183,10 @@
         <tr><td><b><i class="fa fa-money"></i></i> Tarifa:</b></td></tr>
         <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
       {% endif %}
-      
+      {% if estacionamiento.TarifaPico and estacionamiento.Esquema_tarifario == "4" %}
+        <tr><td><b><i class="fa fa-money"></i></i> Tarifa de Hora Pico:</b></td></tr>
+        <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
+      {% endif %}
       
         </tbody>
       </table>
@@ -204,15 +215,33 @@
               {% for field in form %}
                 <div class="control-group">
                   <div class="controls">
-                  	{% ifequal field.name "esquema_tarifario" %}
+                  	{% ifequal field.name "Esquema_tarifario" %}
+	                  	<label for="id_{{field.name}}">{{field.label}}</label>
                   		<select class="form-control" name="{{field.name}}" for="id_{{field.name}}">
-							{% for choice in form.esquema_tarifario.field.choices %}
-						        <option value="{{choice.0}}">{{choice.1}}</option>
+							{% for choice in form.Esquema_tarifario.field.choices %}
+								{% ifequal choice.0|stringformat:"s" estacionamiento.Esquema_tarifario %}
+									<option value="{{choice.0}}" selected>{{choice.1}}</option>
+								{% else %}
+									<option value="{{choice.0}}">{{choice.1}}</option>
+								{% endifequal %}
 						    {% endfor %}
-						</select><p>
-                  	{% else %}
-                    	<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}"><p>
+						</select>
+					{% else %}
+                    	{% if field.name == "HoraPicoInicio" or field.name == "HoraPicoFin" or field.name == "TarifaPico" %}
+                    		{% ifequal estacionamiento.Esquema_tarifario "4" %}
+                    			<label for="id_{{field.name}}">{{field.label}}</label>
+                    			<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}" value="{{field.value}}">
+                    		{% endifequal %}
+                    	{% else %}
+                    		<label for="id_{{field.name}}">{{field.label}}</label>
+                    		{% ifequal field.value None %}
+                    			<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}">
+                    		{% else %}
+                    			<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}" value="{{field.value}}">
+                    		{% endifequal %}
+                    	{% endif %}
                     {% endifequal %}
+                    <p>
                     {{ field.errors }}
                   </div>
                 </div> 
@@ -227,7 +256,6 @@
                     </button>
                   </div>
                 </div>
-                
                 
               </form>
               

@@ -2,7 +2,7 @@
 
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.shortcuts import redirect
 from estacionamientos.controller import *
 from estacionamientos.forms import EstacionamientoExtendedForm
@@ -66,22 +66,32 @@ def estacionamiento_detail(request, _id):
 
     global listaReserva
     listaReserva = []
-
-    if request.method == 'POST':
+    
+    if request.method == 'GET':
+        form = EstacionamientoExtendedForm(initial={'NroPuesto': estacion.NroPuesto,
+                                                    'Apertura': estacion.Apertura,
+                                                    'Cierre': estacion.Cierre,
+                                                    'Reservas_Inicio': estacion.Reservas_Inicio,
+                                                    'Reservas_Cierre': estacion.Reservas_Cierre,
+                                                    'Tarifa': estacion.Tarifa,
+                                                    'Esquema_tarifario:': estacion.Esquema_tarifario})
+        #return render(request, 'estacionamiento.html', {'form': form, 'estacionamiento': estacion})
+     
+    elif request.method == 'POST':
             # Leemos el formulario
             form = EstacionamientoExtendedForm(request.POST)
             # Si el formulario
-            if form.is_valid() and len(form.changed_data) > 1:
+            if form.is_valid() and len(form.changed_data) > 0:
                 
-                if ('horarioin' in form.changed_data and 
-                    'horarioout' in form.changed_data and 
-                    'horario_reserin' in form.changed_data and 
-                    'horario_reserout' in form.changed_data):
+                if ('Apertura' in form.changed_data and 
+                    'Cierre' in form.changed_data and 
+                    'Reservas_Inicio' in form.changed_data and 
+                    'Reservas_Cierre' in form.changed_data):
                     
-                    hora_in = form.cleaned_data['horarioin']
-                    hora_out = form.cleaned_data['horarioout']
-                    reserva_in = form.cleaned_data['horario_reserin']
-                    reserva_out = form.cleaned_data['horario_reserout']
+                    hora_in = form.cleaned_data['Apertura']
+                    hora_out = form.cleaned_data['Cierre']
+                    reserva_in = form.cleaned_data['Reservas_Inicio']
+                    reserva_out = form.cleaned_data['Reservas_Cierre']
                     
                     estacion.Apertura = hora_in
                     estacion.Cierre = hora_out
@@ -92,17 +102,17 @@ def estacionamiento_detail(request, _id):
                     if not m_validado[0]:
                         return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1]})
                 
-                elif ('horarioin' in form.changed_data or 
-                    'horarioout' in form.changed_data or 
-                    'horario_reserin' in form.changed_data or 
-                    'horario_reserout' in form.changed_data):
+                elif ('Apertura' in form.changed_data or 
+                    'Cierre' in form.changed_data or 
+                    'Reservas_Inicio' in form.changed_data or 
+                    'Reservas_Cierre' in form.changed_data):
                     return render(request, 'templateMensaje.html', 
                                   {'color':'red', 
                                    'mensaje': 'Deben especificarse juntos los horarios de Apertura, Cierre, Inicio y Fin de Reserva.'})
 
-                if 'tarifa' in form.changed_data: estacion.Tarifa = form.cleaned_data['tarifa']
-                if 'esquema_tarifario' in form.changed_data: estacion.Esquema_tarifario = form.cleaned_data['esquema_tarifario']
-                if 'puestos' in form.changed_data: estacion.NroPuesto = form.cleaned_data['puestos']
+                if 'Tarifa' in form.changed_data: estacion.Tarifa = form.cleaned_data['Tarifa']
+                if 'Esquema_tarifario' in form.changed_data: estacion.Esquema_tarifario = form.cleaned_data['Esquema_tarifario']
+                if 'NroPuesto' in form.changed_data: estacion.NroPuesto = form.cleaned_data['NroPuesto']
 
                 estacion.save()
                 

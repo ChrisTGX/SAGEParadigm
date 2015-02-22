@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Archivo con funciones de control para SAGE
 import datetime
 from decimal import Decimal
@@ -20,20 +22,24 @@ def encontrarPuesto(sources, ini, fin, nropuestos):
 		if not i in nodisp:
 			return i
 	return -1
-def obtenerClave(item):
-	return item[0]
+
 
 def ordenar(tabla):
+	def obtenerClave(item):
+		return item[0],item[1]
+	
 	return sorted(tabla, key = obtenerClave)
 
-def ViabilidadReservacion(tabla, x, y):
+def solapamientoEnRangoReserva(inicio_reseeva,fin_reserva,inicio,fin):
+    reserva_range = range(inicio_reserva,fin_reserva)
+    solapamiento_range = range(inicio,fin)
+    reserva_set = set(reserva_range)
+    solapamiento_set = set(solapamiento_range)
+    return bool(reserva_set.intersection(solapamiento_set))
+
+def viabilidadReservacion(tabla, x, y):
 	# Devuelve True si un solapamiento se encuentra dentro del rango de una reservacion
 	# False en caso contrario
-	def SolapamientoEnRangoReserva(x,y,inicio,fin):
-		if ((x in range(inicio,fin+1)) or (y in range(inicio,fin+1))):
-			return True
-		return False
-	
 	tipo = 0
 	offset = 1
 	best = 0
@@ -41,36 +47,36 @@ def ViabilidadReservacion(tabla, x, y):
 	beststart = 0
 	bestend = 0
 	for i in range(0,len(tabla)):
-		cnt = cnt - tabla[i][offset]
-		if (cnt > best) and (tabla[i][tipo] != tabla[i+1][tipo]) :
-			best = cnt
-			beststart = tabla[i][tipo]
-			bestend = tabla[i+1][tipo]
-		elif (cnt == best) and SolapamientoEnRangoReserva(x, y,tabla[i][tipo],tabla[i+1][tipo]):
-			best = cnt
-			beststart = tabla[i][tipo]
-			bestend = tabla[i+1][tipo]
+	    cnt = cnt - tabla[i][offset]
+	    if (cnt > best) and (tabla[i][tipo] != tabla[i+1][tipo]) :
+	        best = cnt
+	        beststart = tabla[i][tipo]
+	        bestend = tabla[i+1][tipo]
+	    elif (cnt == best) and solapamientoEnRangoReserva((x.hour*100+x.minute),(y.hour*100+y.minute),tabla[i][tipo],tabla[i+1][tipo]):
+	        best = cnt
+	        beststart = tabla[i][tipo]
+	        bestend = tabla[i+1][tipo]
 	return best,beststart,bestend
 
 
 def AceptarReservacion(x, y, capacidad, sources):
 	tabla = []
 	for elem in sources:
-		tabla.append([elem[0].hour*100+elem[0].minute, -1])
-		tabla.append([elem[1].hour*100+elem[1].minute, 1])
+	    tabla.append([elem[0].hour*100+elem[0].minute, -1])
+	    tabla.append([elem[1].hour*100+elem[1].minute, 1])
 	tabla = ordenar(tabla)
 	print(tabla)
-	best,beststart,bestend = ViabilidadReservacion(tabla, x, y)
+	best,beststart,bestend = viabilidadReservacion(tabla, x, y)
 	print(str(best) + " " + str(beststart) + " " + str(bestend))
 	if best < capacidad: 
-		return True
+	    return True
 	elif best == capacidad:
-		# Si el rango del solapamiento intersecta el de la reservacion, no se acepta esta ultima
-		print(x, y)
-		if (((x.hour*100+x.minute) in range(beststart+1,bestend) or ((y.hour*100+y.minute) in range(beststart,bestend+1)))):
-			return False
-		else:
-			return True
+	    # Si el rango del solapamiento intersecta el de la reservacion, no se acepta esta ultima
+	    print(x, y)
+	    if solapamientoEnRangoReserva((x.hour*100+x.minute),(y.hour*100+y.minute),beststart,bestend):
+	        return False
+	    else:
+	        return True
 	return False
 
 def calcularEstadia(hora_entrada, hora_salida):
