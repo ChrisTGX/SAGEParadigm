@@ -3,6 +3,8 @@
 from django import forms
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
+from django.forms import ModelForm
+from estacionamientos.models import Estacionamiento
 
 
 class EstacionamientoForm(forms.Form):
@@ -46,36 +48,42 @@ class EstacionamientoForm(forms.Form):
                 )
 
 
+class EstacionamientoExtendedForm(ModelForm):
+    class Meta:
+        model = Estacionamiento
+        fields = ['NroPuesto', 'Apertura', 'Cierre', 'Reservas_Inicio', 'Reservas_Cierre',
+                  'Esquema_tarifario', 'HoraPicoInicio', 'HoraPicoFin', 'Tarifa', 'TarifaPico']
 
-class EstacionamientoExtendedForm(forms.Form):
-    puestos = forms.IntegerField(required = False, min_value = 0, label = 'Número de Puestos')
 
-    tarifa_validator = RegexValidator(
-                        regex = '^([0-9]+(\.[0-9]+)?)$',
-                        message = 'Sólo debe contener dígitos.'
-                    )
-    
-    horarioin = forms.TimeField(required = False, label = 'Horario Apertura', 
-                                widget=forms.TimeInput(format='%H:%M'))
-    horarioout = forms.TimeField(required = False, label = 'Horario Cierre', 
-                                 widget=forms.TimeInput(format='%H:%M'))
-
-    horario_reserin = forms.TimeField(required = False, label = 'Horario Inicio Reserva')
-    horario_reserout = forms.TimeField(required = False, label = 'Horario Fin Reserva')
-    
-    esquema_tarifario = forms.ChoiceField(required = False,
-                                          choices=[(1, "Por hora"), 
-                                                   (2, "Por hora y fracción"), 
-                                                   (3, "Por minuto"),
-                                                   (4, "Diferenciado por hora")],
-                                          label = 'Esquema Tarifario'
-                                          )
-    
-    horapico_inicio = forms.TimeField(required = False, label = 'Inicio de Hora Pico')
-    horapico_fin = forms.TimeField(required = False, label = 'Fin de Hora Pico')
-        
-    tarifa = forms.DecimalField(required = False, max_digits=6, decimal_places=2, label = 'Tarifa')
-    tarifa_pico = forms.DecimalField(required = False, max_digits=6, decimal_places=2, label = 'Tarifa de Hora Pico')
+# class EstacionamientoExtendedForm(forms.Form):
+#     puestos = forms.IntegerField(required = False, min_value = 0, label = 'Número de Puestos')
+# 
+#     tarifa_validator = RegexValidator(
+#                         regex = '^([0-9]+(\.[0-9]+)?)$',
+#                         message = 'Sólo debe contener dígitos.'
+#                     )
+#     
+#     horarioin = forms.TimeField(required = False, label = 'Horario Apertura', 
+#                                 widget=forms.TimeInput(format='%H:%M'))
+#     horarioout = forms.TimeField(required = False, label = 'Horario Cierre', 
+#                                  widget=forms.TimeInput(format='%H:%M'))
+# 
+#     horario_reserin = forms.TimeField(required = False, label = 'Horario Inicio Reserva')
+#     horario_reserout = forms.TimeField(required = False, label = 'Horario Fin Reserva')
+#     
+#     esquema_tarifario = forms.ChoiceField(required = False,
+#                                           choices=[(1, "Por hora"), 
+#                                                    (2, "Por hora y fracción"), 
+#                                                    (3, "Por minuto"),
+#                                                    (4, "Diferenciado por hora")],
+#                                           label = 'Esquema Tarifario'
+#                                           )
+#     
+#     horapico_inicio = forms.TimeField(required = False, label = 'Inicio de Hora Pico')
+#     horapico_fin = forms.TimeField(required = False, label = 'Fin de Hora Pico')
+#         
+#     tarifa = forms.DecimalField(required = False, max_digits=6, decimal_places=2, label = 'Tarifa')
+#     tarifa_pico = forms.DecimalField(required = False, max_digits=6, decimal_places=2, label = 'Tarifa de Hora Pico')
 
 
 
