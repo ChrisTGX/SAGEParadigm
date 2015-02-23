@@ -32,6 +32,9 @@ ESQUEMA_Choices = [("1", "Por hora"),
 					("3", "Por minuto"),
 					("4", "Diferenciado por hora")]
 
+PROVCRED_Choices = [("Vista", "Vista"),
+					("Mister", "Mister"),
+					("Xpres", "Xpres")]
 
 # Models
 
@@ -67,7 +70,7 @@ class Estacionamiento(models.Model):
 
 
 
-class ReservasModel(models.Model):
+class Reserva(models.Model):
 	Estacionamiento = models.ForeignKey(Estacionamiento)
 	Puesto = models.IntegerField()
 	InicioReserva = models.TimeField()
@@ -79,3 +82,11 @@ class ReservasModel(models.Model):
 
 
 
+class Pago(models.Model):
+	ID_Pago = models.AutoField(primary_key=True, editable=False)
+	NroTarjeta = models.CharField(max_length=16, null = True, validators=[CREDITCARD_Validator], verbose_name="Número de Tarjeta")
+	NombreTitular = models.CharField(max_length=50, null = True, validators=[NAME_Validator], verbose_name="Nombre del Titular")
+	ProveedorCred = models.CharField(max_length=10, null = True, choices=PROVCRED_Choices, verbose_name="Proveedor de Crédito")
+	
+	def __str__(self):
+		return "Pago No. " + str(self.ID_Pago)

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from django import forms
+#from django import forms
 from django.forms import ModelForm
-from django.core.validators import RegexValidator
-from estacionamientos.models import Estacionamiento, ReservasModel
+#from django.core.validators import RegexValidator
+from estacionamientos.models import Estacionamiento, Reserva, Pago
 
 
 class EstacionamientoForm(ModelForm):
@@ -22,27 +22,33 @@ class EstacionamientoExtendedForm(ModelForm):
 
 
 
-class EstacionamientoReserva(forms.Form):
+class EstacionamientoReserva(ModelForm):
     class Meta:
-        model = ReservasModel
-        fields = ['InicioRserva', 'FinalReserva']
+        model = Reserva
+        fields = ['InicioReserva', 'FinalReserva']
         
 # class EstacionamientoReserva(forms.Form):
 #     inicio = forms.TimeField(label = 'Horario Inicio Reserva')
 #     final = forms.TimeField(label = 'Horario Final Reserva')
 
 
+
+class PagarReservaForm(ModelForm):
+    class Meta:
+        model = Pago
+        fields = ['NroTarjeta', 'ProveedorCred']
+
 # Este form debe ser incluido como model tambien
-class PagarReservaForm(forms.Form):
-    nro_tarjeta_credito = forms.CharField(
-                            required = True,
-                            label = "Nro. de Tarjeta",
-                            validators = [RegexValidator(
-                                                regex = '^\d{16}$',
-                                                message = 'Introduzca un número de tarjeta de crédito con un formato válido.'
-                                                )])
-    proveedor_credito = forms.ChoiceField(required = True,
-                                          choices=[("Vista", "Vista"), 
-                                                   ("Mister", "Mister"), 
-                                                   ("Xpres", "Xpres")])
+# class PagarReservaForm(forms.Form):
+#     nro_tarjeta_credito = forms.CharField(
+#                             required = True,
+#                             label = "Nro. de Tarjeta",
+#                             validators = [RegexValidator(
+#                                                 regex = '^\d{16}$',
+#                                                 message = 'Introduzca un número de tarjeta de crédito con un formato válido.'
+#                                                 )])
+#     proveedor_credito = forms.ChoiceField(required = True,
+#                                           choices=[("Vista", "Vista"), 
+#                                                    ("Mister", "Mister"), 
+#                                                    ("Xpres", "Xpres")])
 
