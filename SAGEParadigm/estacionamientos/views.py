@@ -2,7 +2,7 @@
 
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render
 from django.shortcuts import redirect
 from estacionamientos.controller import *
 from estacionamientos.forms import EstacionamientoExtendedForm
@@ -21,6 +21,7 @@ def estacionamientos_all(request):
     # Si se hace un POST a esta vista implica que se quiere agregar un nuevo
     # estacionamiento
     estacionamientos = Estacionamiento.objects.all()
+    
     if request.method == 'POST':
             # Creamos un formulario con los datos que recibimos
             form = EstacionamientoForm(request.POST)
@@ -35,15 +36,15 @@ def estacionamientos_all(request):
             # el constructor del modelo
             if form.is_valid():
                 obj = Estacionamiento(
-                        Propietario = form.cleaned_data['propietario'],
-                        Nombre = form.cleaned_data['nombre'],
-                        Direccion = form.cleaned_data['direccion'],
-                        Rif = form.cleaned_data['rif'],
-                        Telefono_1 = form.cleaned_data['telefono_1'],
-                        Telefono_2 = form.cleaned_data['telefono_2'],
-                        Telefono_3 = form.cleaned_data['telefono_3'],
-                        Email_1 = form.cleaned_data['email_1'],
-                        Email_2 = form.cleaned_data['email_2']
+                        Propietario = form.cleaned_data['Propietario'],
+                        Nombre = form.cleaned_data['Nombre'],
+                        Direccion = form.cleaned_data['Direccion'],
+                        Rif = form.cleaned_data['Rif'],
+                        Telefono_1 = form.cleaned_data['Telefono_1'],
+                        Telefono_2 = form.cleaned_data['Telefono_2'],
+                        Telefono_3 = form.cleaned_data['Telefono_3'],
+                        Email_1 = form.cleaned_data['Email_1'],
+                        Email_2 = form.cleaned_data['Email_2']
                 )
                 obj.save()
                 # Recargamos los estacionamientos ya que acabamos de agregar
@@ -75,7 +76,6 @@ def estacionamiento_detail(request, _id):
                                                     'Reservas_Cierre': estacion.Reservas_Cierre.strftime('%H:%M'),
                                                     'Tarifa': estacion.Tarifa,
                                                     'Esquema_tarifario:': estacion.Esquema_tarifario})
-        #return render(request, 'estacionamiento.html', {'form': form, 'estacionamiento': estacion})
      
     elif request.method == 'POST':
             # Leemos el formulario
@@ -155,8 +155,8 @@ def estacionamiento_reserva(request, _id):
             form = EstacionamientoReserva(request.POST)
             # Verificamos si es valido con los validadores del formulario
             if form.is_valid():
-                inicio_reserva = form.cleaned_data['inicio']
-                final_reserva = form.cleaned_data['final']
+                inicio_reserva = form.cleaned_data['InicioReserva']
+                final_reserva = form.cleaned_data['FinalReserva']
 
                 # Validamos los horarios con los horario de salida y entrada
                 m_validado = validarHorarioReserva(inicio_reserva, final_reserva, estacion.Reservas_Inicio, estacion.Reservas_Cierre)
