@@ -5,6 +5,11 @@ from django.core.validators import RegexValidator
 
 # Validators
 
+NAME_Validator = RegexValidator(
+					regex = '^[a-zA-ZáéíóúñÑÁÉÍÓÚ ]+$',
+					message = 'Sólo debe contener letras.'
+					)
+
 RIF_Validator = RegexValidator(
 				regex = '^[JVD]-?\d{8}-?\d$', 
 				message = 'Introduzca un RIF con un formato válido.'
@@ -31,8 +36,7 @@ ESQUEMA_Choices = [("1", "Por hora"),
 # Models
 
 class Estacionamiento(models.Model):
-	# propietario=models.ForeignKey(Propietario)
-	Propietario = models.CharField(max_length = 50, help_text = "Nombre del Propietario", verbose_name="Nombre del Dueño")
+	Propietario = models.CharField(max_length = 50, help_text = "Nombre del Propietario", validators = [NAME_Validator], verbose_name="Nombre del Propietario")
 	Nombre = models.CharField(max_length = 50, verbose_name="Nombre del Estacionamiento")
 	Direccion = models.TextField(max_length = 120, verbose_name="Dirección")
 
@@ -61,23 +65,6 @@ class Estacionamiento(models.Model):
 	def __str__(self):
 		return "Estacionamiento " + self.Nombre
 
-# class ExtendedModel(models.Model):
-# 	Estacionamiento = models.ForeignKey(Estacionamiento, primary_key = True)
-
-# class EstacionamientoModelForm(EstacionamientoForm):
-# 	class Meta:
-# 		model = EstacionamientoModel
-# 		fields = ['propietario', 'nombre', 'direccion', 'telefono_1', 'telefono_2', 'telefono_3', 'email_1',
-# 				'email_2', 'rif', 'tarifa', 'horarioin', 'horariout', 'horario_resein', 'horario_reserout']
-
-# class Propietario(models.Model):
-	# nombre = models.CharField(max_length = 50, help_text = "Nombre Propio")
-
-# class EstadoEstacionamiento(models.Model):
-	#
-
-# class PuestosModel(models.Model):
-# 	estacionamiento = models.ForeignKey(ExtendedModel)
 
 
 class ReservasModel(models.Model):
@@ -89,3 +76,6 @@ class ReservasModel(models.Model):
 
 	def __str__(self):
 		return "Reserva del puesto " + str(self.Puesto) + " en " + self.Estacionamiento.Nombre + " de " + str(self.InicioReserva) + " a " + str(self.FinalReserva)
+
+
+
