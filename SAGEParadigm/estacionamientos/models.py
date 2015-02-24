@@ -16,7 +16,7 @@ RIF_Validator = RegexValidator(
 				)
 
 IDDOC_Validator = RegexValidator(
-					regex = '^[VE]-?\d{8}$',
+					regex = '^[VE]-?\d{1,8}$',
 					message = "Introduzca un número de cédula con formato válido."
 					)
 
