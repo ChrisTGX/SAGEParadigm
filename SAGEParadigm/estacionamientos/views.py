@@ -8,7 +8,7 @@ from estacionamientos.controller import *
 from estacionamientos.forms import EstacionamientoExtendedForm
 from estacionamientos.forms import EstacionamientoForm, PagarReservaForm
 from estacionamientos.forms import EstacionamientoReserva
-from estacionamientos.models import Estacionamiento, ReservasModel
+from estacionamientos.models import Estacionamiento, Reserva, Pago
 
 
 listaReserva = []
@@ -62,6 +62,7 @@ def estacionamiento_detail(request, _id):
     # Verificamos que el objeto exista antes de continuar
     try:
         estacion = Estacionamiento.objects.get(id = _id)
+        print(estacion.NroPuesto)
     except ObjectDoesNotExist:
         return render(request, '404.html')
 
@@ -69,13 +70,14 @@ def estacionamiento_detail(request, _id):
     listaReserva = []
     
     if request.method == 'GET':
-        form = EstacionamientoExtendedForm(initial={'NroPuesto': estacion.NroPuesto,
-                                                    'Apertura': estacion.Apertura.strftime('%H:%M'),
-                                                    'Cierre': estacion.Cierre.strftime('%H:%M'),
-                                                    'Reservas_Inicio': estacion.Reservas_Inicio.strftime('%H:%M'),
-                                                    'Reservas_Cierre': estacion.Reservas_Cierre.strftime('%H:%M'),
-                                                    'Tarifa': estacion.Tarifa,
-                                                    'Esquema_tarifario:': estacion.Esquema_tarifario})
+        fields_initial = {'NroPuesto': estacion.NroPuesto}
+        if estacion.Apertura: fields_initial['Apertura'] = estacion.Apertura.strftime('%H:%M')
+        if estacion.Cierre: fields_initial['Cierre'] = estacion.Cierre.strftime('%H:%M')
+        if estacion.Reservas_Inicio: fields_initial['Reservas_Inicio'] = estacion.Reservas_Inicio.strftime('%H:%M')
+        if estacion.Reservas_Cierre: fields_initial['Reservas_Cierre'] = estacion.Reservas_Cierre.strftime('%H:%M')
+        fields_initial['Tarifa'] = estacion.Tarifa
+        fields_initial['Esquema_tarifario'] = estacion.Esquema_tarifario
+        form = EstacionamientoExtendedForm(initial = fields_initial)
      
     elif request.method == 'POST':
             # Leemos el formulario
@@ -135,7 +137,7 @@ def estacionamiento_reserva(request, _id):
     # Antes de entrar en la reserva, si la lista esta vacia, agregamos los
     # valores predefinidos
     if len(listaReserva) < 1:
-        Puestos = ReservasModel.objects.filter(Estacionamiento = estacion).values_list('Puesto', 'InicioReserva', 'FinalReserva')
+        Puestos = Reserva.objects.filter(Estacionamiento = estacion).values_list('Puesto', 'InicioReserva', 'FinalReserva')
         elem1 = (estacion.Apertura, estacion.Apertura)
         elem2 = (estacion.Cierre, estacion.Cierre)
         listaReserva = [[elem1, elem2] for _ in range(estacion.NroPuesto)]
@@ -167,10 +169,10 @@ def estacionamiento_reserva(request, _id):
 
                 # Si esta en un rango valido, procedemos a buscar en la lista
                 # el lugar a insertar
-                sources = ReservasModel.objects.filter(Estacionamiento = estacion).values_list('InicioReserva', 'FinalReserva', 'Puesto')
+                sources = Reserva.objects.filter(Estacionamiento = estacion).values_list('InicioReserva', 'FinalReserva', 'Puesto')
                 if AceptarReservacion(inicio_reserva, final_reserva, estacion.NroPuesto, sources):
                     reservar(inicio_reserva, final_reserva, listaReserva)
-                    reservaFinal = ReservasModel(
+                    reservaFinal = Reserva(
                                         Estacionamiento = estacion,
                                         Puesto = encontrarPuesto(sources, inicio_reserva, final_reserva, estacion.NroPuesto),
                                         InicioReserva = inicio_reserva,
@@ -221,10 +223,18 @@ def pagar_reserva(request, context = None):
         context = context_global
         form = PagarReservaForm(request.POST)
         if form.is_valid():
-            print(context)
             context['reserva_object'].Pagada = True
             context['reserva_object'].save()
             context['form'] = form
+            
+            obj = Pago(
+                    ID_Pago = context['reserva_object'],
+                    NroTarjeta = form.cleaned_data['NroTarjeta'],
+                    ProveedorCred = form.cleaned_data['ProveedorCred'],
+                    Monto = context['total']
+            )
+            obj.save()
+            
             context['color'] = 'green'
             context['mensaje'] = 'Reserva pagada satisfactoriamente. Su codigo de pago es %i' % context['reserva_object'].id
             context['reserva_object'].save()
