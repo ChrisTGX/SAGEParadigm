@@ -12,6 +12,7 @@ from estacionamientos.models import Estacionamiento, Reserva, Pago
 
 
 listaReserva = []
+context_global = {}
 
 
 # Usamos esta vista para procesar todos los estacionamientos
@@ -124,6 +125,7 @@ def estacionamiento_detail(request, _id):
     return render(request, 'estacionamiento.html', {'form': form, 'estacionamiento': estacion})
 
 
+
 def estacionamiento_reserva(request, _id):
     _id = int(_id)
     # Verificamos que el objeto exista antes de continuar
@@ -179,7 +181,7 @@ def estacionamiento_reserva(request, _id):
                                         FinalReserva = final_reserva,
                                         Pagada = False
                                     )
-                    tarifa = float(estacion.Tarifa)
+                    tarifa = Decimal(estacion.Tarifa)
                     horas_completas,fraccion_hora = calcularEstadia(inicio_reserva, final_reserva)
                     total = costoHorasCompletas(horas_completas, tarifa)
                     if estacion.Esquema_tarifario == '1':
@@ -207,7 +209,7 @@ def estacionamiento_reserva(request, _id):
                   {'form': form, 'estacionamiento': estacion})
 
 
-context_global = {}
+
 def pagar_reserva(request, context = None):
     global context_global
     # Si tenemos un GET -> acbamos de llegar desde estacionamiento_reserva
