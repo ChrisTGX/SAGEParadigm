@@ -210,6 +210,7 @@
               {% for field in form %}
                 <div class="control-group">
                   <div class="controls">
+                  	<label for="id_{{field.name}}">{{field.label}}</label>
                     <input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}"><p>
                     {{ field.errors }}
                   </div>
