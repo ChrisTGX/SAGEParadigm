@@ -8,7 +8,7 @@ from estacionamientos.controller import *
 from estacionamientos.forms import EstacionamientoExtendedForm
 from estacionamientos.forms import EstacionamientoForm, PagarReservaForm
 from estacionamientos.forms import EstacionamientoReserva
-from estacionamientos.models import Estacionamiento, Reserva
+from estacionamientos.models import Estacionamiento, Reserva, Pago
 
 
 listaReserva = []
@@ -223,10 +223,18 @@ def pagar_reserva(request, context = None):
         context = context_global
         form = PagarReservaForm(request.POST)
         if form.is_valid():
-            print(context)
             context['reserva_object'].Pagada = True
             context['reserva_object'].save()
             context['form'] = form
+            
+            obj = Pago(
+                    ID_Pago = context['reserva_object'],
+                    NroTarjeta = form.cleaned_data['NroTarjeta'],
+                    ProveedorCred = form.cleaned_data['ProveedorCred'],
+                    Monto = context['total']
+            )
+            obj.save()
+            
             context['color'] = 'green'
             context['mensaje'] = 'Reserva pagada satisfactoriamente. Su codigo de pago es %i' % context['reserva_object'].id
             context['reserva_object'].save()

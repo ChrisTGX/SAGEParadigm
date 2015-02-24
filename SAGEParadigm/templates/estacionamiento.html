@@ -230,7 +230,11 @@
                     	{% if field.name == "HoraPicoInicio" or field.name == "HoraPicoFin" or field.name == "TarifaPico" %}
                     		{% ifequal estacionamiento.Esquema_tarifario "4" %}
                     			<label for="id_{{field.name}}">{{field.label}}</label>
-                    			<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}" value="{{field.value}}">
+                    			{% ifequal field.value None %}
+	                    			<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}">
+	                    		{% else %}
+	                    			<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}" value="{{field.value}}">
+	                    		{% endifequal %}
                     		{% endifequal %}
                     	{% else %}
                     		<label for="id_{{field.name}}">{{field.label}}</label>
