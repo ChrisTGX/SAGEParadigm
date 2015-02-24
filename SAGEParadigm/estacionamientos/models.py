@@ -15,6 +15,11 @@ RIF_Validator = RegexValidator(
 				message = 'Introduzca un RIF con un formato válido.'
 				)
 
+IDDOC_Validator = RegexValidator(
+					regex = '^[VE]-?\d{1,8}$',
+					message = "Introduzca un número de cédula con formato válido."
+					)
+
 CREDITCARD_Validator = RegexValidator(
 						regex = '^\d{16}$',
 						message = 'Introduzca un número de tarjeta de crédito con un formato válido.'
@@ -86,6 +91,7 @@ class Pago(models.Model):
 	ID_Pago = models.ForeignKey(Reserva, primary_key=True, editable=False)
 	NroTarjeta = models.CharField(max_length=16, null = True, validators=[CREDITCARD_Validator], verbose_name="Número de Tarjeta")
 	NombreTitular = models.CharField(max_length=50, null = True, validators=[NAME_Validator], verbose_name="Nombre del Titular")
+	CedulaTitular = models.CharField(max_length=10, null = True, validators=[IDDOC_Validator], verbose_name="Cédula del Titular")
 	ProveedorCred = models.CharField(max_length=10, null = True, choices=PROVCRED_Choices, verbose_name="Proveedor de Crédito")
 	Monto = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Monto", null = True)
 	

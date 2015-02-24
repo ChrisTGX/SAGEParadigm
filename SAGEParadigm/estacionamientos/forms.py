@@ -32,6 +32,6 @@ class EstacionamientoReserva(ModelForm):
 class PagarReservaForm(ModelForm):
     class Meta:
         model = Pago
-        fields = ['NroTarjeta', 'ProveedorCred']
+        fields = ['NroTarjeta', 'ProveedorCred', 'CedulaTitular', 'NombreTitular']
 
 
