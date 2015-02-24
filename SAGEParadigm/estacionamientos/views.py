@@ -231,6 +231,8 @@ def pagar_reserva(request, context = None):
                     ID_Pago = context['reserva_object'],
                     NroTarjeta = form.cleaned_data['NroTarjeta'],
                     ProveedorCred = form.cleaned_data['ProveedorCred'],
+                    CedulaTitular = form.cleaned_data['CedulaTitular'],
+                    NombreTitular = form.cleaned_data['NombreTitular'],
                     Monto = context['total']
             )
             obj.save()
