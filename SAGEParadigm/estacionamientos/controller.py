@@ -4,6 +4,8 @@
 import datetime
 from decimal import Decimal
 
+import types
+
 # Las Tuplas de cada puesto deben tener los horarios de inicio y de cierre para que
 # pueda funcionar [(7:00,7:00), (19:00,19:00)]
 
@@ -12,6 +14,48 @@ from decimal import Decimal
 # donde si m es una matriz, m[i,j] las i corresponden a los puestos y las j corresponden a tuplas
 # con el horario inicio y fin de las reservas
 # [[(horaIn,horaOut),(horaIn,horaOut)],[],....]
+
+# 
+# class StrategyExample :
+# 
+#     def __init__(self, func=None) :
+#         self.name = "Strategy Example 0"
+#         if func :
+#              self.execute = types.MethodType(func, self, StrategyExample)
+# 
+#     def execute(self) :
+#         print self.name
+# 
+# 
+# def executeReplacement1(self) :
+#         print self.name + " from execute 1"
+# 
+# 
+# def executeReplacement2(self) :
+#          print self.name + " from execute 2"
+# 
+# if __name__ == "__main__" :
+# 
+#     strat0 = StrategyExample()
+#     strat1 = StrategyExample(executeReplacement1)
+#     strat1.name = "Strategy Example 1"
+#     strat2 = StrategyExample(executeReplacement2)
+#     strat2.name = "Strategy Example 2"
+# 
+#     strat0.execute()
+#     strat1.execute()
+#     strat2.execute()
+
+class EsquemaTarifario:
+	
+	def __init__(self, tipoEsquema, func):
+		if tipoEsquema == 1:
+			self.calcularCosto = types.MethodType(func, self, EsquemaTarifario)
+
+	def calcularCosto(self):
+		pass
+	
+
 
 def encontrarPuesto(sources, ini, fin, nropuestos):
 	nodisp = []

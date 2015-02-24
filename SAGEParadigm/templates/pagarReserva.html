@@ -53,6 +53,18 @@
               </a>
             </li>
           </ul>
+          
+          <br>
+          
+          <ul class="nav nav-stacked">
+            <li>
+              <a href="./reserva">
+                <i class="fa fa-pencil-square-o"></i>
+                Reservar
+              </a>
+            </li>
+          </ul>
+            
           <hr>
         </div>
         <!-- /span-3 -->
@@ -78,9 +90,10 @@
                 {% for field in form %}
                 	<div class="control-group">
 	                  <div class="controls">
-	                  	{% ifequal field.name "proveedor_credito" %}
+	                  	<label for="id_{{field.name}}">{{field.label}}</label>
+	                  	{% ifequal field.name "ProveedorCred" %}
 	                  		<select class="form-control" name="{{field.name}}" for="id_{{field.name}}">
-								{% for choice in form.proveedor_credito.field.choices %}
+								{% for choice in form.ProveedorCred.field.choices %}
 							        <option value="{{choice.0}}">{{choice.1}}</option>
 							    {% endfor %}
 							</select><p>
@@ -99,6 +112,7 @@
                     <button type="submit" class="btn btn-primary">
                       Pagar
                     </button>
+                    <a class="btn btn-default" href="."> Cancel</a>
                   </div>
                 </div>
             </form>
