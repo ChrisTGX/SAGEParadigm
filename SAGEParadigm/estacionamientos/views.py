@@ -69,13 +69,14 @@ def estacionamiento_detail(request, _id):
     listaReserva = []
     
     if request.method == 'GET':
-        form = EstacionamientoExtendedForm(initial={'NroPuesto': estacion.NroPuesto,
-                                                    'Apertura': estacion.Apertura.strftime('%H:%M'),
-                                                    'Cierre': estacion.Cierre.strftime('%H:%M'),
-                                                    'Reservas_Inicio': estacion.Reservas_Inicio.strftime('%H:%M'),
-                                                    'Reservas_Cierre': estacion.Reservas_Cierre.strftime('%H:%M'),
-                                                    'Tarifa': estacion.Tarifa,
-                                                    'Esquema_tarifario:': estacion.Esquema_tarifario})
+        fields_initial = {'NroPuesto': estacion.NroPuesto}
+        if estacion.Apertura: fields_initial['Apertura'] = estacion.Apertura.strftime('%H:%M')
+        if estacion.Cierre: fields_initial['Cierre'] = estacion.Cierre.strftime('%H:%M')
+        if estacion.Reservas_Inicio: fields_initial['Reservas_Inicio'] = estacion.Reservas_Inicio.strftime('%H:%M')
+        if estacion.Reservas_Cierre: fields_initial['Reservas_Cierre'] = estacion.Reservas_Cierre.strftime('%H:%M')
+        fields_initial['Tarifa'] = estacion.Tarifa
+        fields_initial['Esquema_tarifario'] = estacion.Esquema_tarifario
+        form = EstacionamientoExtendedForm(initial = fields_initial)
      
     elif request.method == 'POST':
             # Leemos el formulario
