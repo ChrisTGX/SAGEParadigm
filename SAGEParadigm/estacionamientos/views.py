@@ -8,7 +8,8 @@ from estacionamientos.controller import *
 from estacionamientos.forms import EstacionamientoExtendedForm
 from estacionamientos.forms import EstacionamientoForm, PagarReservaForm
 from estacionamientos.forms import EstacionamientoReserva
-from estacionamientos.models import Estacionamiento, Reserva, Pago
+from estacionamientos.forms import EsquemaTarifarioForm, EsquemaDiferenciadoForm
+from estacionamientos.models import Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado
 
 
 listaReserva = []
@@ -48,6 +49,11 @@ def estacionamientos_all(request):
                         Email_2 = form.cleaned_data['Email_2']
                 )
                 obj.save()
+                
+                objEsquem = EsquemaTarifario(
+                        Estacionamiento = obj
+                )
+                objEsquem.save()
                 # Recargamos los estacionamientos ya que acabamos de agregar
                 estacionamientos = Estacionamiento.objects.all()
     # Si no es un POST es un GET, y mandamos un formulario vacio
@@ -63,66 +69,118 @@ def estacionamiento_detail(request, _id):
     # Verificamos que el objeto exista antes de continuar
     try:
         estacion = Estacionamiento.objects.get(id = _id)
-        print(estacion.NroPuesto)
+        esquema = EsquemaTarifario.objects.get(Estacionamiento = estacion)
     except ObjectDoesNotExist:
         return render(request, '404.html')
-
+    
+    diferenciado = None
+    
     global listaReserva
     listaReserva = []
     
     if request.method == 'GET':
-        fields_initial = {'NroPuesto': estacion.NroPuesto}
-        if estacion.Apertura: fields_initial['Apertura'] = estacion.Apertura.strftime('%H:%M')
-        if estacion.Cierre: fields_initial['Cierre'] = estacion.Cierre.strftime('%H:%M')
-        if estacion.Reservas_Inicio: fields_initial['Reservas_Inicio'] = estacion.Reservas_Inicio.strftime('%H:%M')
-        if estacion.Reservas_Cierre: fields_initial['Reservas_Cierre'] = estacion.Reservas_Cierre.strftime('%H:%M')
-        fields_initial['Tarifa'] = estacion.Tarifa
-        fields_initial['Esquema_tarifario'] = estacion.Esquema_tarifario
-        form = EstacionamientoExtendedForm(initial = fields_initial)
-     
+        fields_initialParam = {'NroPuesto': estacion.NroPuesto}
+        if estacion.Apertura: fields_initialParam['Apertura'] = estacion.Apertura.strftime('%H:%M')
+        if estacion.Cierre: fields_initialParam['Cierre'] = estacion.Cierre.strftime('%H:%M')
+        if estacion.Reservas_Inicio: fields_initialParam['Reservas_Inicio'] = estacion.Reservas_Inicio.strftime('%H:%M')
+        if estacion.Reservas_Cierre: fields_initialParam['Reservas_Cierre'] = estacion.Reservas_Cierre.strftime('%H:%M')
+       
+        formParam = EstacionamientoExtendedForm(initial = fields_initialParam)
+
+        formEsquem = EsquemaTarifarioForm(instance = esquema)
+        
+        if esquema.TipoEsquema == "4":
+            diferenciado = EsquemaDiferenciado.objects.get(EsquemaTarifario = esquema)
+            
+            fields_initialDifer = {'TarifaPico': diferenciado.TarifaPico}
+            if diferenciado.HoraPicoInicio: fields_initialDifer['HoraPicoInicio'] = diferenciado.HoraPicoInicio.strftime('%H:%M')
+            if diferenciado.HoraPicoFin: fields_initialDifer['HoraPicoFin'] = diferenciado.HoraPicoFin.strftime('%H:%M')
+            
+            formDifer = EsquemaDiferenciadoForm(initial = fields_initialDifer)
+        else:
+            diferenciado = None
+            formDifer = None
+        
     elif request.method == 'POST':
             # Leemos el formulario
-            form = EstacionamientoExtendedForm(request.POST)
+            formParam = EstacionamientoExtendedForm(request.POST)
+            formEsquem = EsquemaTarifarioForm(request.POST)
+            if esquema.TipoEsquema == "4":
+                diferenciado = EsquemaDiferenciado.objects.get(EsquemaTarifario = esquema)
+                formDifer = EsquemaDiferenciadoForm(request.POST)
+            else:
+                diferenciado = None
+                formDifer = None
+                
             # Si el formulario
-            if form.is_valid() and len(form.changed_data) > 0:
-                
-                if ('Apertura' in form.changed_data and 
-                    'Cierre' in form.changed_data and 
-                    'Reservas_Inicio' in form.changed_data and 
-                    'Reservas_Cierre' in form.changed_data):
+            if formParam.is_valid() and formEsquem.is_valid() and (len(formParam.changed_data) > 0 or len(formEsquem.changed_data) > 0):
+                if not formDifer or formDifer.is_valid():
+                    if ('Apertura' in formParam.changed_data and 
+                        'Cierre' in formParam.changed_data and 
+                        'Reservas_Inicio' in formParam.changed_data and 
+                        'Reservas_Cierre' in formParam.changed_data):
+                        
+                        hora_in = formParam.cleaned_data['Apertura']
+                        hora_out = formParam.cleaned_data['Cierre']
+                        reserva_in = formParam.cleaned_data['Reservas_Inicio']
+                        reserva_out = formParam.cleaned_data['Reservas_Cierre']
+                        
+                        estacion.Apertura = hora_in
+                        estacion.Cierre = hora_out
+                        estacion.Reservas_Inicio = reserva_in
+                        estacion.Reservas_Cierre = reserva_out
+                        
+                        m_validado = HorarioEstacionamiento(hora_in, hora_out, reserva_in, reserva_out)
+                        if not m_validado[0]:
+                            return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1]})
                     
-                    hora_in = form.cleaned_data['Apertura']
-                    hora_out = form.cleaned_data['Cierre']
-                    reserva_in = form.cleaned_data['Reservas_Inicio']
-                    reserva_out = form.cleaned_data['Reservas_Cierre']
+                    elif ('Apertura' in formParam.changed_data or 
+                        'Cierre' in formParam.changed_data or 
+                        'Reservas_Inicio' in formParam.changed_data or 
+                        'Reservas_Cierre' in formParam.changed_data):
+                        return render(request, 'templateMensaje.html', 
+                                      {'color':'red', 
+                                       'mensaje': 'Deben especificarse juntos los horarios de Apertura, Cierre, Inicio y Fin de Reserva.'})
                     
-                    estacion.Apertura = hora_in
-                    estacion.Cierre = hora_out
-                    estacion.Reservas_Inicio = reserva_in
-                    estacion.Reservas_Cierre = reserva_out
+                    if 'NroPuesto' in formParam.changed_data: estacion.NroPuesto = formParam.cleaned_data['NroPuesto']
+                                    
+                    estacion.save()
                     
-                    m_validado = HorarioEstacionamiento(hora_in, hora_out, reserva_in, reserva_out)
-                    if not m_validado[0]:
-                        return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1]})
-                
-                elif ('Apertura' in form.changed_data or 
-                    'Cierre' in form.changed_data or 
-                    'Reservas_Inicio' in form.changed_data or 
-                    'Reservas_Cierre' in form.changed_data):
-                    return render(request, 'templateMensaje.html', 
-                                  {'color':'red', 
-                                   'mensaje': 'Deben especificarse juntos los horarios de Apertura, Cierre, Inicio y Fin de Reserva.'})
-
-                if 'Tarifa' in form.changed_data: estacion.Tarifa = form.cleaned_data['Tarifa']
-                if 'Esquema_tarifario' in form.changed_data: estacion.Esquema_tarifario = form.cleaned_data['Esquema_tarifario']
-                if 'NroPuesto' in form.changed_data: estacion.NroPuesto = form.cleaned_data['NroPuesto']
-
-                estacion.save()
-                
+                    estacion = Estacionamiento.objects.get(id = _id)
+    
+                    esquema.TipoEsquema = formEsquem.cleaned_data['TipoEsquema']  
+                    esquema.Tarifa = formEsquem.cleaned_data['Tarifa']
+                                   
+                    esquema.save()
+                    
+                    if formEsquem.cleaned_data['TipoEsquema'] == "4":
+                        esquema = EsquemaTarifario.objects.get(Estacionamiento = estacion)
+                        
+                        if diferenciado:
+                            diferenciado.HoraPicoInicio = formDifer.cleaned_data['HoraPicoInicio']
+                            diferenciado.HoraPicoFin = formDifer.cleaned_data['HoraPicoFin']
+                            diferenciado.TarifaPico = formDifer.cleaned_data['TarifaPico']
+                        else:
+                            diferenciado = EsquemaDiferenciado(
+                                            EsquemaTarifario = esquema
+                                            )
+                        diferenciado.save()
+                        
+                        diferenciado = EsquemaDiferenciado.objects.get(EsquemaTarifario = esquema)
+                        formDifer = EsquemaDiferenciadoForm(instance = diferenciado)
+                        
+                    else:
+                        if diferenciado: diferenciado.delete()
+                        formDifer = None
+                        
     else:
-        form = EstacionamientoExtendedForm()
-
-    return render(request, 'estacionamiento.html', {'form': form, 'estacionamiento': estacion})
+        formParam = EstacionamientoExtendedForm()
+        formEsquem = EsquemaTarifarioForm()
+        formDifer = EsquemaDiferenciadoForm()
+        
+    return render(request, 'estacionamiento.html', 
+                  {'formParam': formParam, 'formEsquem': formEsquem, 'formDifer': formDifer, 
+                   'estacionamiento': estacion, 'esquema': esquema, 'diferenciado': diferenciado})
 
 
 
@@ -131,9 +189,15 @@ def estacionamiento_reserva(request, _id):
     # Verificamos que el objeto exista antes de continuar
     try:
         estacion = Estacionamiento.objects.get(id = _id)
+        esquema = EsquemaTarifario.objects.get(Estacionamiento = estacion)
     except ObjectDoesNotExist:
         return render(request, '404.html')
-
+    
+    if esquema.TipoEsquema == "4":
+        diferenciado = EsquemaDiferenciado.objects.get(EsquemaTarifario = esquema)
+    else:
+        diferenciado = None
+    
     global listaReserva
 
     # Antes de entrar en la reserva, si la lista esta vacia, agregamos los
@@ -152,7 +216,10 @@ def estacionamiento_reserva(request, _id):
     # Si se hace un GET renderizamos los estacionamientos con su formulario
     if request.method == 'GET':
         form = EstacionamientoReserva()
-        return render(request, 'estacionamientoReserva.html', {'form': form, 'estacionamiento': estacion})
+        return render(request, 
+                      'estacionamientoReserva.html',
+                      {'form': form, 
+                       'estacionamiento': estacion, 'esquema': esquema, 'diferenciado': diferenciado})
 
     # Si es un POST estan mandando un request
     elif request.method == 'POST':
@@ -181,15 +248,23 @@ def estacionamiento_reserva(request, _id):
                                         FinalReserva = final_reserva,
                                         Pagada = False
                                     )
-                    tarifa = Decimal(estacion.Tarifa)
+                    
+                    tarifa = Decimal(esquema.Tarifa)
+                    if esquema.TipoEsquema == "4":
+                        tarifa_pico = Decimal(diferenciado.TarifaPico)
+                        horapico_inicio = diferenciado.HoraPicoInicio.strftime('%H:%M')
+                        horapico_fin = diferenciado.HoraPicoFin.strftime('%H:%M')
+                    
                     horas_completas,fraccion_hora = calcularEstadia(inicio_reserva, final_reserva)
                     total = costoHorasCompletas(horas_completas, tarifa)
-                    if estacion.Esquema_tarifario == '1':
+                    if esquema.TipoEsquema == '1':
                         total += costoFraccionHoraEsquema1(fraccion_hora, tarifa)
-                    elif estacion.Esquema_tarifario == '2':
+                    elif esquema.TipoEsquema == '2':
                         total += costoFraccionHoraEsquema2(fraccion_hora, tarifa)
-                    elif estacion.Esquema_tarifario == '3':
+                    elif esquema.TipoEsquema == '3':
                         total += costoFraccionHoraEsquema3(fraccion_hora, tarifa)
+                        
+                    # total = Tarifa(esquema, diferenciado).calcularCosto(inicio_reserva, fina_reserva)
                      
                     request.method = 'GET'
                     return pagar_reserva(request, 
@@ -206,7 +281,8 @@ def estacionamiento_reserva(request, _id):
 
     return render(request, 
                   'estacionamientoReserva.html', 
-                  {'form': form, 'estacionamiento': estacion})
+                  {'form': form, 
+                   'estacionamiento': estacion, 'esquema': esquema, 'diferenciado': diferenciado})
 
 
 
