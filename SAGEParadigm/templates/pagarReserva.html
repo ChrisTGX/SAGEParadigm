@@ -90,7 +90,7 @@
                 {% for field in form %}
                 	<div class="control-group">
 	                  <div class="controls">
-	                  	<label for="id_{{field.name}}">{{field.label}}</label>
+	                  	<label for="id_{{field.name}}" style="color:#777777;">{{field.label}}</label>
 	                  	{% ifequal field.name "ProveedorCred" %}
 	                  		<select class="form-control" name="{{field.name}}" for="id_{{field.name}}">
 								{% for choice in form.ProveedorCred.field.choices %}

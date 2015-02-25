@@ -3,7 +3,7 @@
 #from django import forms
 from django.forms import ModelForm
 #from django.core.validators import RegexValidator
-from estacionamientos.models import Estacionamiento, Reserva, Pago
+from estacionamientos.models import Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado
 
 
 class EstacionamientoForm(ModelForm):
@@ -17,9 +17,23 @@ class EstacionamientoForm(ModelForm):
 class EstacionamientoExtendedForm(ModelForm):
     class Meta:
         model = Estacionamiento
-        fields = ['NroPuesto', 'Apertura', 'Cierre', 'Reservas_Inicio', 'Reservas_Cierre',
-                  'Esquema_tarifario', 'HoraPicoInicio', 'HoraPicoFin', 'Tarifa', 'TarifaPico']
+        fields = ['NroPuesto', 'Apertura', 'Cierre', 'Reservas_Inicio', 'Reservas_Cierre']
+#                   'Esquema_tarifario', 'HoraPicoInicio', 'HoraPicoFin', 'Tarifa', 'TarifaPico']
 
+
+
+class EsquemaTarifarioForm(ModelForm):
+    class Meta:
+        model = EsquemaTarifario
+        fields = ['TipoEsquema', 'Tarifa']
+        
+        
+        
+class EsquemaDiferenciadoForm(ModelForm):
+    class Meta:
+        model = EsquemaDiferenciado
+        fields = ['HoraPicoInicio', 'HoraPicoFin', 'TarifaPico']
+        
 
 
 class EstacionamientoReserva(ModelForm):

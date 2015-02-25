@@ -151,35 +151,35 @@
         <tr><td><b><i class="fa fa-clock-o"></i> Horario Fin de reserva:</b></td></tr>
         <tr><td>{{estacionamiento.Reservas_Cierre}}</td></tr>
       {% endif %}
-      {% if estacionamiento.HoraPicoInicio and estacionamiento.Esquema_tarifario == "4" %}
+      {% if diferenciado.HoraPicoInicio and esquema.TipoEsquema == "4" %}
         <tr><td><b><i class="fa fa-money"></i></i> Inicio de Hora Pico:</b></td></tr>
-        <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
+        <tr><td>{{diferenciado.HoraPicoInicio}}</td></tr>
       {% endif %}
-      {% if estacionamiento.HoraPicoFin and estacionamiento.Esquema_tarifario == "4" %}
+      {% if diferenciado.HoraPicoFin and esquema.TipoEsquema == "4" %}
         <tr><td><b><i class="fa fa-money"></i></i> Fin de Hora Pico:</b></td></tr>
-        <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
+        <tr><td>{{diferenciado.HoraPicoFin}}</td></tr>
       {% endif %}
-      {% if estacionamiento.Esquema_tarifario %}
+      {% if esquema.TipoEsquema %}
         <tr><td><b><i class="fa fa-money"></i></i> Esquema Tarifario:</b></td></tr>
         <tr><td>
-        	{% if estacionamiento.Esquema_tarifario == "1" %}
+        	{% if esquema.TipoEsquema == "1" %}
         		Por hora
-        	{% elif estacionamiento.Esquema_tarifario == "2" %}
+        	{% elif esquema.TipoEsquema == "2" %}
         		Por hora y fracción
-        	{% elif estacionamiento.Esquema_tarifario == "3" %}
+        	{% elif esquema.TipoEsquema == "3" %}
         		Por minuto
-        	{% elif estacionamiento.Esquema_tarifario == "4" %}
+        	{% elif esquema.TipoEsquema == "4" %}
         		Diferenciado por hora
         	{% endif %}
         </td></tr>
       {% endif %}
-	  {% if estacionamiento.Tarifa %}
+ 	  {% if esquema.Tarifa %}
         <tr><td><b><i class="fa fa-money"></i></i> Tarifa:</b></td></tr>
-        <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
+        <tr><td>{{esquema.Tarifa}} Bsf.</td></tr>
       {% endif %}
-      {% if estacionamiento.TarifaPico and estacionamiento.Esquema_tarifario == "4" %}
+      {% if diferenciado.TarifaPico and esquema.TipoEsquema == "4" %}
         <tr><td><b><i class="fa fa-money"></i></i> Tarifa de Hora Pico:</b></td></tr>
-        <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
+        <tr><td>{{diferenciado.TarifaPico}} Bsf.</td></tr>
       {% endif %}
       
       
@@ -211,7 +211,8 @@
                 <div class="control-group">
                   <div class="controls">
                   	<label for="id_{{field.name}}">{{field.label}}</label>
-                    <input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}"><p>
+                  	<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}">
+					<p>
                     {{ field.errors }}
                   </div>
                 </div> 

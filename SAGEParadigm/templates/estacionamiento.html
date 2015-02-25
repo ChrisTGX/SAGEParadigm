@@ -55,7 +55,7 @@
           </ul>
 
           <br>
-          {% if estacionamiento.Apertura and estacionamiento.Cierre and estacionamiento.Reservas_Inicio and estacionamiento.Reservas_Cierre and estacionamiento.NroPuesto and estacionamiento.Tarifa %}
+          {% if estacionamiento.Apertura and estacionamiento.Cierre and estacionamiento.Reservas_Inicio and estacionamiento.Reservas_Cierre and estacionamiento.NroPuesto and esquema.TipoEsquema and esquema.Tarifa %}
             <ul class="nav nav-stacked">
               <li>
                 <a href="./reserva">
@@ -157,35 +157,35 @@
         <tr><td><b><i class="fa fa-clock-o"></i> Horario Fin de reserva:</b></td></tr>
         <tr><td>{{estacionamiento.Reservas_Cierre}}</td></tr>
       {% endif %}
-      {% if estacionamiento.HoraPicoInicio and estacionamiento.Esquema_tarifario == "4" %}
+      {% if diferenciado.HoraPicoInicio and esquema.TipoEsquema == "4" %}
         <tr><td><b><i class="fa fa-money"></i></i> Inicio de Hora Pico:</b></td></tr>
-        <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
+        <tr><td>{{diferenciado.HoraPicoInicio}}</td></tr>
       {% endif %}
-      {% if estacionamiento.HoraPicoFin and estacionamiento.Esquema_tarifario == "4" %}
+      {% if diferenciado.HoraPicoFin and esquema.TipoEsquema == "4" %}
         <tr><td><b><i class="fa fa-money"></i></i> Fin de Hora Pico:</b></td></tr>
-        <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
+        <tr><td>{{diferenciado.HoraPicoFin}}</td></tr>
       {% endif %}
-      {% if estacionamiento.Esquema_tarifario %}
+      {% if esquema.TipoEsquema %}
         <tr><td><b><i class="fa fa-money"></i></i> Esquema Tarifario:</b></td></tr>
         <tr><td>
-        	{% if estacionamiento.Esquema_tarifario == "1" %}
+        	{% if esquema.TipoEsquema == "1" %}
         		Por hora
-        	{% elif estacionamiento.Esquema_tarifario == "2" %}
+        	{% elif esquema.TipoEsquema == "2" %}
         		Por hora y fracción
-        	{% elif estacionamiento.Esquema_tarifario == "3" %}
+        	{% elif esquema.TipoEsquema == "3" %}
         		Por minuto
-        	{% elif estacionamiento.Esquema_tarifario == "4" %}
+        	{% elif esquema.TipoEsquema == "4" %}
         		Diferenciado por hora
         	{% endif %}
         </td></tr>
       {% endif %}
- 	  {% if estacionamiento.Tarifa %}
+ 	  {% if esquema.Tarifa %}
         <tr><td><b><i class="fa fa-money"></i></i> Tarifa:</b></td></tr>
-        <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
+        <tr><td>{{esquema.Tarifa}} Bsf.</td></tr>
       {% endif %}
-      {% if estacionamiento.TarifaPico and estacionamiento.Esquema_tarifario == "4" %}
+      {% if diferenciado.TarifaPico and esquema.TipoEsquema == "4" %}
         <tr><td><b><i class="fa fa-money"></i></i> Tarifa de Hora Pico:</b></td></tr>
-        <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
+        <tr><td>{{diferenciado.TarifaPico}} Bsf.</td></tr>
       {% endif %}
       
         </tbody>
@@ -212,14 +212,31 @@
               
               <form action="." method="post" class="form form-vertical">
               {% csrf_token %}
-              {% for field in form %}
+              <!-- Form EstacionamientoExtended -->
+              {% for field in formParam %}
                 <div class="control-group">
                   <div class="controls">
-                  	{% ifequal field.name "Esquema_tarifario" %}
-	                  	<label for="id_{{field.name}}">{{field.label}}</label>
+	                <label for="id_{{field.name}}">{{field.label}}</label>
+                  	{% ifequal field.value None %}
+	                	<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}">
+	                {% else %}
+	                	<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}" value="{{field.value}}">
+	                {% endifequal %}
+                    <p>
+                    {{ field.errors }}
+                  </div>
+                </div> 
+              {% endfor %}
+              
+              <!-- Form EsquemaTarifario -->
+              {% for field in formEsquem %}
+                <div class="control-group">
+                  <div class="controls">
+                  	{% if field.name == "TipoEsquema" %}
+	                  	<label for="id_{{field.name}}">Esquema Tarifario</label>
                   		<select class="form-control" name="{{field.name}}" for="id_{{field.name}}">
-							{% for choice in form.Esquema_tarifario.field.choices %}
-								{% ifequal choice.0|stringformat:"s" estacionamiento.Esquema_tarifario %}
+							{% for choice in formEsquem.TipoEsquema.field.choices %}
+								{% ifequal choice.0|stringformat:"s" esquema.TipoEsquema %}
 									<option value="{{choice.0}}" selected>{{choice.1}}</option>
 								{% else %}
 									<option value="{{choice.0}}">{{choice.1}}</option>
@@ -227,30 +244,35 @@
 						    {% endfor %}
 						</select>
 					{% else %}
-                    	{% if field.name == "HoraPicoInicio" or field.name == "HoraPicoFin" or field.name == "TarifaPico" %}
-                    		{% ifequal estacionamiento.Esquema_tarifario "4" %}
-                    			<label for="id_{{field.name}}">{{field.label}}</label>
-                    			{% ifequal field.value None %}
-	                    			<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}">
-	                    		{% else %}
-	                    			<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}" value="{{field.value}}">
-	                    		{% endifequal %}
-                    		{% endifequal %}
+                    	<label for="id_{{field.name}}">{{field.label}}</label>
+                    	{% ifequal field.value None %}
+                    		<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}">
                     	{% else %}
-                    		<label for="id_{{field.name}}">{{field.label}}</label>
-                    		{% ifequal field.value None %}
-                    			<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}">
-                    		{% else %}
-                    			<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}" value="{{field.value}}">
-                    		{% endifequal %}
-                    	{% endif %}
-                    {% endifequal %}
+                    		<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}" value="{{field.value}}">
+                    	{% endifequal %}
+                    {% endif %}
                     <p>
                     {{ field.errors }}
                   </div>
                 </div> 
               {% endfor %}
-                
+              
+              <!-- Form EsquemaDiferenciado -->
+              {% for field in formDifer %}
+                <div class="control-group">
+                  <div class="controls">
+                  	<label for="id_{{field.name}}">{{field.label}}</label>
+                  	{% ifequal field.value None %}
+	                    <input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}">
+	                {% else %}
+	                	<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}" value="{{field.value}}">
+	                {% endifequal %}
+                    <p>
+                    {{ field.errors }}
+                  </div>
+                </div> 
+              {% endfor %}
+              
                 <div class="control-group">
                   <label>
                   </label>

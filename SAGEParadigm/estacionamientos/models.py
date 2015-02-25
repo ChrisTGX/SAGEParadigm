@@ -32,7 +32,7 @@ PHONE_Validator = RegexValidator(
 
 # Choices
 
-ESQUEMA_Choices = [("1", "Por hora"),
+SCHEME_Choices = [("1", "Por hora"),
 					("2", "Por hora y fracción"),
 					("3", "Por minuto"),
 					("4", "Diferenciado por hora")]
@@ -40,6 +40,7 @@ ESQUEMA_Choices = [("1", "Por hora"),
 PROVCRED_Choices = [("Vista", "Vista"),
 					("Mister", "Mister"),
 					("Xpres", "Xpres")]
+
 
 # Models
 
@@ -57,11 +58,11 @@ class Estacionamiento(models.Model):
 
 	Rif = models.CharField(max_length = 12, validators = [RIF_Validator], verbose_name="RIF")
 
-	Esquema_tarifario = models.CharField(max_length = 4, choices = ESQUEMA_Choices, blank = True, null = True, verbose_name="Esquema Tarifario")
-	Tarifa = models.DecimalField(max_digits=6, decimal_places=2, blank = True, null = True, verbose_name="Tarifa")
-	HoraPicoInicio = models.TimeField(blank = True, null = True, verbose_name="Inicio de Hora Pico")
-	HoraPicoFin = models.TimeField(blank = True, null = True, verbose_name="Fin de Hora Pico")
-	TarifaPico = models.DecimalField(max_digits=6, decimal_places=2, blank = True, null = True, verbose_name="Tarifa de Hora Pico")
+# 	Esquema_tarifario = models.CharField(max_length = 4, choices = SCHEME_Choices, blank = True, null = True, verbose_name="Esquema Tarifario")
+# 	Tarifa = models.DecimalField(max_digits=6, decimal_places=2, blank = True, null = True, verbose_name="Tarifa")
+# 	HoraPicoInicio = models.TimeField(blank = True, null = True, verbose_name="Inicio de Hora Pico")
+# 	HoraPicoFin = models.TimeField(blank = True, null = True, verbose_name="Fin de Hora Pico")
+# 	TarifaPico = models.DecimalField(max_digits=6, decimal_places=2, blank = True, null = True, verbose_name="Tarifa de Hora Pico")
 	
 	Apertura = models.TimeField(blank = True, null = True, verbose_name="Horario de Apertura")
 	Cierre = models.TimeField(blank = True, null = True, verbose_name="Horario de Cierre")
@@ -72,6 +73,27 @@ class Estacionamiento(models.Model):
 
 	def __str__(self):
 		return "Estacionamiento " + self.Nombre
+
+
+
+class EsquemaTarifario(models.Model):
+	Estacionamiento = models.ForeignKey(Estacionamiento, primary_key = True, unique = True, editable = False)
+	TipoEsquema = models.CharField(max_length=50, choices = SCHEME_Choices, verbose_name="Tipo de Esquema", null = True)
+	Tarifa = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Tarifa", null = True)
+	
+	def __str__(self):
+		return "Esquema Tarifario tipo " + str(self.TipoEsquema) + " del estacionamiento " + str(self.Estacionamiento) + " | Tarifa: " + str(self.Tarifa)
+	
+	
+	
+class EsquemaDiferenciado(models.Model):
+	EsquemaTarifario = models.ForeignKey(EsquemaTarifario, primary_key = True, unique = True, editable = False)
+	HoraPicoInicio = models.DateTimeField(blank = True, null = True, verbose_name="Inicio de Hora Pico")
+	HoraPicoFin = models.DateTimeField(blank = True, null = True, verbose_name="Fin de Hora Pico")
+	TarifaPico = models.DecimalField(max_digits=6, decimal_places=2, blank = True, null = True, verbose_name="Tarifa de Hora Pico")
+
+	def __str__(self):
+		return "Esquema Tarifario Diferenciado " + str(self.EsquemaTarifario) + " | Tarifa Pico: " + str(self.TarifaPico) 
 
 
 
