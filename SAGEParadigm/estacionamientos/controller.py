@@ -17,6 +17,8 @@ class Tarifa:
 			self.costoFraccionHora = self._costoFraccionHoraEsquema2
 		elif esquema.TipoEsquema == "3":
 			self.costoFraccionHora = self._costoFraccionHoraEsquema3
+		elif esquema.TipoEsquema == "4":
+			self.costoFraccionHora = self._costoFraccionHoraEsquema4
 	
 	def _calcularEstadia(self, hora_entrada, hora_salida):
 		hora_entrada = datetime.datetime(1,1,1,hora_entrada.hour,hora_entrada.minute)
@@ -28,6 +30,8 @@ class Tarifa:
 
 	def _costoHorasCompletas(self, horas,tarifa):
 		return Decimal(horas) * Decimal(tarifa)
+	
+	################## Esquemas ####################
 	
 	# Esquema tarifario 1
 	def _costoFraccionHoraEsquema1(self, fraccion, tarifa):
@@ -45,6 +49,10 @@ class Tarifa:
 	def _costoFraccionHoraEsquema3(self, fraccion, tarifa):
 		if fraccion == 0: return Decimal(0)
 		return Decimal(fraccion) * (Decimal(tarifa) / Decimal(60))
+	
+	# Esquema tarifario 4
+	def _costoFraccionHoraEsquema4(self, fraccion, tarifa):
+		pass
 	
 	#######################################################
 	

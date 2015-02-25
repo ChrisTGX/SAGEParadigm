@@ -102,76 +102,76 @@ def estacionamiento_detail(request, _id):
             formDifer = None
         
     elif request.method == 'POST':
-            # Leemos el formulario
-            formParam = EstacionamientoExtendedForm(request.POST)
-            formEsquem = EsquemaTarifarioForm(request.POST)
-            if esquema.TipoEsquema == "4":
-                diferenciado = EsquemaDiferenciado.objects.get(EsquemaTarifario = esquema)
-                formDifer = EsquemaDiferenciadoForm(request.POST)
-            else:
-                diferenciado = None
-                formDifer = None
+        # Leemos el formulario
+        formParam = EstacionamientoExtendedForm(request.POST)
+        formEsquem = EsquemaTarifarioForm(request.POST)
+        if esquema.TipoEsquema == "4":
+            diferenciado = EsquemaDiferenciado.objects.get(EsquemaTarifario = esquema)
+            formDifer = EsquemaDiferenciadoForm(request.POST)
+        else:
+            diferenciado = None
+            formDifer = None
+            
+        # Si el formulario
+        if formParam.is_valid() and formEsquem.is_valid() and (len(formParam.changed_data) > 0 or len(formEsquem.changed_data) > 0):
+            if not formDifer or formDifer.is_valid():
+                if ('Apertura' in formParam.changed_data and 
+                    'Cierre' in formParam.changed_data and 
+                    'Reservas_Inicio' in formParam.changed_data and 
+                    'Reservas_Cierre' in formParam.changed_data):
+                    
+                    hora_in = formParam.cleaned_data['Apertura']
+                    hora_out = formParam.cleaned_data['Cierre']
+                    reserva_in = formParam.cleaned_data['Reservas_Inicio']
+                    reserva_out = formParam.cleaned_data['Reservas_Cierre']
+                    
+                    estacion.Apertura = hora_in
+                    estacion.Cierre = hora_out
+                    estacion.Reservas_Inicio = reserva_in
+                    estacion.Reservas_Cierre = reserva_out
+                    
+                    m_validado = HorarioEstacionamiento(hora_in, hora_out, reserva_in, reserva_out)
+                    if not m_validado[0]:
+                        return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1]})
                 
-            # Si el formulario
-            if formParam.is_valid() and formEsquem.is_valid() and (len(formParam.changed_data) > 0 or len(formEsquem.changed_data) > 0):
-                if not formDifer or formDifer.is_valid():
-                    if ('Apertura' in formParam.changed_data and 
-                        'Cierre' in formParam.changed_data and 
-                        'Reservas_Inicio' in formParam.changed_data and 
-                        'Reservas_Cierre' in formParam.changed_data):
-                        
-                        hora_in = formParam.cleaned_data['Apertura']
-                        hora_out = formParam.cleaned_data['Cierre']
-                        reserva_in = formParam.cleaned_data['Reservas_Inicio']
-                        reserva_out = formParam.cleaned_data['Reservas_Cierre']
-                        
-                        estacion.Apertura = hora_in
-                        estacion.Cierre = hora_out
-                        estacion.Reservas_Inicio = reserva_in
-                        estacion.Reservas_Cierre = reserva_out
-                        
-                        m_validado = HorarioEstacionamiento(hora_in, hora_out, reserva_in, reserva_out)
-                        if not m_validado[0]:
-                            return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1]})
+                elif ('Apertura' in formParam.changed_data or 
+                    'Cierre' in formParam.changed_data or 
+                    'Reservas_Inicio' in formParam.changed_data or 
+                    'Reservas_Cierre' in formParam.changed_data):
+                    return render(request, 'templateMensaje.html', 
+                                  {'color':'red', 
+                                   'mensaje': 'Deben especificarse juntos los horarios de Apertura, Cierre, Inicio y Fin de Reserva.'})
+                
+                if 'NroPuesto' in formParam.changed_data: estacion.NroPuesto = formParam.cleaned_data['NroPuesto']
+                                
+                estacion.save()
+                
+                estacion = Estacionamiento.objects.get(id = _id)
+
+                esquema.TipoEsquema = formEsquem.cleaned_data['TipoEsquema']  
+                esquema.Tarifa = formEsquem.cleaned_data['Tarifa']
+                               
+                esquema.save()
+                
+                if formEsquem.cleaned_data['TipoEsquema'] == "4":
+                    esquema = EsquemaTarifario.objects.get(Estacionamiento = estacion)
                     
-                    elif ('Apertura' in formParam.changed_data or 
-                        'Cierre' in formParam.changed_data or 
-                        'Reservas_Inicio' in formParam.changed_data or 
-                        'Reservas_Cierre' in formParam.changed_data):
-                        return render(request, 'templateMensaje.html', 
-                                      {'color':'red', 
-                                       'mensaje': 'Deben especificarse juntos los horarios de Apertura, Cierre, Inicio y Fin de Reserva.'})
-                    
-                    if 'NroPuesto' in formParam.changed_data: estacion.NroPuesto = formParam.cleaned_data['NroPuesto']
-                                    
-                    estacion.save()
-                    
-                    estacion = Estacionamiento.objects.get(id = _id)
-    
-                    esquema.TipoEsquema = formEsquem.cleaned_data['TipoEsquema']  
-                    esquema.Tarifa = formEsquem.cleaned_data['Tarifa']
-                                   
-                    esquema.save()
-                    
-                    if formEsquem.cleaned_data['TipoEsquema'] == "4":
-                        esquema = EsquemaTarifario.objects.get(Estacionamiento = estacion)
-                        
-                        if diferenciado:
-                            diferenciado.HoraPicoInicio = formDifer.cleaned_data['HoraPicoInicio']
-                            diferenciado.HoraPicoFin = formDifer.cleaned_data['HoraPicoFin']
-                            diferenciado.TarifaPico = formDifer.cleaned_data['TarifaPico']
-                        else:
-                            diferenciado = EsquemaDiferenciado(
-                                            EsquemaTarifario = esquema
-                                            )
-                        diferenciado.save()
-                        
-                        diferenciado = EsquemaDiferenciado.objects.get(EsquemaTarifario = esquema)
-                        formDifer = EsquemaDiferenciadoForm(instance = diferenciado)
-                        
+                    if diferenciado:
+                        diferenciado.HoraPicoInicio = formDifer.cleaned_data['HoraPicoInicio']
+                        diferenciado.HoraPicoFin = formDifer.cleaned_data['HoraPicoFin']
+                        diferenciado.TarifaPico = formDifer.cleaned_data['TarifaPico']
                     else:
-                        if diferenciado: diferenciado.delete()
-                        formDifer = None
+                        diferenciado = EsquemaDiferenciado(
+                                        EsquemaTarifario = esquema
+                                        )
+                    diferenciado.save()
+                    
+                    diferenciado = EsquemaDiferenciado.objects.get(EsquemaTarifario = esquema)
+                    formDifer = EsquemaDiferenciadoForm(instance = diferenciado)
+                    
+                else:
+                    if diferenciado: diferenciado.delete()
+                    formDifer = None
                         
     else:
         formParam = EstacionamientoExtendedForm()
@@ -224,45 +224,45 @@ def estacionamiento_reserva(request, _id):
 
     # Si es un POST estan mandando un request
     elif request.method == 'POST':
-            form = EstacionamientoReserva(request.POST)
-            # Verificamos si es valido con los validadores del formulario
-            if form.is_valid():
-                inicio_reserva = form.cleaned_data['InicioReserva']
-                final_reserva = form.cleaned_data['FinalReserva']
+        form = EstacionamientoReserva(request.POST)
+        # Verificamos si es valido con los validadores del formulario
+        if form.is_valid():
+            inicio_reserva = form.cleaned_data['InicioReserva']
+            final_reserva = form.cleaned_data['FinalReserva']
 
-                # Validamos los horarios con los horario de salida y entrada
-                m_validado = validarHorarioReserva(inicio_reserva, final_reserva, estacion.Reservas_Inicio, estacion.Reservas_Cierre)
+            # Validamos los horarios con los horario de salida y entrada
+            m_validado = validarHorarioReserva(inicio_reserva, final_reserva, estacion.Reservas_Inicio, estacion.Reservas_Cierre)
 
-                # Si no es valido devolvemos el request
-                if not m_validado[0]:
-                    return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1]})
+            # Si no es valido devolvemos el request
+            if not m_validado[0]:
+                return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1]})
 
-                # Si esta en un rango valido, procedemos a buscar en la lista
-                # el lugar a insertar
-                sources = Reserva.objects.filter(Estacionamiento = estacion).values_list('InicioReserva', 'FinalReserva', 'Puesto')
-                if AceptarReservacion(inicio_reserva, final_reserva, estacion.NroPuesto, sources):
-                    reservar(inicio_reserva, final_reserva, listaReserva)
-                    reservaFinal = Reserva(
-                                        Estacionamiento = estacion,
-                                        Puesto = encontrarPuesto(sources, inicio_reserva, final_reserva, estacion.NroPuesto),
-                                        InicioReserva = inicio_reserva,
-                                        FinalReserva = final_reserva,
-                                        Pagada = False
-                                    )
+            # Si esta en un rango valido, procedemos a buscar en la lista
+            # el lugar a insertar
+            sources = Reserva.objects.filter(Estacionamiento = estacion).values_list('InicioReserva', 'FinalReserva', 'Puesto')
+            if AceptarReservacion(inicio_reserva, final_reserva, estacion.NroPuesto, sources):
+                reservar(inicio_reserva, final_reserva, listaReserva)
+                reservaFinal = Reserva(
+                                    Estacionamiento = estacion,
+                                    Puesto = encontrarPuesto(sources, inicio_reserva, final_reserva, estacion.NroPuesto),
+                                    InicioReserva = inicio_reserva,
+                                    FinalReserva = final_reserva,
+                                    Pagada = False
+                                )
 
-                    esquemaTar = Tarifa(esquema, diferenciado)
-                    total = esquemaTar.calcularCosto(inicio_reserva, final_reserva)
-                     
-                    request.method = 'GET'
-                    return pagar_reserva(request, 
-                                  context = {'total':total,
-                                             'reserva_object':reservaFinal})
+                esquemaTar = Tarifa(esquema, diferenciado)
+                total = esquemaTar.calcularCosto(inicio_reserva, final_reserva)
+                 
+                request.method = 'GET'
+                return pagar_reserva(request, 
+                              context = {'total':total,
+                                         'reserva_object':reservaFinal})
 
-                else:
-                    return render(request, 
-                                  'templateMensaje.html', 
-                                  {'color':'red', 
-                                   'mensaje':'No hay un puesto disponible para ese horario'})
+            else:
+                return render(request, 
+                              'templateMensaje.html', 
+                              {'color':'red', 
+                               'mensaje':'No hay un puesto disponible para ese horario'})
     else:
         form = EstacionamientoReserva()
 
