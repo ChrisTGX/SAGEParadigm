@@ -249,22 +249,8 @@ def estacionamiento_reserva(request, _id):
                                         Pagada = False
                                     )
                     
-                    tarifa = Decimal(esquema.Tarifa)
-                    if esquema.TipoEsquema == "4":
-                        tarifa_pico = Decimal(diferenciado.TarifaPico)
-                        horapico_inicio = diferenciado.HoraPicoInicio.strftime('%H:%M')
-                        horapico_fin = diferenciado.HoraPicoFin.strftime('%H:%M')
-                    
-                    horas_completas,fraccion_hora = calcularEstadia(inicio_reserva, final_reserva)
-                    total = costoHorasCompletas(horas_completas, tarifa)
-                    if esquema.TipoEsquema == '1':
-                        total += costoFraccionHoraEsquema1(fraccion_hora, tarifa)
-                    elif esquema.TipoEsquema == '2':
-                        total += costoFraccionHoraEsquema2(fraccion_hora, tarifa)
-                    elif esquema.TipoEsquema == '3':
-                        total += costoFraccionHoraEsquema3(fraccion_hora, tarifa)
-                        
-                    # total = Tarifa(esquema, diferenciado).calcularCosto(inicio_reserva, fina_reserva)
+                    esquemaTar = Tarifa(esquema, diferenciado)
+                    total = esquemaTar.calcularCosto(inicio_reserva, final_reserva)
                      
                     request.method = 'GET'
                     return pagar_reserva(request, 

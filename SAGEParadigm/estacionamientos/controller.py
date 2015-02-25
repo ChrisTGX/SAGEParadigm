@@ -4,59 +4,62 @@
 import datetime
 from decimal import Decimal
 
-import types
-
-# Las Tuplas de cada puesto deben tener los horarios de inicio y de cierre para que
-# pueda funcionar [(7:00,7:00), (19:00,19:00)]
 
 
-# Suponiendo que cada estacionamiento tiene una estructura "matricial" lista de listas
-# donde si m es una matriz, m[i,j] las i corresponden a los puestos y las j corresponden a tuplas
-# con el horario inicio y fin de las reservas
-# [[(horaIn,horaOut),(horaIn,horaOut)],[],....]
-
-# 
-# class StrategyExample :
-# 
-#     def __init__(self, func=None) :
-#         self.name = "Strategy Example 0"
-#         if func :
-#              self.execute = types.MethodType(func, self, StrategyExample)
-# 
-#     def execute(self) :
-#         print self.name
-# 
-# 
-# def executeReplacement1(self) :
-#         print self.name + " from execute 1"
-# 
-# 
-# def executeReplacement2(self) :
-#          print self.name + " from execute 2"
-# 
-# if __name__ == "__main__" :
-# 
-#     strat0 = StrategyExample()
-#     strat1 = StrategyExample(executeReplacement1)
-#     strat1.name = "Strategy Example 1"
-#     strat2 = StrategyExample(executeReplacement2)
-#     strat2.name = "Strategy Example 2"
-# 
-#     strat0.execute()
-#     strat1.execute()
-#     strat2.execute()
-
-class EsquemaTarifario:
+class Tarifa:
 	
-	def __init__(self, tipoEsquema, func):
-		if tipoEsquema == 1:
-			self.calcularCosto = types.MethodType(func, self, EsquemaTarifario)
+	def __init__(self, esquema, diferenciado):
+		self.esquema = esquema
+		self.diferenciado = diferenciado
+		if esquema.TipoEsquema == "1":
+			self.costoFraccionHora = self._costoFraccionHoraEsquema1
+		elif esquema.TipoEsquema == "2":
+			self.costoFraccionHora = self._costoFraccionHoraEsquema2
+		elif esquema.TipoEsquema == "3":
+			self.costoFraccionHora = self._costoFraccionHoraEsquema3
+	
+	def _calcularEstadia(self, hora_entrada, hora_salida):
+		hora_entrada = datetime.datetime(1,1,1,hora_entrada.hour,hora_entrada.minute)
+		hora_salida = datetime.datetime(1,1,1,hora_salida.hour,hora_salida.minute)
+		estadia = hora_salida - hora_entrada
+		horas_completas = estadia.seconds // 3600
+		fraccion_hora = int(int(estadia.seconds%3600)/60) 
+		return horas_completas, fraccion_hora
 
-	def calcularCosto(self):
+	def _costoHorasCompletas(self, horas,tarifa):
+		return Decimal(horas) * Decimal(tarifa)
+	
+	# Esquema tarifario 1
+	def _costoFraccionHoraEsquema1(self, fraccion, tarifa):
+		if fraccion == 0: return 0
+		return Decimal(tarifa)
+	
+	# Esquema tarifario 2
+	def _costoFraccionHoraEsquema2(self, fraccion, tarifa):
+		if fraccion == 0: return 0
+		else :
+			if fraccion <= 30: return Decimal(tarifa) / Decimal(2)
+			return Decimal(tarifa)
+	
+	# Esquema tarifario 3
+	def _costoFraccionHoraEsquema3(self, fraccion, tarifa):
+		if fraccion == 0: return Decimal(0)
+		return Decimal(fraccion) * (Decimal(tarifa) / Decimal(60))
+	
+	#######################################################
+	
+	def costoFraccionHora(self, fraccion, tarifa):
 		pass
 	
-
-
+	def calcularCosto(self, inicio_reserva, final_reserva):
+		tarifa = Decimal(self.esquema.Tarifa)
+		horas_completas,fraccion_hora = self._calcularEstadia(inicio_reserva, final_reserva)
+		total = self._costoHorasCompletas(horas_completas, tarifa)
+		total += self.costoFraccionHora(fraccion_hora, tarifa)
+		return total
+		
+	
+	
 def encontrarPuesto(sources, ini, fin, nropuestos):
 	nodisp = []
 	for elem in sources:
