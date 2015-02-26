@@ -57,12 +57,6 @@ class Estacionamiento(models.Model):
 	Email_2 = models.EmailField(blank = True, null = True, verbose_name="Email 2")
 
 	Rif = models.CharField(max_length = 12, validators = [RIF_Validator], verbose_name="RIF")
-
-# 	Esquema_tarifario = models.CharField(max_length = 4, choices = SCHEME_Choices, blank = True, null = True, verbose_name="Esquema Tarifario")
-# 	Tarifa = models.DecimalField(max_digits=6, decimal_places=2, blank = True, null = True, verbose_name="Tarifa")
-# 	HoraPicoInicio = models.TimeField(blank = True, null = True, verbose_name="Inicio de Hora Pico")
-# 	HoraPicoFin = models.TimeField(blank = True, null = True, verbose_name="Fin de Hora Pico")
-# 	TarifaPico = models.DecimalField(max_digits=6, decimal_places=2, blank = True, null = True, verbose_name="Tarifa de Hora Pico")
 	
 	Apertura = models.TimeField(blank = True, null = True, verbose_name="Horario de Apertura")
 	Cierre = models.TimeField(blank = True, null = True, verbose_name="Horario de Cierre")
