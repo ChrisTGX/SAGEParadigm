@@ -204,7 +204,7 @@ def estacionamiento_reserva(request, _id):
     # Antes de entrar en la reserva, si la lista esta vacia, agregamos los
     # valores predefinidos
     if len(listaReserva) < 1:
-        Puestos = Reserva.objects.filter(Estacionamiento = estacion).values_list('Puesto', 'InicioReserva', 'FinalReserva')
+        Puestos = Reserva.objects.filter(Estacionamiento = estacion).values_list('Puesto', 'FechaInicio', 'HoraInicio', 'FechaFinal', 'HoraFinal')
         elem1 = (estacion.Apertura, estacion.Apertura)
         elem2 = (estacion.Cierre, estacion.Cierre)
         listaReserva = [[elem1, elem2] for _ in range(estacion.NroPuesto)]
@@ -227,9 +227,27 @@ def estacionamiento_reserva(request, _id):
         form = EstacionamientoReserva(request.POST)
         # Verificamos si es valido con los validadores del formulario
         if form.is_valid():
-            inicio_reserva = form.cleaned_data['InicioReserva']
-            final_reserva = form.cleaned_data['FinalReserva']
-
+            # Inicio Reserva
+            year = form.cleaned_data['FechaInicio'].year
+            month = form.cleaned_data['FechaInicio'].month
+            day = form.cleaned_data['FechaInicio'].day
+            hour = form.cleaned_data['HoraInicio'].hour
+            minute = form.cleaned_data['HoraInicio'].minute
+            
+            inicio_reserva = datetime.datetime(year, month, day, hour, minute)
+            
+            # Fin Reserva
+            year = form.cleaned_data['FechaFinal'].year
+            month = form.cleaned_data['FechaFinal'].month
+            day = form.cleaned_data['FechaFinal'].day
+            hour = form.cleaned_data['HoraFinal'].hour
+            minute = form.cleaned_data['HoraFinal'].minute
+            
+            final_reserva = datetime.datetime(year, month, day, hour, minute)
+            
+            print("DIA: " + str(inicio_reserva.day) + " | MES: " + str(inicio_reserva.month) + " | AÑO: " + str(inicio_reserva.year))
+            print("HORA: " + str(inicio_reserva.hour) + " | MINUTO: " + str(inicio_reserva.minute))
+            print(str(inicio_reserva))
             # Validamos los horarios con los horario de salida y entrada
             m_validado = validarHorarioReserva(inicio_reserva, final_reserva, estacion.Reservas_Inicio, estacion.Reservas_Cierre)
 
@@ -239,14 +257,16 @@ def estacionamiento_reserva(request, _id):
 
             # Si esta en un rango valido, procedemos a buscar en la lista
             # el lugar a insertar
-            sources = Reserva.objects.filter(Estacionamiento = estacion).values_list('InicioReserva', 'FinalReserva', 'Puesto')
+            sources = Reserva.objects.filter(Estacionamiento = estacion).values_list('FechaInicio', 'HoraInicio','FechaFinal', 'HoraFinal','Puesto')
             if AceptarReservacion(inicio_reserva, final_reserva, estacion.NroPuesto, sources):
                 reservar(inicio_reserva, final_reserva, listaReserva)
                 reservaFinal = Reserva(
                                     Estacionamiento = estacion,
                                     Puesto = encontrarPuesto(sources, inicio_reserva, final_reserva, estacion.NroPuesto),
-                                    InicioReserva = inicio_reserva,
-                                    FinalReserva = final_reserva,
+                                    FechaInicio = datetime.date(inicio_reserva.year, inicio_reserva.month, inicio_reserva.day),
+                                    HoraInicio = datetime.time(inicio_reserva.hour, inicio_reserva.minute),
+                                    FechaFinal = datetime.date(final_reserva.year, final_reserva.month, final_reserva.day),
+                                    HoraFinal = datetime.time(final_reserva.hour, final_reserva.minute),
                                     Pagada = False
                                 )
 

@@ -2,8 +2,9 @@
 
 #from django import forms
 from django.forms import ModelForm
-#from django.core.validators import RegexValidator
+from django import forms
 from estacionamientos.models import Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado
+from bootstrap3_datetime.widgets import DateTimePicker
 
 
 class EstacionamientoForm(ModelForm):
@@ -39,8 +40,8 @@ class EsquemaDiferenciadoForm(ModelForm):
 class EstacionamientoReserva(ModelForm):
     class Meta:
         model = Reserva
-        fields = ['InicioReserva', 'FinalReserva']
-        
+        fields = ['FechaInicio', 'HoraInicio', 'FechaFinal', 'HoraFinal']
+
         
 
 class PagarReservaForm(ModelForm):
