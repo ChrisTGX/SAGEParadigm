@@ -101,7 +101,7 @@ class Reserva(models.Model):
 	Pagada = models.NullBooleanField(blank = True, null = True)
 
 	def __str__(self):
-		return "Reserva del puesto " + str(self.Puesto) + " en " + self.Estacionamiento.Nombre + " de " + str(self.InicioReserva) + " a " + str(self.FinalReserva)
+		return "Reserva del puesto " + str(self.Puesto) + " en " + self.Estacionamiento.Nombre + " de " + str(self.FechaInicio) + str(self.HoraInicio) + " a " + str(self.FechaFinal) + str(self.HoraFinal)
 
 
 

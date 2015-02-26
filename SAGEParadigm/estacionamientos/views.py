@@ -245,9 +245,6 @@ def estacionamiento_reserva(request, _id):
             
             final_reserva = datetime.datetime(year, month, day, hour, minute)
             
-            print("DIA: " + str(inicio_reserva.day) + " | MES: " + str(inicio_reserva.month) + " | AÑO: " + str(inicio_reserva.year))
-            print("HORA: " + str(inicio_reserva.hour) + " | MINUTO: " + str(inicio_reserva.minute))
-            print(str(inicio_reserva))
             # Validamos los horarios con los horario de salida y entrada
             m_validado = validarHorarioReserva(inicio_reserva, final_reserva, estacion.Reservas_Inicio, estacion.Reservas_Cierre)
 
@@ -258,6 +255,8 @@ def estacionamiento_reserva(request, _id):
             # Si esta en un rango valido, procedemos a buscar en la lista
             # el lugar a insertar
             sources = Reserva.objects.filter(Estacionamiento = estacion).values_list('FechaInicio', 'HoraInicio','FechaFinal', 'HoraFinal','Puesto')
+            print(str(sources))
+            
             if AceptarReservacion(inicio_reserva, final_reserva, estacion.NroPuesto, sources):
                 reservar(inicio_reserva, final_reserva, listaReserva)
                 reservaFinal = Reserva(
