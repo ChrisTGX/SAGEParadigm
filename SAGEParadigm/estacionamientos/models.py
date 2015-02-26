@@ -60,8 +60,6 @@ class Estacionamiento(models.Model):
 	
 	Apertura = models.TimeField(blank = True, null = True, verbose_name="Horario de Apertura")
 	Cierre = models.TimeField(blank = True, null = True, verbose_name="Horario de Cierre")
-	Reservas_Inicio = models.TimeField(blank = True, null = True, verbose_name="Horario Inicio de Reserva")
-	Reservas_Cierre = models.TimeField(blank = True, null = True, verbose_name="Horario Fin de Reserva")
 	
 	NroPuesto = models.PositiveIntegerField(blank = True, null = True, verbose_name="Número de Puestos")
 
