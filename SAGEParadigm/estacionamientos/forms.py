@@ -36,10 +36,14 @@ class EsquemaDiferenciadoForm(ModelForm):
         
 
 
-class EstacionamientoReserva(ModelForm):
-    class Meta:
-        model = Reserva
-        fields = ['FechaInicio', 'HoraInicio', 'FechaFinal', 'HoraFinal']
+class EstacionamientoReserva(forms.Form):
+    FechaInicio = forms.DateField(required=True, input_formats=['%d/%m/%Y'], label="Fecha de Inicio")
+    HoraInicio = forms.TimeField(required=True, label="Hora de Inicio")
+    FechaFinal = forms.DateField(required=True, input_formats=['%d/%m/%Y'], label="Fecha de Fin")
+    HoraFinal = forms.TimeField(required=True, label="Hora de Fin")
+#     class Meta:
+#         model = Reserva
+#         fields = ['FechaInicio', 'HoraInicio', 'FechaFinal', 'HoraFinal']
 
         
 
