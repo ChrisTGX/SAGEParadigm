@@ -2,8 +2,9 @@
 
 # Archivo con funciones de control para SAGE
 import datetime
+import math
 from decimal import Decimal
-
+from math import ceil
 
 
 class Tarifa:
@@ -22,17 +23,36 @@ class Tarifa:
 			self.costoFraccionHora = self._costoFraccionHoraEsquema4
 			self.calcularCosto = self._calcularCostoEsquema4
 			self.tarifaPico = Decimal(self.diferenciado.TarifaPico)
-			self.horapico_inicio = Decimal(self.diferenciado.HoraPicoInicio)
-			self.horapico_fin = Decimal(self.diferenciado.HoraPicoFin)
+			self.horapico_inicio = self.diferenciado.HoraPicoInicio
+			self.horapico_fin = self.diferenciado.HoraPicoFin
 	
 	def _calcularEstadia(self, hora_entrada, hora_salida):
 		estadia = hora_salida - hora_entrada
 		horas_completas = (estadia.days*24) + (estadia.seconds // 3600)
 		fraccion_hora = int(int(estadia.seconds%3600)/60) 
 		return horas_completas, fraccion_hora
+	
+	def _calcularEstadiaEsquema4(self, hora_entrada, hora_salida):
+		estadia = hora_salida - hora_entrada
+		mins_pico = 0
+		for minsini in range((estadia).seconds // 60):
+			if (hora_entrada + datetime.timedelta(0,minsini*60)).time() == self.horapico_inicio:
+				minsfin = 1
+				minssig = (hora_entrada + datetime.timedelta(0,minsini*60) + datetime.timedelta(0,minsfin*60)).time()
+				while minssig <= self.horapico_fin and minssig <= hora_salida.time():
+					mins_pico += 1
+					minsfin += 1
+		horas_completas = (estadia.days*24) + (estadia.seconds // 3600) - ceil(mins_pico / 60)
+		horas_pico = mins_pico // 60
+		fraccion_hora = int(int(estadia.seconds%3600)/60)
+		fraccion_pico = int(mins_pico % 60)
+		return horas_completas, horas_pico, fraccion_hora, fraccion_pico
 
 	def _costoHorasCompletas(self, horas):
 		return Decimal(horas) * self.tarifa
+	
+	def _costoHorasCompletasPico(self, horas_pico):
+		return Decimal(horas_pico) * self.tarifaPico 
 	
 	################## Esquemas ####################
 	
@@ -54,8 +74,9 @@ class Tarifa:
 		return Decimal(fraccion) * (Decimal(self.tarifa) / Decimal(60))
 	
 	# Esquema tarifario 4
-	def _costoFraccionHoraEsquema4(self, fraccion):
-		pass
+	def _costoFraccionHoraEsquema4Pico(self, fraccion_pico):
+		if fraccion_pico == 0: return Decimal(0)
+		return Decimal(fraccion_pico) * (Decimal(self.tarifaPico) / Decimal(60))
 	
 	#######################################################
 	
@@ -63,7 +84,12 @@ class Tarifa:
 		pass
 	
 	def _calcularCostoEsquema4(self, inicio_reserva, final_reserva):
-		pass
+		horas_completas,horas_pico,fraccion_hora,fraccion_pico = self._calcularEstadiaEsquema4(inicio_reserva, final_reserva)
+		total = Decimal(self._costoHorasCompletas(horas_completas))
+		total += Decimal(self._costoHorasCompletasPico(horas_pico))
+		total += Decimal(self._costoFraccionHoraEsquema3(fraccion_hora))
+		total += Decimal(self._costoFraccionHoraEsquema4Pico(fraccion_pico))
+		return total
 	
 	def calcularCosto(self, inicio_reserva, final_reserva):
 		horas_completas,fraccion_hora = self._calcularEstadia(inicio_reserva, final_reserva)
@@ -252,8 +278,6 @@ def validarHorarioReserva(ReservaInicio, ReservaFin, HorarioApertura, HorarioCie
 		return (False, 'La hora de inicio de la reserva debe ser menor a la hora de fin')
 	if ReservaFin - ReservaInicio < datetime.timedelta(0, 3600):
 		return (False, 'El tiempo de la reserva debe ser al menos de 1 hora')
-	if ReservaFin - ReservaInicio > datetime.timedelta(7):
-		return (False, 'El tiempo de la reserva debe ser a lo sumo de 7 días')
 	if ReservaInicio.date() < today.date():
 		return (False, 'La fecha de inicio de la reserva no puede ser anterior al día actual')
 	if ReservaFin.date() > nextweek.date():
@@ -262,5 +286,18 @@ def validarHorarioReserva(ReservaInicio, ReservaFin, HorarioApertura, HorarioCie
 		return (False, 'El horario de fin de la reserva debe estar en un horario válido')
 	if ReservaInicio.time() < HorarioApertura:
 		return (False, 'El horario de inicio de la reserva debe estar en un horario válido')
+	
+	if HorarioApertura <= HorarioCierre: dia = 1
+	else: dia = 2
+	hora1 = datetime.datetime(1,1,1,HorarioApertura.hour,HorarioApertura.minute)
+	hora2 = datetime.datetime(1,1,dia,HorarioCierre.hour,HorarioCierre.minute) + datetime.timedelta(0,60)
+	tiempoFuncionamiento = (hora2 - hora1)
+	if tiempoFuncionamiento.days == 1 and tiempoFuncionamiento.seconds == 0: # Funciona las 24 horas
+		if ReservaFin - ReservaInicio > datetime.timedelta(7):
+			return (False, 'El tiempo de la reserva en un estacionamiento abierto las 24 horas debe ser a lo sumo de 7 días')
+	else:
+		if ReservaFin.date() != ReservaInicio.date():
+			return (False, 'El tiempo de la reserva está fuera del horario de funcionamiento del estacionamiento')
+	
 	return (True, '')
 
