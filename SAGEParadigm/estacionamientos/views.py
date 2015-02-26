@@ -255,7 +255,6 @@ def estacionamiento_reserva(request, _id):
             # Si esta en un rango valido, procedemos a buscar en la lista
             # el lugar a insertar
             sources = Reserva.objects.filter(Estacionamiento = estacion).values_list('FechaInicio', 'HoraInicio','FechaFinal', 'HoraFinal','Puesto')
-            print(str(sources))
             
             if AceptarReservacion(inicio_reserva, final_reserva, estacion.NroPuesto, sources):
                 reservar(inicio_reserva, final_reserva, listaReserva)

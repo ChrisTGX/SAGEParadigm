@@ -22,7 +22,6 @@ class Tarifa:
 	
 	def _calcularEstadia(self, hora_entrada, hora_salida):
 		estadia = hora_salida - hora_entrada
-		print(str(estadia))
 		horas_completas = (estadia.days*24) + (estadia.seconds // 3600)
 		fraccion_hora = int(int(estadia.seconds%3600)/60) 
 		return horas_completas, fraccion_hora
@@ -90,7 +89,6 @@ def ordenar(tabla):
 	return sorted(tabla, key = obtenerClave)
 
 def solapamientoEnRangoReserva(inicio_reserva,fin_reserva,inicio,fin):
-	print(inicio_reserva, fin_reserva, inicio, fin, "AQUI 22")
 	reserva_range = range(inicio_reserva,fin_reserva)
 	solapamiento_range = range(inicio,fin)
 	reserva_set = set(reserva_range)
@@ -128,16 +126,15 @@ def AceptarReservacion(inicio, final, capacidad, sources):
 		diasFin = (elem[2] - today.date()).days
 		tabla.append([diasIni*10000 + elem[1].hour*100 + elem[1].minute, -1])
 		tabla.append([diasFin*10000 + elem[3].hour*100 + elem[3].minute, 1])
-		print(str(tabla))
+
 	tabla = ordenar(tabla)
-	print(tabla)
+	
 	best,beststart,bestend = viabilidadReservacion(tabla, inicio, final)
-	print(str(best) + " " + str(beststart) + " " + str(bestend))
+	
 	if best < capacidad: 
 		return True
 	elif best == capacidad:
 		# Si el rango del solapamiento intersecta el de la reservacion, no se acepta esta ultima
-		print(inicio, final, "AQUI")
 		if solapamientoEnRangoReserva(((inicio.date() - today.date()).days*10000+inicio.hour*100+inicio.minute),((final.date() - today.date()).days*10000+final.hour*100+final.minute),beststart,bestend):
 			return False
 		else:
