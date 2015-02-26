@@ -256,6 +256,7 @@
     <script type="text/javascript" src="{% static 'js/livevalidation_standalone.js'%}"></script>
     <script type="text/javascript">
         var date_format_message = "Formatos válidos: mm/dd/aaaa, m/d/aaaa, mm/d/aaaa y m/dd/aaaa.";
+        var time_format_message = "Formatos válidos: hh:mm y h:mm";
         new LiveValidation('id_FechaInicio').add(Validate.Format, 
                                                 { pattern: /^\d\d?\/\d\d?\/\d\d\d\d$/ ,
                                                   failureMessage: date_format_message });
@@ -264,10 +265,10 @@
                                                   failureMessage: date_format_message });
         new LiveValidation('id_HoraInicio').add(Validate.Format, 
                                                 { pattern: /^\d?\d:\d\d$/ ,
-                                                  failureMessage: date_format_message });
+                                                  failureMessage: time_format_message });
         new LiveValidation('id_HoraFinal').add(Validate.Format, 
                                                 { pattern: /^\d?\d:\d\d$/ ,
-                                                  failureMessage: date_format_message });
+                                                  failureMessage: time_format_message });
     </script>
 </body>
 

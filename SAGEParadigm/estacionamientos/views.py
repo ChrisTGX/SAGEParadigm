@@ -82,9 +82,7 @@ def estacionamiento_detail(request, _id):
         fields_initialParam = {'NroPuesto': estacion.NroPuesto}
         if estacion.Apertura: fields_initialParam['Apertura'] = estacion.Apertura.strftime('%H:%M')
         if estacion.Cierre: fields_initialParam['Cierre'] = estacion.Cierre.strftime('%H:%M')
-        if estacion.Reservas_Inicio: fields_initialParam['Reservas_Inicio'] = estacion.Reservas_Inicio.strftime('%H:%M')
-        if estacion.Reservas_Cierre: fields_initialParam['Reservas_Cierre'] = estacion.Reservas_Cierre.strftime('%H:%M')
-       
+        
         formParam = EstacionamientoExtendedForm(initial = fields_initialParam)
 
         formEsquem = EsquemaTarifarioForm(instance = esquema)
@@ -116,31 +114,23 @@ def estacionamiento_detail(request, _id):
         if formParam.is_valid() and formEsquem.is_valid() and (len(formParam.changed_data) > 0 or len(formEsquem.changed_data) > 0):
             if not formDifer or formDifer.is_valid():
                 if ('Apertura' in formParam.changed_data and 
-                    'Cierre' in formParam.changed_data and 
-                    'Reservas_Inicio' in formParam.changed_data and 
-                    'Reservas_Cierre' in formParam.changed_data):
+                    'Cierre' in formParam.changed_data):
                     
                     hora_in = formParam.cleaned_data['Apertura']
                     hora_out = formParam.cleaned_data['Cierre']
-                    reserva_in = formParam.cleaned_data['Reservas_Inicio']
-                    reserva_out = formParam.cleaned_data['Reservas_Cierre']
                     
                     estacion.Apertura = hora_in
                     estacion.Cierre = hora_out
-                    estacion.Reservas_Inicio = reserva_in
-                    estacion.Reservas_Cierre = reserva_out
                     
-                    m_validado = HorarioEstacionamiento(hora_in, hora_out, reserva_in, reserva_out)
+                    m_validado = HorarioEstacionamiento(hora_in, hora_out)
                     if not m_validado[0]:
                         return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1]})
                 
                 elif ('Apertura' in formParam.changed_data or 
-                    'Cierre' in formParam.changed_data or 
-                    'Reservas_Inicio' in formParam.changed_data or 
-                    'Reservas_Cierre' in formParam.changed_data):
+                    'Cierre' in formParam.changed_data):
                     return render(request, 'templateMensaje.html', 
                                   {'color':'red', 
-                                   'mensaje': 'Deben especificarse juntos los horarios de Apertura, Cierre, Inicio y Fin de Reserva.'})
+                                   'mensaje': 'Deben especificarse juntos los horarios de Apertura y Cierre.'})
                 
                 if 'NroPuesto' in formParam.changed_data: estacion.NroPuesto = formParam.cleaned_data['NroPuesto']
                                 
@@ -204,14 +194,10 @@ def estacionamiento_reserva(request, _id):
     # Antes de entrar en la reserva, si la lista esta vacia, agregamos los
     # valores predefinidos
     if len(listaReserva) < 1:
-        Puestos = Reserva.objects.filter(Estacionamiento = estacion).values_list('Puesto', 'FechaInicio', 'HoraInicio', 'FechaFinal', 'HoraFinal')
+        """Puestos = Reserva.objects.filter(Estacionamiento = estacion).values_list('Puesto', 'FechaInicio', 'HoraInicio', 'FechaFinal', 'HoraFinal')
         elem1 = (estacion.Apertura, estacion.Apertura)
         elem2 = (estacion.Cierre, estacion.Cierre)
-        listaReserva = [[elem1, elem2] for _ in range(estacion.NroPuesto)]
-
-        for obj in Puestos:
-            puesto = busquedaBin(obj[1], obj[2], listaReserva[obj[0]])
-            listaReserva[obj[0]] = insertarReserva(obj[1], obj[2], puesto[0], listaReserva[obj[0]])
+        listaReserva = [[elem1, elem2] for _ in range(estacion.NroPuesto)]"""
 
 
     # Si se hace un GET renderizamos los estacionamientos con su formulario
@@ -246,7 +232,7 @@ def estacionamiento_reserva(request, _id):
             final_reserva = datetime.datetime(year, month, day, hour, minute)
             
             # Validamos los horarios con los horario de salida y entrada
-            m_validado = validarHorarioReserva(inicio_reserva, final_reserva, estacion.Reservas_Inicio, estacion.Reservas_Cierre)
+            m_validado = validarHorarioReserva(inicio_reserva, final_reserva, estacion.Apertura, estacion.Cierre)
 
             # Si no es valido devolvemos el request
             if not m_validado[0]:
@@ -257,7 +243,6 @@ def estacionamiento_reserva(request, _id):
             sources = Reserva.objects.filter(Estacionamiento = estacion).values_list('FechaInicio', 'HoraInicio','FechaFinal', 'HoraFinal','Puesto')
             
             if AceptarReservacion(inicio_reserva, final_reserva, estacion.NroPuesto, sources):
-                reservar(inicio_reserva, final_reserva, listaReserva)
                 reservaFinal = Reserva(
                                     Estacionamiento = estacion,
                                     Puesto = encontrarPuesto(sources, inicio_reserva, final_reserva, estacion.NroPuesto),

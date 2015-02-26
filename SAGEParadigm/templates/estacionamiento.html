@@ -55,7 +55,7 @@
           </ul>
 
           <br>
-          {% if estacionamiento.Apertura and estacionamiento.Cierre and estacionamiento.Reservas_Inicio and estacionamiento.Reservas_Cierre and estacionamiento.NroPuesto and esquema.TipoEsquema and esquema.Tarifa %}
+          {% if estacionamiento.Apertura and estacionamiento.Cierre and estacionamiento.NroPuesto and esquema.TipoEsquema and esquema.Tarifa %}
             <ul class="nav nav-stacked">
               <li>
                 <a href="./reserva">
@@ -148,14 +148,6 @@
       {% if estacionamiento.Cierre %}
         <tr><td><b><i class="fa fa-clock-o"></i> Horario de Cierre:</b></td></tr>
         <tr><td>{{estacionamiento.Cierre}}</td></tr>
-      {% endif %}
-      {% if estacionamiento.Reservas_Inicio %}
-        <tr><td><b><i class="fa fa-clock-o"></i> Horario Inicio de reserva:</b></td></tr>
-        <tr><td>{{estacionamiento.Reservas_Inicio}}</td></tr>
-      {% endif %}
-      {% if estacionamiento.Reservas_Cierre %}
-        <tr><td><b><i class="fa fa-clock-o"></i> Horario Fin de reserva:</b></td></tr>
-        <tr><td>{{estacionamiento.Reservas_Cierre}}</td></tr>
       {% endif %}
       {% if diferenciado.HoraPicoInicio and esquema.TipoEsquema == "4" %}
         <tr><td><b><i class="fa fa-money"></i></i> Inicio de Hora Pico:</b></td></tr>
@@ -317,12 +309,6 @@
                                                 { pattern: /^\d?\d:\d\d$/, 
                                                   failureMessage: time_format_message });
         new LiveValidation('id_Cierre').add(Validate.Format, 
-                                                { pattern: /^\d?\d:\d\d$/,
-                                                  failureMessage: time_format_message });
-        new LiveValidation('id_Reservas_Inicio').add(Validate.Format, 
-                                                { pattern: /^\d?\d:\d\d$/,
-                                                  failureMessage: time_format_message });
-        new LiveValidation('id_Reservas_Cierre').add(Validate.Format, 
                                                 { pattern: /^\d?\d:\d\d$/,
                                                   failureMessage: time_format_message });
         new LiveValidation('id_Tarifa').add(Validate.Format, 

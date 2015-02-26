@@ -371,7 +371,7 @@ class SimpleFormTestCase(TestCase):
         HoraFin = datetime.time(hour = 18, minute = 0, second = 0)
         ReservaInicio = datetime.time(hour = 12, minute = 0, second = 0)
         ReservaFin = datetime.time(hour = 18, minute = 0, second = 0)
-        x = HorarioEstacionamiento(HoraInicio, HoraFin, ReservaInicio, ReservaFin)
+        x = HorarioEstacionamiento(HoraInicio, HoraFin)
         self.assertEqual(x, (True, ''))
 
     # malicia
@@ -380,7 +380,7 @@ class SimpleFormTestCase(TestCase):
         HoraFin = datetime.time(hour = 11, minute = 0, second = 0)
         ReservaInicio = datetime.time(hour = 12, minute = 0, second = 0)
         ReservaFin = datetime.time(hour = 18, minute = 0, second = 0)
-        x = HorarioEstacionamiento(HoraInicio, HoraFin, ReservaInicio, ReservaFin)
+        x = HorarioEstacionamiento(HoraInicio, HoraFin)
         self.assertEqual(x, (False, 'El horario de apertura debe ser menor al horario de cierre'))
 
     # caso borde
@@ -389,26 +389,8 @@ class SimpleFormTestCase(TestCase):
         HoraFin = datetime.time(hour = 12, minute = 0, second = 0)
         ReservaInicio = datetime.time(hour = 12, minute = 0, second = 0)
         ReservaFin = datetime.time(hour = 18, minute = 0, second = 0)
-        x = HorarioEstacionamiento(HoraInicio, HoraFin, ReservaInicio, ReservaFin)
+        x = HorarioEstacionamiento(HoraInicio, HoraFin)
         self.assertEqual(x, (False, 'El horario de apertura debe ser menor al horario de cierre'))
-
-    # caso borde
-    def test_HorariosInvalido_HoraCierreReserva_Menor_HoraAperturaReserva(self):
-        HoraInicio = datetime.time(hour = 12, minute = 0, second = 0)
-        HoraFin = datetime.time(hour = 18, minute = 0, second = 0)
-        ReservaInicio = datetime.time(hour = 12, minute = 0, second = 0)
-        ReservaFin = datetime.time(hour = 11, minute = 0, second = 0)
-        x = HorarioEstacionamiento(HoraInicio, HoraFin, ReservaInicio, ReservaFin)
-        self.assertEqual(x, (False, 'El horario de inicio de reserva debe ser menor al horario de cierre'))
-
-    # caso borde
-    def test_HorariosInvalido_HoraCierreReserva_Igual_HoraAperturaReserva(self):
-        HoraInicio = datetime.time(hour = 12, minute = 0, second = 0)
-        HoraFin = datetime.time(hour = 18, minute = 0, second = 0)
-        ReservaInicio = datetime.time(hour = 12, minute = 0, second = 0)
-        ReservaFin = datetime.time(hour = 12, minute = 0, second = 0)
-        x = HorarioEstacionamiento(HoraInicio, HoraFin, ReservaInicio, ReservaFin)
-        self.assertEqual(x, (False, 'El horario de inicio de reserva debe ser menor al horario de cierre'))
 
     # caso borde
     def test_Limite_HorarioValido_Apertura_Cierre(self):
@@ -416,7 +398,7 @@ class SimpleFormTestCase(TestCase):
         HoraFin = datetime.time(hour = 12, minute = 0, second = 1)
         ReservaInicio = datetime.time(hour = 12, minute = 0, second = 0)
         ReservaFin = datetime.time(hour = 12, minute = 0, second = 1)
-        x = HorarioEstacionamiento(HoraInicio, HoraFin, ReservaInicio, ReservaFin)
+        x = HorarioEstacionamiento(HoraInicio, HoraFin)
         self.assertEqual(x, (True, ''))
 
     # caso borde
@@ -425,46 +407,11 @@ class SimpleFormTestCase(TestCase):
         HoraFin = datetime.time(hour = 23, minute = 59, second = 59)
         ReservaInicio = datetime.time(hour = 12, minute = 0, second = 0)
         ReservaFin = datetime.time(hour = 23, minute = 59, second = 59)
-        x = HorarioEstacionamiento(HoraInicio, HoraFin, ReservaInicio, ReservaFin)
+        x = HorarioEstacionamiento(HoraInicio, HoraFin)
         self.assertEqual(x, (True, ''))
 
-    # caso borde
-    def test_InicioReserva_Mayor_HoraCierreEstacionamiento(self):
-        HoraInicio = datetime.time(hour = 12, minute = 0, second = 0)
-        HoraFin = datetime.time(hour = 18, minute = 0, second = 0)
-        ReservaInicio = datetime.time(hour = 19, minute = 0, second = 0)
-        ReservaFin = datetime.time(hour = 20, minute = 0, second = 0)
-        x = HorarioEstacionamiento(HoraInicio, HoraFin, ReservaInicio, ReservaFin)
-        self.assertEqual(x, (False, 'El horario de comienzo de reserva debe ser menor al horario de cierre del estacionamiento'))
-
-    # caso borde
-    def test_InicioReserva_Mayor_HoraCierreEstacionamiento2(self):
-        HoraInicio = datetime.time(hour = 12, minute = 0, second = 0)
-        HoraFin = datetime.time(hour = 18, minute = 0, second = 0)
-        ReservaInicio = datetime.time(hour = 19, minute = 0, second = 0)
-        ReservaFin = datetime.time(hour = 20, minute = 0, second = 0)
-        x = HorarioEstacionamiento(HoraInicio, HoraFin, ReservaInicio, ReservaFin)
-        self.assertEqual(x, (False, 'El horario de comienzo de reserva debe ser menor al horario de cierre del estacionamiento'))
-
-    # malicia
-    def test_CierreReserva_Mayor_HoraCierreEstacionamiento(self):
-        HoraInicio = datetime.time(hour = 12, minute = 0, second = 0)
-        HoraFin = datetime.time(hour = 18, minute = 0, second = 0)
-        ReservaInicio = datetime.time(hour = 17, minute = 0, second = 0)
-        ReservaFin = datetime.time(hour = 20, minute = 0, second = 0)
-        x = HorarioEstacionamiento(HoraInicio, HoraFin, ReservaInicio, ReservaFin)
-        self.assertEqual(x, (False, 'El horario de cierre de estacionamiento debe ser mayor o igual al horario de finalización de reservas'))
-
-    # malicia
-    def test_CierreReserva_Menos_HoraInicioEstacionamiento(self):
-        HoraInicio = datetime.time(hour = 12, minute = 0, second = 0)
-        HoraFin = datetime.time(hour = 18, minute = 0, second = 0)
-        ReservaInicio = datetime.time(hour = 10, minute = 0, second = 0)
-        ReservaFin = datetime.time(hour = 11, minute = 0, second = 0)
-        x = HorarioEstacionamiento(HoraInicio, HoraFin, ReservaInicio, ReservaFin)
-        self.assertEqual(x, (False, 'El horario de inicio de reserva debe ser mayor o igual al horario de apertura del estacionamiento'))
-
-
+    
+    
 
 ###################################################################
 # ESTACIONAMIENTO_RESERVA_FORM
@@ -528,735 +475,40 @@ class SimpleFormTestCase(TestCase):
 
     # normal
     def test_HorarioReservaValido(self):
-        ReservaInicio = datetime.time(hour = 13, minute = 0, second = 0)
-        ReservaFin = datetime.time(hour = 15, minute = 0, second = 0)
-        HoraApertura = datetime.time(hour = 12, minute = 0, second = 0)
-        HoraCierre = datetime.time(hour = 18, minute = 0, second = 0)
+        ReservaInicio = datetime.datetime(year = 2015, month = 10, day = 25,hour = 13, minute = 0, second = 0)
+        ReservaFin = datetime.datetime(year = 2015, month = 10, day = 25,hour = 15, minute = 0, second = 0)
+        HoraApertura = datetime.datetime(year = 2015, month = 10, day = 25,hour = 12, minute = 0, second = 0)
+        HoraCierre = datetime.datetime(year = 2015, month = 10, day = 25,hour = 18, minute = 0, second = 0)
         x = validarHorarioReserva(ReservaInicio, ReservaFin, HoraApertura, HoraCierre)
         self.assertEqual(x, (True, ''))
 
     # caso borde
     def test_HorarioReservaInvalido_InicioReservacion_Mayor_FinalReservacion(self):
-        ReservaInicio = datetime.time(hour = 13, minute = 0, second = 0)
-        ReservaFin = datetime.time(hour = 12, minute = 59, second = 59)
-        HoraApertura = datetime.time(hour = 12, minute = 0, second = 0)
-        HoraCierre = datetime.time(hour = 18, minute = 0, second = 0)
+        ReservaInicio = datetime.datetime(year = 2015, month = 10, day = 25,hour = 13, minute = 0, second = 0)
+        ReservaFin = datetime.datetime(year = 2015, month = 10, day = 25,hour = 12, minute = 59, second = 59)
+        HoraApertura = datetime.datetime(year = 2015, month = 10, day = 25,hour = 12, minute = 0, second = 0)
+        HoraCierre = datetime.datetime(year = 2015, month = 10, day = 25,hour = 18, minute = 0, second = 0)
         x = validarHorarioReserva(ReservaInicio, ReservaFin, HoraApertura, HoraCierre)
         self.assertEqual(x, (False, 'El horario de apertura debe ser menor al horario de cierre'))
 
     # caso borde
     def test_HorarioReservaInvalido_TiempoTotalMenor1h(self):
-        ReservaInicio = datetime.time(hour = 13, minute = 0, second = 0)
-        ReservaFin = datetime.time(hour = 13, minute = 59, second = 59)
-        HoraApertura = datetime.time(hour = 12, minute = 0, second = 0)
-        HoraCierre = datetime.time(hour = 18, minute = 0, second = 0)
+        ReservaInicio = datetime.datetime(year = 2015, month = 10, day = 25,hour = 13, minute = 0, second = 0)
+        ReservaFin = datetime.datetime(year = 2015, month = 10, day = 25,hour = 13, minute = 59, second = 59)
+        HoraApertura = datetime.datetime(year = 2015, month = 10, day = 25,hour = 12, minute = 0, second = 0)
+        HoraCierre = datetime.datetime(year = 2015, month = 10, day = 25,hour = 18, minute = 0, second = 0)
         x = validarHorarioReserva(ReservaInicio, ReservaFin, HoraApertura, HoraCierre)
         self.assertEqual(x, (False, 'El tiempo de reserva debe ser al menos de 1 hora'))
 
     # malicia
     def test_Reservacion_CamposVacios(self):
-        form_data = {'InicioReserva':datetime.time(6, 0), 'FinalReserva':datetime.time(12, 0)}
+        form_data = {'InicioReserva':datetime.datetime(6, 0), 'FinalReserva':datetime.datetime(12, 0)}
         form = EstacionamientoReserva(data = form_data)
         self.assertEqual(form.is_valid(), True)
-
-# Binaria, Pruebas Unitarias
-
-    # caso borde
-    def test_Binaria_lista_vacia(self):
-        valor = datetime.time(hour = 10, minute = 0, second = 0)
-        lista = []
-        x = binaria(valor, 0, len(lista), lista)
-        self.assertEqual(x, 0)
-
-    # caso borde
-    def test_Binaria_lista_un_elem(self):
-        valor = datetime.time(hour = 10, minute = 0, second = 0)
-        Hora1In = datetime.time(hour = 8, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 9, minute = 0, second = 0)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        x = binaria(valor, 0, len(lista), lista)
-        self.assertEqual(x, 1)
-
-    # caso borde
-    def test_Binaria_horas_borde(self):
-        valor = datetime.time(hour = 10, minute = 0, second = 0)
-        Hora1In = datetime.time(hour = 0, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 0, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 23, minute = 59, second = 59)
-        Hora2Out = datetime.time(hour = 23, minute = 59, second = 59)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora2In, Hora2Out])
-        x = binaria(valor, 0, len(lista), lista)
-        self.assertEqual(x, 1)
-
-    # caso borde
-    def test_Binaria_horas_borde2(self):
-        valor = datetime.time(hour = 0, minute = 0, second = 0)
-        Hora1In = datetime.time(hour = 0, minute = 0, second = 1)
-        Hora1Out = datetime.time(hour = 0, minute = 0, second = 1)
-        Hora2In = datetime.time(hour = 23, minute = 59, second = 59)
-        Hora2Out = datetime.time(hour = 23, minute = 59, second = 59)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora2In, Hora2Out])
-        x = binaria(valor, 0, len(lista), lista)
-        self.assertEqual(x, 0)
-
-    # caso borde
-    def test_Binaria_horas_borde3(self):
-        valor = datetime.time(hour = 23, minute = 59, second = 59)
-        Hora1In = datetime.time(hour = 0, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 0, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 23, minute = 59, second = 58)
-        Hora2Out = datetime.time(hour = 23, minute = 59, second = 58)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora2In, Hora2Out])
-        x = binaria(valor, 0, len(lista), lista)
-        self.assertEqual(x, 2)
-
-    # malicia
-    def test_Binaria_horas_mal_orden(self):
-        valor = datetime.time(hour = 20, minute = 10, second = 13)
-        Hora1In = datetime.time(hour = 0, minute = 1, second = 0)
-        Hora1Out = datetime.time(hour = 0, minute = 0, second = 30)
-        Hora2In = datetime.time(hour = 23, minute = 59, second = 59)
-        Hora2Out = datetime.time(hour = 23, minute = 59, second = 58)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora2In, Hora2Out])
-        x = binaria(valor, 0, len(lista), lista)
-        self.assertEqual(x, 1)
-
-    # malicia
-    def test_Binaria_horas_mal_orden2(self):
-        valor = datetime.time(hour = 20, minute = 10, second = 13)
-        Hora1In = datetime.time(hour = 0, minute = 1, second = 0)
-        Hora1Out = datetime.time(hour = 0, minute = 0, second = 30)
-        Hora2In = datetime.time(hour = 23, minute = 59, second = 59)
-        Hora2Out = datetime.time(hour = 19, minute = 59, second = 58)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora2In, Hora2Out])
-        x = binaria(valor, 0, len(lista), lista)
-        self.assertEqual(x, 1)
-
-    # malicia
-    def test_Binaria_horas_mal_orden3(self):
-        valor = datetime.time(hour = 20, minute = 10, second = 13)
-        Hora1In = datetime.time(hour = 0, minute = 1, second = 0)
-        Hora1Out = datetime.time(hour = 0, minute = 0, second = 30)
-        Hora2In = datetime.time(hour = 23, minute = 59, second = 59)
-        Hora2Out = datetime.time(hour = 19, minute = 59, second = 58)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora2In, Hora2Out])
-        x = binaria(valor, 0, len(lista), lista)
-        self.assertEqual(x, 1)
-
-# busquedaBin, Pruebas Integracion, funcion 'binaria' con 'busquedaBin'
-
-    # caso borde
-    def test_BusquedaBin_horarios_todoeldia(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora2In, Hora2Out])
-        HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
-        HoraOut = datetime.time(hour = 22, minute = 0, second = 0)
-        x = busquedaBin(HoraIn, HoraOut, lista)
-        self.assertEqual(x, (1, True))
-
-    # caso borde
-    def test_BusquedaBin_noDisponible(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora3In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora3In, Hora3Out])
-        lista.append([Hora2In, Hora2Out])
-        HoraIn = datetime.time(hour = 7, minute = 0, second = 0)
-        HoraOut = datetime.time(hour = 9, minute = 0, second = 0)
-        x = busquedaBin(HoraIn, HoraOut, lista)
-        self.assertEqual(x, (2, False))
-
-    # normal
-    def test_BusquedaBin_noDisponible_reservarTodoElDia(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora3In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora3In, Hora3Out])
-        lista.append([Hora2In, Hora2Out])
-        HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
-        HoraOut = datetime.time(hour = 22, minute = 0, second = 0)
-        x = busquedaBin(HoraIn, HoraOut, lista)
-        self.assertEqual(x, (1, False))
-
-    # caso borde
-    def test_BusquedaBin_lista_solo_maxmin(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora2In, Hora2Out])
-        HoraIn = datetime.time(hour = 12, minute = 0, second = 0)
-        HoraOut = datetime.time(hour = 18, minute = 0, second = 0)
-        x = busquedaBin(HoraIn, HoraOut, lista)
-        self.assertEqual(x, (1, True))
-
-    # caso borde
-    def test_BusquedaBin_horasIguales_Inicio(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora2In, Hora2Out])
-        HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
-        HoraOut = datetime.time(hour = 6, minute = 0, second = 0)
-        x = busquedaBin(HoraIn, HoraOut, lista)
-        self.assertEqual(x, (1, True))
-
-    # caso borde
-    def test_BusquedaBin_horasIguales_Fin(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora2In, Hora2Out])
-        HoraIn = datetime.time(hour = 22, minute = 0, second = 0)
-        HoraOut = datetime.time(hour = 22, minute = 0, second = 0)
-        x = busquedaBin(HoraIn, HoraOut, lista)
-        self.assertEqual(x, (1, True))
-
-    # malicia
-    def test_BusquedaBin_lista_no_inicializada(self):
-        lista = []
-        HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
-        HoraOut = datetime.time(hour = 12, minute = 0, second = 0)
-        x = busquedaBin(HoraIn, HoraOut, lista)
-        self.assertEqual(x, (0, True))
-
-    # malicia
-    def test_BusquedaBin_lista_None(self):
-        lista = None
-        HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
-        HoraOut = datetime.time(hour = 12, minute = 0, second = 0)
-        x = busquedaBin(HoraIn, HoraOut, lista)
-        self.assertEqual(x, (0, False))
-
-    # malicia
-    def test_BusquedaBin_lista_noLista(self):
-        lista = 'String'
-        HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
-        HoraOut = datetime.time(hour = 12, minute = 0, second = 0)
-        x = busquedaBin(HoraIn, HoraOut, lista)
-        self.assertEqual(x, (0, False))
-
-    # malicia
-    def test_BusquedaBin_horaIngreso_None(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora2In, Hora2Out])
-        HoraIn = None
-        HoraOut = datetime.time(hour = 22, minute = 0, second = 0)
-        x = busquedaBin(HoraIn, HoraOut, lista)
-        self.assertEqual(x, (0, False))
-
-    # malicia
-    def test_BusquedaBin_horaSalida_None(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora2In, Hora2Out])
-        HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
-        HoraOut = None
-        x = busquedaBin(HoraIn, HoraOut, lista)
-        self.assertEqual(x, (0, False))
-
-    # malicia
-    def test_BusquedaBin_horaIngreso_no_datetime(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora2In, Hora2Out])
-        HoraIn = 'String'
-        HoraOut = datetime.time(hour = 22, minute = 0, second = 0)
-        x = busquedaBin(HoraIn, HoraOut, lista)
-        self.assertEqual(x, (0, False))
-
-    # malicia
-    def test_BusquedaBin_horaSalida_no_datetime(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora2In, Hora2Out])
-        HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
-        HoraOut = 'String'
-        x = busquedaBin(HoraIn, HoraOut, lista)
-        self.assertEqual(x, (0, False))
-
-    # normal
-    def test_BusquedaBin_todoEn_None(self):
-        lista = None
-        HoraIn = None
-        HoraOut = None
-        x = busquedaBin(HoraIn, HoraOut, lista)
-        self.assertEqual(x, (0, False))
-
-# buscar, Pruebas Integracion, funcion 'busquedaBin' con 'buscar'
-
-    # normal
-    def test_buscar_funcionalidadOK(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora2In, Hora2Out])
-        estacionamiento = [lista for _ in range(2)]
-        HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
-        HoraOut = datetime.time(hour = 12, minute = 0, second = 0)
-        x = buscar(HoraIn, HoraOut, estacionamiento)
-        self.assertEqual(x, (0, 1, True))
-
-    # caso borde
-    def test_buscar_horas_Iguales(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora2In, Hora2Out])
-        estacionamiento = [lista for _ in range(2)]
-        HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
-        HoraOut = datetime.time(hour = 6, minute = 0, second = 0)
-        x = buscar(HoraIn, HoraOut, estacionamiento)
-        self.assertEqual(x, (0, 1, True))
-
-    # caso borde
-    def test_buscar_estacionamientoLleno(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3Out = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora3In, Hora3Out])
-        lista.append([Hora2In, Hora2Out])
-        estacionamiento = [lista for _ in range(2)]
-        HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
-        HoraOut = datetime.time(hour = 12, minute = 0, second = 0)
-        x = buscar(HoraIn, HoraOut, estacionamiento)
-        self.assertEqual(x, (-1, -1, False))
-
-    # malicia
-    def test_buscar_estacionamiento_None(self):
-        estacionamiento = None
-        HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
-        HoraOut = datetime.time(hour = 12, minute = 0, second = 0)
-        x = buscar(HoraIn, HoraOut, estacionamiento)
-        self.assertEqual(x, (-1, -1, False))
-
-    # malicia
-    def test_buscar_estacionamiento_noLista(self):
-        estacionamiento = 'String'
-        HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
-        HoraOut = datetime.time(hour = 12, minute = 0, second = 0)
-        x = buscar(HoraIn, HoraOut, estacionamiento)
-        self.assertEqual(x, (-1, -1, False))
-
-    # malicia
-    def test_buscar_estacionamiento_noInicializado(self):
-        estacionamiento = []
-        HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
-        HoraOut = datetime.time(hour = 12, minute = 0, second = 0)
-        x = buscar(HoraIn, HoraOut, estacionamiento)
-        self.assertEqual(x, (-1, -1, False))
-
-    # malicia
-    def test_buscar_horaIngreso_None(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3Out = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora3In, Hora3Out])
-        lista.append([Hora2In, Hora2Out])
-        estacionamiento = [lista for _ in range(2)]
-        HoraIn = None
-        HoraOut = datetime.time(hour = 12, minute = 0, second = 0)
-        x = buscar(HoraIn, HoraOut, estacionamiento)
-        self.assertEqual(x, (-1, -1, False))
-
-    # malicia
-    def test_buscar_horaFin_None(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3Out = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora3In, Hora3Out])
-        lista.append([Hora2In, Hora2Out])
-        estacionamiento = [lista for _ in range(2)]
-        HoraIn = datetime.time(hour = 6, minute = 0, second = 0)
-        HoraOut = None
-        x = buscar(HoraIn, HoraOut, estacionamiento)
-        self.assertEqual(x, (-1, -1, False))
-
-    # malicia
-    def test_buscar_horaIngreso_noDatetime(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3Out = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append([Hora1In, Hora1Out])
-        lista.append([Hora3In, Hora3Out])
-        lista.append([Hora2In, Hora2Out])
-        estacionamiento = [lista for _ in range(2)]
-        HoraIn = 'String'
-        HoraOut = datetime.time(hour = 12, minute = 0, second = 0)
-        x = buscar(HoraIn, HoraOut, estacionamiento)
-        self.assertEqual(x, (-1, -1, False))
-
-    # normal
-    def test_buscar_todo_None(self):
-        estacionamiento = None
-        HoraIn = None
-        HoraOut = None
-        x = buscar(HoraIn, HoraOut, estacionamiento)
-        self.assertEqual(x, (-1, -1, False))
-
-    # normal
-    def test_buscar_todo_invalido(self):
-        estacionamiento = 'String'
-        HoraIn = 42
-        HoraOut = 42
-        x = buscar(HoraIn, HoraOut, estacionamiento)
-        self.assertEqual(x, (-1, -1, False))
-
-
-# insertarReserva, Pruebas Unitarias
-# no se requiere unas pruebas exaustivas de esta funcion, ya que esta funcion
-# solo agrega una tupla a la lista otorgada utilizando la funcion 'insert' de las listas
-# de python, la cual presumo que ha sido probada en gran cantidad de oportunidades
-
-    # normal
-    def test_insertarReserva_funcionalidadOk(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3Out = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append((Hora1In, Hora1Out))
-        lista.append((Hora2In, Hora2Out))
-        lista2 = []
-        lista2.append((Hora1In, Hora1Out))
-        lista2.append((Hora3In, Hora3Out))
-        lista2.append((Hora2In, Hora2Out))
-        x = insertarReserva(Hora3In, Hora3Out, 1, lista)
-        self.assertEqual(x, lista2)
-
-    # malicia
-    def test_insertarReserva_lista_None(self):
-        Hora3In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = None
-        x = insertarReserva(Hora3In, Hora3Out, 1, lista)
-        self.assertEqual(x, None)
-
-    # malicia
-    def test_insertarReserva_lista_noLista(self):
-        Hora3In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = 'String'
-        x = insertarReserva(Hora3In, Hora3Out, 1, lista)
-        self.assertEqual(x, None)
-
-    # malicia
-    def test_insertarReserva_horaIngreso_None(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3In = None
-        Hora3Out = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append((Hora1In, Hora1Out))
-        lista.append((Hora2In, Hora2Out))
-        x = insertarReserva(Hora3In, Hora3Out, 1, lista)
-        self.assertEqual(x, lista)
-
-    # malicia
-    def test_insertarReserva_horaSalida_None(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3Out = None
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append((Hora1In, Hora1Out))
-        lista.append((Hora2In, Hora2Out))
-        x = insertarReserva(Hora3In, Hora3Out, 1, lista)
-        self.assertEqual(x, lista)
-
-    # malicia
-    def test_insertarReserva_horaIngreso_noDatetime(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3In = 42
-        Hora3Out = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append((Hora1In, Hora1Out))
-        lista.append((Hora2In, Hora2Out))
-        x = insertarReserva(Hora3In, Hora3Out, 1, lista)
-        self.assertEqual(x, lista)
-
-    # malicia
-    def test_insertarReserva_horaSalida_noDatetime(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3Out = 42
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append((Hora1In, Hora1Out))
-        lista.append((Hora2In, Hora2Out))
-        x = insertarReserva(Hora3In, Hora3Out, 1, lista)
-        self.assertEqual(x, lista)
-
-    # malicia
-    def test_insertarReserva_todo_None(self):
-        lista = None
-        x = insertarReserva(None, None, 1, lista)
-        self.assertEqual(x, None)
-
-# reservar, Pruebas Integracion, funciones 'reservar', 'buscar' e 'insertarReserva'
-
-    # normal
-    def test_reservar_funcionalidadOk(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3In = datetime.time(hour = 8, minute = 0, second = 0)
-        Hora3Out = datetime.time(hour = 12, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append((Hora1In, Hora1Out))
-        lista.append((Hora2In, Hora2Out))
-        estacionamiento = [lista for _ in range(2)]
-        lista2 = []
-        lista2.append((Hora1In, Hora1Out))
-        lista2.append((Hora3In, Hora3Out))
-        lista2.append((Hora2In, Hora2Out))
-        estacionamiento2 = []
-        estacionamiento2.append(lista2)
-        estacionamiento2.append(lista)
-        x = reservar(Hora3In, Hora3Out, estacionamiento)
-        self.assertEqual(x, estacionamiento2)
-
-    # caso frontera
-    def test_reservar_estacionamiento_full(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3Out = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append((Hora1In, Hora1Out))
-        lista.append((Hora3In, Hora3Out))
-        lista.append((Hora2In, Hora2Out))
-        estacionamiento = [lista for _ in range(2)]
-        x = reservar(Hora3In, Hora3Out, estacionamiento)
-        self.assertEqual(x, 1)
-
-    # caso frontera
-    def test_reservar_ultimoPuestoAReservar(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3In = datetime.time(hour = 8, minute = 0, second = 0)
-        Hora3Out = datetime.time(hour = 12, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append((Hora1In, Hora1Out))
-        lista.append((Hora2In, Hora2Out))
-        lista2 = []
-        lista2.append((Hora1In, Hora1Out))
-        lista2.append((Hora3In, Hora3Out))
-        lista2.append((Hora2In, Hora2Out))
-        estacionamiento = []
-        estacionamiento.append(lista2)
-        estacionamiento.append(lista)
-        estacionamiento2 = []
-        estacionamiento2.append(lista2)
-        estacionamiento2.append(lista2)
-        x = reservar(Hora3In, Hora3Out, estacionamiento)
-        self.assertEqual(x, estacionamiento2)
-
-    # malicia
-    def test_reservar_estacionamiento_None(self):
-        Hora3In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3Out = datetime.time(hour = 22, minute = 0, second = 0)
-        estacionamiento = None
-        x = reservar(Hora3In, Hora3Out, estacionamiento)
-        self.assertEqual(x, 1)
-
-    # malicia
-    def test_reservar_estacionamiento_noLista(self):
-        Hora3In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3Out = datetime.time(hour = 22, minute = 0, second = 0)
-        estacionamiento = 'String'
-        x = reservar(Hora3In, Hora3Out, estacionamiento)
-        self.assertEqual(x, 1)
-
-    # malicia
-    def test_reservar_horaIngreso_None(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3In = None
-        Hora3Out = datetime.time(hour = 12, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append((Hora1In, Hora1Out))
-        lista.append((Hora2In, Hora2Out))
-        estacionamiento = [lista for _ in range(2)]
-        lista2 = []
-        lista2.append((Hora1In, Hora1Out))
-        lista2.append((Hora3In, Hora3Out))
-        lista2.append((Hora2In, Hora2Out))
-        estacionamiento2 = []
-        estacionamiento2.append(lista2)
-        estacionamiento2.append(lista)
-        x = reservar(Hora3In, Hora3Out, estacionamiento)
-        self.assertEqual(x, 1)
-
-    # malicia
-    def test_reservar_horaSalida_None(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3In = datetime.time(hour = 8, minute = 0, second = 0)
-        Hora3Out = None
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append((Hora1In, Hora1Out))
-        lista.append((Hora2In, Hora2Out))
-        estacionamiento = [lista for _ in range(2)]
-        lista2 = []
-        lista2.append((Hora1In, Hora1Out))
-        lista2.append((Hora3In, Hora3Out))
-        lista2.append((Hora2In, Hora2Out))
-        estacionamiento2 = []
-        estacionamiento2.append(lista2)
-        estacionamiento2.append(lista)
-        x = reservar(Hora3In, Hora3Out, estacionamiento)
-        self.assertEqual(x, 1)
-
-    # malicia
-    def test_reservar_horaIngreso_noLista(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3In = 'String'
-        Hora3Out = datetime.time(hour = 12, minute = 0, second = 0)
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append((Hora1In, Hora1Out))
-        lista.append((Hora2In, Hora2Out))
-        estacionamiento = [lista for _ in range(2)]
-        lista2 = []
-        lista2.append((Hora1In, Hora1Out))
-        lista2.append((Hora3In, Hora3Out))
-        lista2.append((Hora2In, Hora2Out))
-        estacionamiento2 = []
-        estacionamiento2.append(lista2)
-        estacionamiento2.append(lista)
-        x = reservar(Hora3In, Hora3Out, estacionamiento)
-        self.assertEqual(x, 1)
-
-    # malicia
-    def test_reservar_horaSalida_noLista(self):
-        Hora1In = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora1Out = datetime.time(hour = 6, minute = 0, second = 0)
-        Hora3In = datetime.time(hour = 8, minute = 0, second = 0)
-        Hora3Out = 'String'
-        Hora2In = datetime.time(hour = 22, minute = 0, second = 0)
-        Hora2Out = datetime.time(hour = 22, minute = 0, second = 0)
-        lista = []
-        lista.append((Hora1In, Hora1Out))
-        lista.append((Hora2In, Hora2Out))
-        estacionamiento = [lista for _ in range(2)]
-        lista2 = []
-        lista2.append((Hora1In, Hora1Out))
-        lista2.append((Hora3In, Hora3Out))
-        lista2.append((Hora2In, Hora2Out))
-        estacionamiento2 = []
-        estacionamiento2.append(lista2)
-        estacionamiento2.append(lista)
-        x = reservar(Hora3In, Hora3Out, estacionamiento)
-        self.assertEqual(x, 1)
-
-    # malicia
-    def test_reservar_todo_None(self):
-        x = reservar(None, None, None)
-        self.assertEqual(x, 1)
-        
-    
-    
+ 
+ 
+ 
+# Objects used in some tests
     
 estacionamiento = Estacionamiento()
 estacionamiento.Propietario = "Pedro"
@@ -1287,15 +539,7 @@ esquema3.Tarifa = 100
 tarifa3 = Tarifa(esquema3, None)   
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
+      
 class EsquemasTarifariosTests(unittest.TestCase):
     
     
