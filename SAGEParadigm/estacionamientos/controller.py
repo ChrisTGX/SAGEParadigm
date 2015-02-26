@@ -11,6 +11,7 @@ class Tarifa:
 	def __init__(self, esquema, diferenciado):
 		self.esquema = esquema
 		self.diferenciado = diferenciado
+		self.tarifa = Decimal(self.esquema.Tarifa)
 		if esquema.TipoEsquema == "1":
 			self.costoFraccionHora = self._costoFraccionHoraEsquema1
 		elif esquema.TipoEsquema == "2":
@@ -19,6 +20,10 @@ class Tarifa:
 			self.costoFraccionHora = self._costoFraccionHoraEsquema3
 		elif esquema.TipoEsquema == "4":
 			self.costoFraccionHora = self._costoFraccionHoraEsquema4
+			self.calcularCosto = self._calcularCostoEsquema4
+			self.tarifaPico = Decimal(self.diferenciado.TarifaPico)
+			self.horapico_inicio = Decimal(self.diferenciado.HoraPicoInicio)
+			self.horapico_fin = Decimal(self.diferenciado.HoraPicoFin)
 	
 	def _calcularEstadia(self, hora_entrada, hora_salida):
 		estadia = hora_salida - hora_entrada
@@ -26,30 +31,30 @@ class Tarifa:
 		fraccion_hora = int(int(estadia.seconds%3600)/60) 
 		return horas_completas, fraccion_hora
 
-	def _costoHorasCompletas(self, horas,tarifa):
-		return Decimal(horas) * Decimal(tarifa)
+	def _costoHorasCompletas(self, horas):
+		return Decimal(horas) * self.tarifa
 	
 	################## Esquemas ####################
 	
 	# Esquema tarifario 1
-	def _costoFraccionHoraEsquema1(self, fraccion, tarifa):
+	def _costoFraccionHoraEsquema1(self, fraccion):
 		if fraccion == 0: return 0
-		return Decimal(tarifa)
+		return Decimal(self.tarifa)
 	
 	# Esquema tarifario 2
-	def _costoFraccionHoraEsquema2(self, fraccion, tarifa):
+	def _costoFraccionHoraEsquema2(self, fraccion):
 		if fraccion == 0: return 0
 		else :
-			if fraccion <= 30: return Decimal(tarifa) / Decimal(2)
-			return Decimal(tarifa)
+			if fraccion <= 30: return Decimal(self.tarifa) / Decimal(2)
+			return Decimal(self.tarifa)
 	
 	# Esquema tarifario 3
-	def _costoFraccionHoraEsquema3(self, fraccion, tarifa):
+	def _costoFraccionHoraEsquema3(self, fraccion):
 		if fraccion == 0: return Decimal(0)
-		return Decimal(fraccion) * (Decimal(tarifa) / Decimal(60))
+		return Decimal(fraccion) * (Decimal(self.tarifa) / Decimal(60))
 	
 	# Esquema tarifario 4
-	def _costoFraccionHoraEsquema4(self, fraccion, tarifa):
+	def _costoFraccionHoraEsquema4(self, fraccion):
 		pass
 	
 	#######################################################
@@ -57,14 +62,15 @@ class Tarifa:
 	def costoFraccionHora(self, fraccion, tarifa):
 		pass
 	
+	def _calcularCostoEsquema4(self, inicio_reserva, final_reserva):
+		pass
+	
 	def calcularCosto(self, inicio_reserva, final_reserva):
-		tarifa = Decimal(self.esquema.Tarifa)
 		horas_completas,fraccion_hora = self._calcularEstadia(inicio_reserva, final_reserva)
-		total = self._costoHorasCompletas(horas_completas, tarifa)
-		total += self.costoFraccionHora(fraccion_hora, tarifa)
+		total = Decimal(self._costoHorasCompletas(horas_completas))
+		total += Decimal(self.costoFraccionHora(fraccion_hora))
 		return total
 		
-	
 	
 def encontrarPuesto(sources, ini, fin, nropuestos):
 	nodisp = []
@@ -88,12 +94,14 @@ def ordenar(tabla):
 	
 	return sorted(tabla, key = obtenerClave)
 
+
 def solapamientoEnRangoReserva(inicio_reserva,fin_reserva,inicio,fin):
 	reserva_range = range(inicio_reserva,fin_reserva)
 	solapamiento_range = range(inicio,fin)
 	reserva_set = set(reserva_range)
 	solapamiento_set = set(solapamiento_range)
 	return bool(reserva_set.intersection(solapamiento_set))
+
 
 def viabilidadReservacion(tabla, inicio, final):
 	# Devuelve True si un solapamiento se encuentra dentro del rango de una reservacion
@@ -172,6 +180,7 @@ def buscar(hin, hout, estacionamiento):
 			return (i, posicion[0], posicion[1])
 	return (-1, -1, False)
 
+
 def binaria(valor, inicio, fin, lista):
 	if inicio == fin:
 		return inicio
@@ -181,6 +190,7 @@ def binaria(valor, inicio, fin, lista):
 	if lista[centro][0] < valor:
 		return binaria(valor, centro + 1, fin, lista)
 	return centro
+
 
 # Busca en una lista ordenada la posicion en la que una nueva tupla
 # puede ser insertado, y ademas devuelve un booleano que dice si la
@@ -203,6 +213,7 @@ def busquedaBin(hin, hout, listaTuplas):
 	else:
 		return (index, False)
 
+
 # inserta ordenadamente por hora de inicio
 def insertarReserva(hin, hout, puesto, listaReserva):
 	# no verifica precondicion, se supone que se hace buscar antes para ver si se puede agregar
@@ -216,6 +227,7 @@ def insertarReserva(hin, hout, puesto, listaReserva):
 	listaReserva.insert(puesto, tupla)
 	# estacionamiento[puesto].sort()
 	return listaReserva
+
 
 def reservar(hin, hout, estacionamiento):
 	if not isinstance(estacionamiento, list):
