@@ -4,7 +4,7 @@
 from django.forms import ModelForm
 from django import forms
 from estacionamientos.models import Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado
-from bootstrap3_datetime.widgets import DateTimePicker
+#from bootstrap3_datetime.widgets import DateTimePicker
 
 
 class EstacionamientoForm(ModelForm):
