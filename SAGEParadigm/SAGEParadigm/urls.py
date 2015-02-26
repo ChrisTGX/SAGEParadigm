@@ -9,5 +9,5 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', RedirectView.as_view(url='estacionamientos/')),
-    url(r'^estacionamientos/', include('estacionamientos.urls',namespace='estacionamientos'))
+    url(r'^estacionamientos/', include('estacionamientos.urls',namespace='estacionamientos')),
 )

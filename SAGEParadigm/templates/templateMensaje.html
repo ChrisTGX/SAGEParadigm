@@ -53,7 +53,17 @@
               </a>
             </li>
           </ul>
-
+          
+          <br>
+          
+		  <ul class="nav nav-stacked">
+            <li>
+              <a href="./reserva">
+                <i class="fa fa-pencil-square-o"></i>
+                Reservar
+              </a>
+            </li>
+          </ul>
  <!--           <ul class="nav nav-stacked">
             <li>
               <a href="./hola">
@@ -85,6 +95,24 @@
      
        <div class="col-md-8" style="color:{{color}}"> 
 			{{mensaje}}
+			<p>
+       		{% ifequal color "red" %}
+       			<div class="control-group">
+                  <div class="controls">
+                    <a class="btn btn-primary" href="./reserva">
+                      Regresar
+                    </a>
+                  </div>
+                </div>
+            {% else %}
+            	<div class="control-group">
+                  <div class="controls">
+                    <a class="btn btn-primary" href=".">
+                      Regresar
+                    </a>
+                  </div>
+                </div>
+       		{% endifequal %}
       <hr>              
     </div><div class="col-md-4">
 

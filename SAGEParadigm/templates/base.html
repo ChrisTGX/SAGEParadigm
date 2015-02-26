@@ -91,7 +91,7 @@
       {% if estacionamientos %}
 
         <thead>
-          <tr><th></th><th>Dueño</th><th>Nombre</th><th>RIF</th></tr>
+          <tr><th></th><th>Propietario</th><th>Nombre del Estacionamiento</th><th>RIF</th></tr>
         </thead>
         <tbody>
         {% for obj in estacionamientos %}
@@ -125,7 +125,7 @@
               {% for field in form %}
                 <div class="control-group">
                   <div class="controls">
-                    <input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}"><p>
+                    <input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" id="id_{{field.name}}"><p>
                     {{ field.errors }}
                   </div>
                 </div> 
@@ -169,4 +169,14 @@
 
     <script type="text/javascript" src="{% static 'js/jquery-2.1.1.min.js'%}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js'%}"></script>
+    <script type="text/javascript" src="{% static 'js/livevalidation_standalone.js'%}"></script>
+    <script type="text/javascript">
+        new LiveValidation('id_Propietario').add(Validate.Format, { pattern: /^[a-zA-ZáéíóúñÑÁÉÍÓÚ ]+$/, failureMessage: "Sólo debe contener letras." });
+        new LiveValidation('id_Telefono_1').add(Validate.Format, { pattern: /^((0?212)|(0?412)|(0?416)|(0?414)|(0?424)|(0?426))-?\d{7}$/, failureMessage: "Debe introducir un formato válido." });
+        new LiveValidation('id_Telefono_2').add(Validate.Format, { pattern: /^((0?212)|(0?412)|(0?416)|(0?414)|(0?424)|(0?426))-?\d{7}$/, failureMessage: "Debe introducir un formato válido." });
+        new LiveValidation('id_Telefono_3').add(Validate.Format, { pattern: /^((0?212)|(0?412)|(0?416)|(0?414)|(0?424)|(0?426))-?\d{7}$/, failureMessage: "Debe introducir un formato válido." });
+        new LiveValidation('id_Email_1').add(Validate.Email);
+        new LiveValidation('id_Email_2').add(Validate.Email);
+        new LiveValidation('id_Rif').add(Validate.Format, { pattern: /^[JVD]-?\d{8}-?\d$/, failureMessage: "Introduzca un RIF con un formato válido." });
+    </script>
 </body></html>

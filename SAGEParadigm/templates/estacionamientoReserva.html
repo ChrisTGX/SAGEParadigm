@@ -11,7 +11,6 @@
     <link href="{% static 'css/bootstrap.min.css'%}" rel="stylesheet">
     <link href="{% static 'css/base.css'%}" rel="stylesheet">
     <link href="{% static 'css/font-awesome.min.css'%}" rel="stylesheet">
-    
    </head>
 
  <body>
@@ -23,9 +22,9 @@
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
           <span class="icon-toggle"></span>
       </button>
-          <div class="navbar-brand" href="#">
+          <a class="navbar-brand" href="..">
             SAGE
-          </div>
+          </a>
     </div>
   </div><!-- /container -->
 </div>
@@ -80,10 +79,10 @@
           
         </thead>
         <tbody>
-            <tr><td><b><i class="fa fa-car"></i> Nombre del estacionamiento:</b></td></tr>
+            <tr><td><b><i class="fa fa-car"></i> Nombre del Estacionamiento:</b></td></tr>
       <tr><td>{{estacionamiento.Nombre}}</td></tr>
 
-      <tr><td><b><i class="fa fa-user"></i> Nombre del propietario:</b></td></tr>
+      <tr><td><b><i class="fa fa-user"></i> Nombre del Propietario:</b></td></tr>
       <tr><td>{{estacionamiento.Propietario}}</td></tr>
 
       <tr><td><b><i class="fa fa-home"></i> Dirección:</b></td></tr>
@@ -122,11 +121,7 @@
       </table>
       
       <hr>  
-      <hr>
-      
-   
 
-    
     </div>
     <div class="col-md-4">
        
@@ -136,33 +131,62 @@
         </thead>
         <tbody>
       {% if estacionamiento.NroPuesto %}
-        <tr><td><b><i class="fa fa-car"></i> Puestos:</b></td></tr>
+        <tr><td><b><i class="fa fa-car"></i> Número de Puestos:</b></td></tr>
         <tr><td>{{estacionamiento.NroPuesto}}</td></tr>
       {% endif %}
-      {% if estacionamiento.Reservas_Inicio %}
-        <tr><td><b><i class="fa fa-clock-o"></i> Horario inicio de reserva:</b></td></tr>
-        <tr><td>{{estacionamiento.Reservas_Inicio}}</td></tr>
-      {% endif %}
-      {% if estacionamiento.Reservas_Cierre %}
-        <tr><td><b><i class="fa fa-clock-o"></i> Horario fin de reserva:</b></td></tr>
-        <tr><td>{{estacionamiento.Reservas_Cierre}}</td></tr>
-      {% endif %}
       {% if estacionamiento.Apertura %}
-        <tr><td><b><i class="fa fa-clock-o"></i> Horario apertura:</b></td></tr>
+        <tr><td><b><i class="fa fa-clock-o"></i> Horario de Apertura:</b></td></tr>
         <tr><td>{{estacionamiento.Apertura}}</td></tr>
       {% endif %}
       {% if estacionamiento.Cierre %}
-        <tr><td><b><i class="fa fa-clock-o"></i> Horario cierre:</b></td></tr>
+        <tr><td><b><i class="fa fa-clock-o"></i> Horario de Cierre:</b></td></tr>
         <tr><td>{{estacionamiento.Cierre}}</td></tr>
       {% endif %}
-    {% if estacionamiento.Tarifa %}
+      {% if estacionamiento.Reservas_Inicio %}
+        <tr><td><b><i class="fa fa-clock-o"></i> Horario Inicio de reserva:</b></td></tr>
+        <tr><td>{{estacionamiento.Reservas_Inicio}}</td></tr>
+      {% endif %}
+      {% if estacionamiento.Reservas_Cierre %}
+        <tr><td><b><i class="fa fa-clock-o"></i> Horario Fin de reserva:</b></td></tr>
+        <tr><td>{{estacionamiento.Reservas_Cierre}}</td></tr>
+      {% endif %}
+      {% if diferenciado.HoraPicoInicio and esquema.TipoEsquema == "4" %}
+        <tr><td><b><i class="fa fa-money"></i></i> Inicio de Hora Pico:</b></td></tr>
+        <tr><td>{{diferenciado.HoraPicoInicio}}</td></tr>
+      {% endif %}
+      {% if diferenciado.HoraPicoFin and esquema.TipoEsquema == "4" %}
+        <tr><td><b><i class="fa fa-money"></i></i> Fin de Hora Pico:</b></td></tr>
+        <tr><td>{{diferenciado.HoraPicoFin}}</td></tr>
+      {% endif %}
+      {% if esquema.TipoEsquema %}
+        <tr><td><b><i class="fa fa-money"></i></i> Esquema Tarifario:</b></td></tr>
+        <tr><td>
+        	{% if esquema.TipoEsquema == "1" %}
+        		Por hora
+        	{% elif esquema.TipoEsquema == "2" %}
+        		Por hora y fracción
+        	{% elif esquema.TipoEsquema == "3" %}
+        		Por minuto
+        	{% elif esquema.TipoEsquema == "4" %}
+        		Diferenciado por hora
+        	{% endif %}
+        </td></tr>
+      {% endif %}
+ 	  {% if esquema.Tarifa %}
         <tr><td><b><i class="fa fa-money"></i></i> Tarifa:</b></td></tr>
-        <tr><td>{{estacionamiento.Tarifa}} Bsf.</td></tr>
+        <tr><td>{{esquema.Tarifa}} Bsf.</td></tr>
+      {% endif %}
+      {% if diferenciado.TarifaPico and esquema.TipoEsquema == "4" %}
+        <tr><td><b><i class="fa fa-money"></i></i> Tarifa de Hora Pico:</b></td></tr>
+        <tr><td>{{diferenciado.TarifaPico}} Bsf.</td></tr>
       {% endif %}
       
       
         </tbody>
       </table>
+      
+      <hr>
+      
     </div><div class="col-md-4">
 
     
@@ -185,7 +209,9 @@
               {% for field in form %}
                 <div class="control-group">
                   <div class="controls">
-                    <input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}"><p>
+                  	<label id="labelid_{{field.name}}">{{field.label}}</label>
+                  	<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" id="id_{{field.name}}">
+					<p>
                     {{ field.errors }}
                   </div>
                 </div> 
@@ -225,11 +251,25 @@
 <!-- /Main -->
 <br><br><br><br>
 
-
-
     <script type="text/javascript" src="{% static 'js/jquery-2.1.1.min.js'%}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js'%}"></script>
-
+    <script type="text/javascript" src="{% static 'js/livevalidation_standalone.js'%}"></script>
+    <script type="text/javascript">
+        var date_format_message = "Formatos válidos: mm/dd/aaaa, m/d/aaaa, mm/d/aaaa y m/dd/aaaa.";
+        var time_format_message = "Formatos válidos: hh:mm y h:mm";
+        new LiveValidation('id_FechaInicio').add(Validate.Format, 
+                                                { pattern: /^\d\d?\/\d\d?\/\d\d\d\d$/ ,
+                                                  failureMessage: date_format_message });
+        new LiveValidation('id_FechaFinal').add(Validate.Format, 
+                                                { pattern: /^\d\d?\/\d\d?\/\d\d\d\d$/ , 
+                                                  failureMessage: date_format_message });
+        new LiveValidation('id_HoraInicio').add(Validate.Format, 
+                                                { pattern: /^\d?\d:\d\d$/ ,
+                                                  failureMessage: time_format_message });
+        new LiveValidation('id_HoraFinal').add(Validate.Format, 
+                                                { pattern: /^\d?\d:\d\d$/ ,
+                                                  failureMessage: time_format_message });
+    </script>
 </body>
 
 </html>
