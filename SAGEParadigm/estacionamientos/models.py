@@ -11,12 +11,12 @@ NAME_Validator = RegexValidator(
 					)
 
 RIF_Validator = RegexValidator(
-				regex = '^[JVD]-?\d{8}-?\d$', 
+				regex = '^[JjVvDd]-?\d{8}-?\d$', 
 				message = 'Introduzca un RIF con un formato válido.'
 				)
 
 IDDOC_Validator = RegexValidator(
-					regex = '^[VE]-?\d{1,8}$',
+					regex = '^[VvEe]-?\d{1,8}$',
 					message = "Introduzca un número de cédula con formato válido."
 					)
 
@@ -26,7 +26,7 @@ CREDITCARD_Validator = RegexValidator(
 						)
 
 PHONE_Validator = RegexValidator(
-					regex = '^((0212)|(0412)|(0416)|(0414)|(0424)|(0426))-?\d{7}',
+					regex = '^((0?212)|(0?412)|(0?416)|(0?414)|(0?424)|(0?426))-?\d{7}',
 					message = 'Debe introducir un formato válido.'					
 					)
 
@@ -63,7 +63,7 @@ class Estacionamiento(models.Model):
 	Reservas_Inicio = models.TimeField(blank = True, null = True, verbose_name="Horario Inicio de Reserva")
 	Reservas_Cierre = models.TimeField(blank = True, null = True, verbose_name="Horario Fin de Reserva")
 	
-	NroPuesto = models.IntegerField(blank = True, null = True, verbose_name="Número de Puestos")
+	NroPuesto = models.PositiveIntegerField(blank = True, null = True, verbose_name="Número de Puestos")
 
 	def __str__(self):
 		return "Estacionamiento " + self.Nombre
