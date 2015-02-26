@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <html lang="es"><head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
@@ -90,15 +91,15 @@
                 {% for field in form %}
                 	<div class="control-group">
 	                  <div class="controls">
-	                  	<label for="id_{{field.name}}" style="color:#777777;">{{field.label}}</label>
+	                  	<label id="labelid_{{field.name}}" style="color:#777777;">{{field.label}}</label>
 	                  	{% ifequal field.name "ProveedorCred" %}
-	                  		<select class="form-control" name="{{field.name}}" for="id_{{field.name}}">
+	                  		<select class="form-control" name="{{field.name}}" id="id_{{field.name}}">
 								{% for choice in form.ProveedorCred.field.choices %}
 							        <option value="{{choice.0}}">{{choice.1}}</option>
 							    {% endfor %}
 							</select><p>
 	                  	{% else %}
-	                    	<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}"><p>
+	                    	<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" id="id_{{field.name}}"><p>
 	                    {% endifequal %}
 	                    {{ field.errors }}
 	                  </div>
@@ -164,8 +165,20 @@
       <!--/row-->
       
     </div>
-
+    
+    
     <script type="text/javascript" src="/static/js/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
-
+    <script type="text/javascript" src="{% static 'js/livevalidation_standalone.js'%}"></script>
+    <script type="text/javascript">
+        new LiveValidation('id_NroTarjeta').add(Validate.Format, 
+                                                { pattern: /^\d{16}$/ ,
+                                                  failureMessage: "Introduzca un número de tarjeta de crédito con un formato válido." });
+        new LiveValidation('id_NombreTitular').add(Validate.Format,
+                                                { pattern: /^[a-zA-ZáéíóúñÑÁÉÍÓÚ ]+$/,
+                                                 failureMessage: "Sólo debe contener letras." });
+        new LiveValidation('id_CedulaTitular').add(Validate.Format, 
+                                                { pattern: /^[VvEe]-?\d{1,8}$/,
+                                                  failureMessage: "Introduzca un número de cédula con formato válido." });
+    </script>
 </body></html>

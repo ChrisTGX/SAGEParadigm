@@ -209,8 +209,8 @@
               {% for field in form %}
                 <div class="control-group">
                   <div class="controls">
-                  	<label for="id_{{field.name}}">{{field.label}}</label>
-                  	<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" for="id_{{field.name}}">
+                  	<label id="labelid_{{field.name}}">{{field.label}}</label>
+                  	<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" id="id_{{field.name}}">
 					<p>
                     {{ field.errors }}
                   </div>
@@ -253,7 +253,22 @@
 
     <script type="text/javascript" src="{% static 'js/jquery-2.1.1.min.js'%}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js'%}"></script>
-
+    <script type="text/javascript" src="{% static 'js/livevalidation_standalone.js'%}"></script>
+    <script type="text/javascript">
+        var date_format_message = "Formatos válidos: mm/dd/aaaa, m/d/aaaa, mm/d/aaaa y m/dd/aaaa.";
+        new LiveValidation('id_FechaInicio').add(Validate.Format, 
+                                                { pattern: /^\d\d?\/\d\d?\/\d\d\d\d$/ ,
+                                                  failureMessage: date_format_message });
+        new LiveValidation('id_FechaFinal').add(Validate.Format, 
+                                                { pattern: /^\d\d?\/\d\d?\/\d\d\d\d$/ , 
+                                                  failureMessage: date_format_message });
+        new LiveValidation('id_HoraInicio').add(Validate.Format, 
+                                                { pattern: /^\d?\d:\d\d$/ ,
+                                                  failureMessage: date_format_message });
+        new LiveValidation('id_HoraFinal').add(Validate.Format, 
+                                                { pattern: /^\d?\d:\d\d$/ ,
+                                                  failureMessage: date_format_message });
+    </script>
 </body>
 
 </html>
