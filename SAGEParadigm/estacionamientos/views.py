@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from django.core.urlresolvers import reverse
+#from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
-from django.shortcuts import redirect
+#from django.shortcuts import redirect
 from estacionamientos.controller import *
 from estacionamientos.forms import EstacionamientoExtendedForm
 from estacionamientos.forms import EstacionamientoForm, PagarReservaForm

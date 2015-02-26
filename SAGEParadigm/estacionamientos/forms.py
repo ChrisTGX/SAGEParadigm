@@ -2,9 +2,7 @@
 
 #from django import forms
 from django.forms import ModelForm
-from django import forms
 from estacionamientos.models import Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado
-from bootstrap3_datetime.widgets import DateTimePicker
 
 
 class EstacionamientoForm(ModelForm):
@@ -19,7 +17,6 @@ class EstacionamientoExtendedForm(ModelForm):
     class Meta:
         model = Estacionamiento
         fields = ['NroPuesto', 'Apertura', 'Cierre', 'Reservas_Inicio', 'Reservas_Cierre']
-#                   'Esquema_tarifario', 'HoraPicoInicio', 'HoraPicoFin', 'Tarifa', 'TarifaPico']
 
 
 
