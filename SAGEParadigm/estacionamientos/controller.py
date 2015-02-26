@@ -258,8 +258,10 @@ def validarHorarioReserva(ReservaInicio, ReservaFin, HorarioApertura, HorarioCie
 
 	if ReservaInicio >= ReservaFin:
 		return (False, 'El horario de apertura debe ser menor al horario de cierre')
-	if ReservaFin.hour - ReservaInicio.hour < 1:
+	if ReservaFin - ReservaInicio < datetime.timedelta(0, 3600):
 		return (False, 'El tiempo de reserva debe ser al menos de 1 hora')
+	if ReservaFin - ReservaInicio > datetime.timedelta(7):
+		return (False, 'El tiempo de reserva debe ser a lo sumo de 7 días')
 	if ReservaFin.time() > HorarioCierre:
 		return (False, 'El horario de inicio de reserva debe estar en un horario válido')
 	if ReservaInicio.time() < HorarioApertura:
