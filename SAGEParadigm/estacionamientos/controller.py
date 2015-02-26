@@ -141,34 +141,34 @@ def AceptarReservacion(inicio, final, capacidad, sources):
 			return True
 	return False
 
-def calcularEstadia(hora_entrada, hora_salida):
-	hora_entrada = datetime.datetime(1,1,1,hora_entrada.hour,hora_entrada.minute)
-	hora_salida = datetime.datetime(1,1,1,hora_salida.hour,hora_salida.minute)
-	estadia = hora_salida - hora_entrada
-	horas_completas = estadia.seconds // 3600
-	fraccion_hora = int(int(estadia.seconds%3600)/60) 
-	return horas_completas, fraccion_hora
-
-
-def costoHorasCompletas(horas,tarifa):
-	return Decimal(horas) * Decimal(tarifa)
-
-# Esquema tarifario 1
-def costoFraccionHoraEsquema1(fraccion,tarifa):
-	if fraccion == 0: return 0
-	return Decimal(tarifa)
-
-# Esquema tarifario 2
-def costoFraccionHoraEsquema2(fraccion,tarifa):
-	if fraccion == 0: return 0
-	else :
-		if fraccion <= 30: return Decimal(tarifa) / Decimal(2)
-		return Decimal(tarifa)
-
-# Esquema tarifario 3
-def costoFraccionHoraEsquema3(fraccion,tarifa):
-	if fraccion == 0: return Decimal(0)
-	return Decimal(fraccion) * (Decimal(tarifa) / Decimal(60))
+# def calcularEstadia(hora_entrada, hora_salida):
+# 	hora_entrada = datetime.datetime(1,1,1,hora_entrada.hour,hora_entrada.minute)
+# 	hora_salida = datetime.datetime(1,1,1,hora_salida.hour,hora_salida.minute)
+# 	estadia = hora_salida - hora_entrada
+# 	horas_completas = estadia.seconds // 3600
+# 	fraccion_hora = int(int(estadia.seconds%3600)/60) 
+# 	return horas_completas, fraccion_hora
+# 
+# 
+# def costoHorasCompletas(horas,tarifa):
+# 	return Decimal(horas) * Decimal(tarifa)
+# 
+# # Esquema tarifario 1
+# def costoFraccionHoraEsquema1(fraccion,tarifa):
+# 	if fraccion == 0: return 0
+# 	return Decimal(tarifa)
+# 
+# # Esquema tarifario 2
+# def costoFraccionHoraEsquema2(fraccion,tarifa):
+# 	if fraccion == 0: return 0
+# 	else :
+# 		if fraccion <= 30: return Decimal(tarifa) / Decimal(2)
+# 		return Decimal(tarifa)
+# 
+# # Esquema tarifario 3
+# def costoFraccionHoraEsquema3(fraccion,tarifa):
+# 	if fraccion == 0: return Decimal(0)
+# 	return Decimal(fraccion) * (Decimal(tarifa) / Decimal(60))
 
 
 def HorarioEstacionamiento(HoraInicio, HoraFin, ReservaInicio, ReservaFin):
