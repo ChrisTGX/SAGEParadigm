@@ -553,24 +553,6 @@ class SimpleFormTestCase(TestCase):
         x = validarHorarioReserva(ReservaInicio, ReservaFin, HoraApertura, HoraCierre)
         self.assertEqual(x, (False, 'El tiempo de reserva debe ser al menos de 1 hora'))
 
-    # caso borde
-    def test_HorarioReservaInvalido_ReservaFinal_Mayor_HorarioCierre(self):
-        ReservaInicio = datetime.time(hour = 13, minute = 0, second = 0)
-        ReservaFin = datetime.time(hour = 18, minute = 0, second = 1)
-        HoraApertura = datetime.time(hour = 12, minute = 0, second = 0)
-        HoraCierre = datetime.time(hour = 18, minute = 0, second = 0)
-        x = validarHorarioReserva(ReservaInicio, ReservaFin, HoraApertura, HoraCierre)
-        self.assertEqual(x, (False, 'El horario de inicio de reserva debe estar en un horario válido'))
-
-    # caso borde
-    def test_HorarioReservaInvalido_ReservaInicial_Menor_HorarioApertura(self):
-        ReservaInicio = datetime.time(hour = 11, minute = 59, second = 59)
-        ReservaFin = datetime.time(hour = 15, minute = 0, second = 1)
-        HoraApertura = datetime.time(hour = 12, minute = 0, second = 0)
-        HoraCierre = datetime.time(hour = 18, minute = 0, second = 0)
-        x = validarHorarioReserva(ReservaInicio, ReservaFin, HoraApertura, HoraCierre)
-        self.assertEqual(x, (False, 'El horario de cierre de reserva debe estar en un horario válido'))
-
     # malicia
     def test_Reservacion_CamposVacios(self):
         form_data = {'InicioReserva':datetime.time(6, 0), 'FinalReserva':datetime.time(12, 0)}
@@ -1274,97 +1256,179 @@ class SimpleFormTestCase(TestCase):
         self.assertEqual(x, 1)
         
     
+    
+    
+estacionamiento = Estacionamiento()
+estacionamiento.Propietario = "Pedro"
+estacionamiento.Nombre = "Est"
+estacionamiento.Direccion = "Ccs"
+estacionamiento.Telefono_1 = "0424-2227381"
+estacionamiento.Email_1 = "cs@cs.cs"
+estacionamiento.Rif = "V-123456785"
+estacionamiento.Apertura = datetime.time(6,0)
+estacionamiento.Cierre = datetime.time(20,0)
+estacionamiento.Reservas_Inicio = datetime.time(6,0)
+estacionamiento.Reservas_Cierre = datetime.time(20,0)
+estacionamiento.NroPuesto = 10
+esquema1 = EsquemaTarifario()
+esquema1.Estacionamiento = estacionamiento
+esquema1.TipoEsquema = "1"
+esquema1.Tarifa = 100
+tarifa1 = Tarifa(esquema1, None)
+esquema2 = EsquemaTarifario()
+esquema2.Estacionamiento = estacionamiento
+esquema2.TipoEsquema = "2"
+esquema2.Tarifa = 100
+tarifa2 = Tarifa(esquema2, None)
+esquema3 = EsquemaTarifario()
+esquema3.Estacionamiento = estacionamiento
+esquema3.TipoEsquema = "3"
+esquema3.Tarifa = 100
+tarifa3 = Tarifa(esquema3, None)   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 class EsquemasTarifariosTests(unittest.TestCase):
+    
+    
+    
     def testcostoHorasCompletasSimple(self):
-        self.assertEqual(costoHorasCompletas(4,5),20)
+        global tarifa1
+        self.assertEqual(tarifa1._costoHorasCompletas(4,5),20)
     def testcostoHorasCompletasCeroHoras(self):
-        self.assertEqual(costoHorasCompletas(0,5),0)
+        global tarifa1
+        self.assertEqual(tarifa1._costoHorasCompletas(0,5),0)
     def testcostoHorasCompletasMaximoDeHoras(self):
-        self.assertEqual(costoHorasCompletas(23,5),115)    
-    def testcostoHorasCompletasHoraUnitaria(self):    
-        self.assertEqual(costoHorasCompletas(1,5),5)
+        global tarifa1
+        self.assertEqual(tarifa1._costoHorasCompletas(23,5),115)    
+    def testcostoHorasCompletasHoraUnitaria(self):
+        global tarifa1
+        self.assertEqual(tarifa1._costoHorasCompletas(1,5),5)
         
-    def testcostoHorasCompletasTarifaDecimal(self):    
-        self.assertEqual(costoHorasCompletas(4,0.1),Decimal(0.1)*Decimal(4))
-    def testcostoHorasCompletasTarifaDecimalCeroHoras(self):    
-        self.assertEqual(costoHorasCompletas(0,0.1),0)
+    def testcostoHorasCompletasTarifaDecimal(self): 
+        global tarifa1   
+        self.assertEqual(tarifa1._costoHorasCompletas(4,0.1),Decimal(0.1)*Decimal(4))
+    def testcostoHorasCompletasTarifaDecimalCeroHoras(self):
+        global tarifa1  
+        self.assertEqual(tarifa1._costoHorasCompletas(0,0.1),0)
     def testcostoHorasCompletasTarifaDecimalMaximoDeHoras(self):
-        self.assertEqual(costoHorasCompletas(23,0.1),Decimal(23)*Decimal(0.1))
+        global tarifa1
+        self.assertEqual(tarifa1._costoHorasCompletas(23,0.1),Decimal(23)*Decimal(0.1))
     def testcostoHorasCompletasTarifaDecimalHoraUnitaria(self):
-        self.assertEqual(costoHorasCompletas(1,0.1),Decimal(1)*Decimal(0.1))
+        global tarifa1
+        self.assertEqual(tarifa1._costoHorasCompletas(1,0.1),Decimal(1)*Decimal(0.1))
         
-    def testcostoHorasCompletasTarifaAlta(self):    
-        self.assertEqual(costoHorasCompletas(4,2**30),4*2**30)
-    def testcostoHorasCompletasTarifaAltaCeroHoras(self):    
-        self.assertEqual(costoHorasCompletas(0,2**30),0)
-    def testcostoHorasCompletasTarifaAltaMaximoDeHoras(self):    
-        self.assertEqual(costoHorasCompletas(23,2**30),23*2**30)
+    def testcostoHorasCompletasTarifaAlta(self):
+        global tarifa1   
+        self.assertEqual(tarifa1._costoHorasCompletas(4,2**30),4*2**30)
+    def testcostoHorasCompletasTarifaAltaCeroHoras(self):
+        global tarifa1    
+        self.assertEqual(tarifa1._costoHorasCompletas(0,2**30),0)
+    def testcostoHorasCompletasTarifaAltaMaximoDeHoras(self):
+        global tarifa1    
+        self.assertEqual(tarifa1._costoHorasCompletas(23,2**30),23*2**30)
     def testcostoHorasCompletasTarifaAltaHoraUnitaria(self):
-        self.assertEqual(costoHorasCompletas(1,2**30),2**30)
+        global tarifa1
+        self.assertEqual(tarifa1._costoHorasCompletas(1,2**30),2**30)
         
         
     def testcostoFraccionHoraEsquema1DecimalCeroMinutos(self):
-        self.assertEqual(costoFraccionHoraEsquema1(0, 0.1), 0)
-    def testcostoFraccionHoraEsquema1DecimalMinutoUnitario(self):    
-        self.assertEqual(costoFraccionHoraEsquema1(1, 0.1), 0.1)
-    def testcostoFraccionHoraEsquema1DecimalMinutoMaximo(self):    
-        self.assertEqual(costoFraccionHoraEsquema1(59, 0.1), 0.1)
+        global tarifa1
+        self.assertEqual(tarifa1._costoFraccionHoraEsquema1(0, 0.1), 0)
+    def testcostoFraccionHoraEsquema1DecimalMinutoUnitario(self):
+        global tarifa1    
+        self.assertEqual(tarifa1._costoFraccionHoraEsquema1(1, 0.1), 0.1)
+    def testcostoFraccionHoraEsquema1DecimalMinutoMaximo(self):
+        global tarifa1    
+        self.assertEqual(tarifa1._costoFraccionHoraEsquema1(59, 0.1), 0.1)
         
-    def testcostoFraccionHoraEsquema1SimpleCeroMinutos(self):        
-        self.assertEqual(costoFraccionHoraEsquema1(0, 5), 0)
+    def testcostoFraccionHoraEsquema1SimpleCeroMinutos(self):
+        global tarifa1        
+        self.assertEqual(tarifa1._costoFraccionHoraEsquema1(0, 5), 0)
     def testcostoFraccionHoraEsquema1SimpleMinutoUnitario(self):
-        self.assertEqual(costoFraccionHoraEsquema1(1, 5), 5)
+        global tarifa1
+        self.assertEqual(tarifa1._costoFraccionHoraEsquema1(1, 5), 5)
     def testcostoFraccionHoraEsquema1SimpleMinutoMaximo(self):
-        self.assertEqual(costoFraccionHoraEsquema1(59, 5), 5) 
+        global tarifa1
+        self.assertEqual(tarifa1._costoFraccionHoraEsquema1(59, 5), 5) 
         
     def testcostoFraccionHoraEsquema1TarifaAltaCeroMinutos(self):
-        self.assertEqual(costoFraccionHoraEsquema1(0, 2**30), 0)
-    def testcostoFraccionHoraEsquema1TarifaAltaMinutoUnitario(self):    
-        self.assertEqual(costoFraccionHoraEsquema1(1, 2**30), 2**30)
-    def testcostoFraccionHoraEsquema1TarifaAltaMinutoMaximo(self):    
-        self.assertEqual(costoFraccionHoraEsquema1(59, 2**30), 2**30) 
+        global tarifa1
+        self.assertEqual(tarifa1._costoFraccionHoraEsquema1(0, 2**30), 0)
+    def testcostoFraccionHoraEsquema1TarifaAltaMinutoUnitario(self):
+        global tarifa1
+        self.assertEqual(tarifa1._costoFraccionHoraEsquema1(1, 2**30), 2**30)
+    def testcostoFraccionHoraEsquema1TarifaAltaMinutoMaximo(self):
+        global tarifa1    
+        self.assertEqual(tarifa1._costoFraccionHoraEsquema1(59, 2**30), 2**30) 
         
     def testcostoFraccionHoraEsquema2DecimalCeroMinutos(self):
-        self.assertEqual(costoFraccionHoraEsquema2(0, 0.1), 0)
+        global tarifa2
+        self.assertEqual(tarifa2._costoFraccionHoraEsquema2(0, 0.1), 0)
     def testcostoFraccionHoraEsquema2DecimalMinutoUnitario(self):
-        self.assertEqual(costoFraccionHoraEsquema2(1, 0.1), Decimal(0.1)/Decimal(2))
-    def testcostoFraccionHoraEsquema2DecimalMinutoMaximo(self):    
-        self.assertEqual(costoFraccionHoraEsquema2(59, 0.1), 0.1)
+        global tarifa2
+        self.assertEqual(tarifa2._costoFraccionHoraEsquema2(1, 0.1), Decimal(0.1)/Decimal(2))
+    def testcostoFraccionHoraEsquema2DecimalMinutoMaximo(self):
+        global tarifa2    
+        self.assertEqual(tarifa2._costoFraccionHoraEsquema2(59, 0.1), 0.1)
             
-    def testcostoFraccionHoraEsquema2SimpleCeroMinutos(self):        
-        self.assertEqual(costoFraccionHoraEsquema2(0, 5), 0)
-    def testcostoFraccionHoraEsquema2SimpleMinutoUnitario(self):    
-        self.assertEqual(costoFraccionHoraEsquema2(1, 5), 2.5)
+    def testcostoFraccionHoraEsquema2SimpleCeroMinutos(self):
+        global tarifa2        
+        self.assertEqual(tarifa2._costoFraccionHoraEsquema2(0, 5), 0)
+    def testcostoFraccionHoraEsquema2SimpleMinutoUnitario(self):
+        global tarifa2    
+        self.assertEqual(tarifa2._costoFraccionHoraEsquema2(1, 5), 2.5)
     def testcostoFraccionHoraEsquema2SimpleMinutoMaximo(self):
-        self.assertEqual(costoFraccionHoraEsquema2(59, 5), 5) 
+        global tarifa2
+        self.assertEqual(tarifa2._costoFraccionHoraEsquema2(59, 5), 5) 
         
     def testcostoFraccionHoraEsquema2TarifaAltaCeroMinutos(self):
-        self.assertEqual(costoFraccionHoraEsquema2(0, 2**30), 0)
+        global tarifa2
+        self.assertEqual(tarifa2._costoFraccionHoraEsquema2(0, 2**30), 0)
     def testcostoFraccionHoraEsquema2TarifaAltaMinutoUnitario(self):
-        self.assertEqual(costoFraccionHoraEsquema2(1, 2**30), (2**30)/2)
-    def testcostoFraccionHoraEsquema2TarifaAltaMaximoMinuto(self):    
-        self.assertEqual(costoFraccionHoraEsquema2(59, 2**30), 2**30)
+        global tarifa2
+        self.assertEqual(tarifa2._costoFraccionHoraEsquema2(1, 2**30), (2**30)/2)
+    def testcostoFraccionHoraEsquema2TarifaAltaMaximoMinuto(self):
+        global tarifa2    
+        self.assertEqual(tarifa2._costoFraccionHoraEsquema2(59, 2**30), 2**30)
                   
     def testcostoFraccionHoraEsquema3DecimalCeroMinutos(self):
-        self.assertEqual(costoFraccionHoraEsquema3(0, 0.1), 0)
+        global tarifa3
+        self.assertEqual(tarifa3._costoFraccionHoraEsquema3(0, 0.1), 0)
     def testcostoFraccionHoraEsquema3DecimalMinutoUnitario(self):
-        self.assertEqual(costoFraccionHoraEsquema3(1, 0.1), Decimal((0.1))/Decimal(60))
+        global tarifa3
+        self.assertEqual(tarifa3._costoFraccionHoraEsquema3(1, 0.1), Decimal((0.1))/Decimal(60))
     def testcostoFraccionHoraEsquema3DecimalMaximoMinuto(self):
-        self.assertEqual(costoFraccionHoraEsquema3(59, 0.1), Decimal(0.1)-Decimal((0.1))/Decimal(60))
+        global tarifa3
+        self.assertEqual(tarifa3._costoFraccionHoraEsquema3(59, 0.1), Decimal(0.1)-Decimal((0.1))/Decimal(60))
     
-    def testcostoFraccionHoraEsquema3SimpleCeroMinutos(self):        
-        self.assertEqual(costoFraccionHoraEsquema3(0, 5), 0)
+    def testcostoFraccionHoraEsquema3SimpleCeroMinutos(self):
+        global tarifa3        
+        self.assertEqual(tarifa3._costoFraccionHoraEsquema3(0, 5), 0)
     def testcostoFraccionHoraEsquema3SimpleMinutoUnitario(self):
-        self.assertEqual(costoFraccionHoraEsquema3(1, 5), Decimal(5)/Decimal(60))
-    def testcostoFraccionHoraEsquema3SimpleMaximoMinuto(self):    
-        self.assertEqual(costoFraccionHoraEsquema3(59, 5), Decimal(59)*(Decimal(5)/Decimal(60))) 
+        global tarifa3
+        self.assertEqual(tarifa3._costoFraccionHoraEsquema3(1, 5), Decimal(5)/Decimal(60))
+    def testcostoFraccionHoraEsquema3SimpleMaximoMinuto(self):
+        global tarifa3    
+        self.assertEqual(tarifa3._costoFraccionHoraEsquema3(59, 5), Decimal(59)*(Decimal(5)/Decimal(60))) 
         
-    def testcostoFraccionHoraEsquema3TarifaAltaCeroMinutos(self):    
-        self.assertEqual(costoFraccionHoraEsquema3(0, 2**30), 0)
+    def testcostoFraccionHoraEsquema3TarifaAltaCeroMinutos(self):
+        global tarifa3    
+        self.assertEqual(tarifa3._costoFraccionHoraEsquema3(0, 2**30), 0)
     def testcostoFraccionHoraEsquema3TarifaAltaMinutoUnitario(self):
-        self.assertEqual(costoFraccionHoraEsquema3(1, 2**30), (Decimal(2)**Decimal(30))/Decimal(60))
+        global tarifa3
+        self.assertEqual(tarifa3._costoFraccionHoraEsquema3(1, 2**30), (Decimal(2)**Decimal(30))/Decimal(60))
     def testcostoFraccionHoraEsquema3TarifaAltaMaximoMinuto(self):
-        self.assertEqual(costoFraccionHoraEsquema3(59, 2**30), Decimal('1055846126.933333333333333334'))
+        global tarifa3
+        self.assertEqual(tarifa3._costoFraccionHoraEsquema3(59, 2**30), Decimal('1055846126.933333333333333334'))
 
 
 class PagarReservaTests(unittest.TestCase):
@@ -1401,7 +1465,7 @@ class PagarReservaTests(unittest.TestCase):
         form = PagarReservaForm(form_data)
         self.assertEqual(form.is_valid(), False)
     def test_CedulaMenosDigitos(self):
-        form_data = {'NroTarjeta': '1234567891234567', 'CedulaTitular': 'V123', 'NombreTitular': 'Pedro Pérez', 'ProveedorCred':'Vista'}
+        form_data = {'NroTarjeta': '1234567891234567', 'CedulaTitular': 'V-123', 'NombreTitular': 'Pedro Pérez', 'ProveedorCred':'Vista'}
         form = PagarReservaForm(form_data)
         self.assertEqual(form.is_valid(), True)
     def test_CedulaSinLetra(self):
