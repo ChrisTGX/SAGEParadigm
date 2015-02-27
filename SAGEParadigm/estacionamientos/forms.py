@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 #from django import forms
-from django.forms import ModelForm
+from django.forms import ModelForm, DateInput
 from estacionamientos.models import Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado
+from django.forms.widgets import TextInput
 
 
 class EstacionamientoForm(ModelForm):
@@ -39,6 +40,16 @@ class EstacionamientoReserva(ModelForm):
     class Meta:
         model = Reserva
         fields = ['FechaInicio', 'HoraInicio', 'FechaFinal', 'HoraFinal']
+        widgets = {
+            'FechaInicio': DateInput(attrs={'class':'datepicker form-control',
+                                          'placeholder': 'Fecha inicial de reserva'}),
+            'FechaFinal': DateInput(attrs={'class':'datepicker form-control',
+                                          'placeholder': 'Fecha final de reserva'}),
+            'HoraInicio': TextInput(attrs={'class':'form-control',
+                                          'placeholder': 'Hora inicial de reserva'}),
+            'HoraFinal': TextInput(attrs={'class':'form-control',
+                                          'placeholder': 'Hora final de reserva'}),
+        }
 
         
 

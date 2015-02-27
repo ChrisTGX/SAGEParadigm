@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href="{% static 'css/bootstrap.min.css'%}" rel="stylesheet">
     <link href="{% static 'css/base.css'%}" rel="stylesheet">
+    <link href="{% static 'css/jquery-ui.css'%}" rel="stylesheet">
     <link href="{% static 'css/font-awesome.min.css'%}" rel="stylesheet">
     <link href="{% static 'css/livevalidation.css'%}" rel="stylesheet">
     
@@ -208,7 +209,7 @@
               
               <form action="./reserva" method="post" class="form form-vertical">
               {% csrf_token %}
-              {% for field in form %}
+              <!--{% for field in form %}
                 <div class="control-group">
                   <div class="controls">
                   	<label id="labelid_{{field.name}}">{{field.label}}</label>
@@ -217,7 +218,8 @@
                     {{ field.errors }}
                   </div>
                 </div> 
-              {% endfor %}
+              {% endfor %}-->
+              {{form}}
                 
                 <div class="control-group">
                   <label>
@@ -254,6 +256,7 @@
 <br><br><br><br>
 
     <script type="text/javascript" src="{% static 'js/jquery-2.1.1.min.js'%}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery-ui.js'%}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js'%}"></script>
     <script type="text/javascript" src="{% static 'js/livevalidation_standalone.js'%}"></script>
     <script type="text/javascript">
@@ -271,6 +274,16 @@
         new LiveValidation('id_HoraFinal').add(Validate.Format, 
                                                 { pattern: /^\d?\d:\d\d$/ ,
                                                   failureMessage: time_format_message });
+        
+    </script>
+    <script>
+        $(document).ready(function() {
+            $( ".datepicker" ).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "1900:2012", 
+            });
+        });
     </script>
 </body>
 
