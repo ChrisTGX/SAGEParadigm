@@ -194,15 +194,6 @@ def estacionamiento_reserva(request, _id):
     
     global listaReserva
 
-    # Antes de entrar en la reserva, si la lista esta vacia, agregamos los
-    # valores predefinidos
-    if len(listaReserva) < 1:
-        """Puestos = Reserva.objects.filter(Estacionamiento = estacion).values_list('Puesto', 'FechaInicio', 'HoraInicio', 'FechaFinal', 'HoraFinal')
-        elem1 = (estacion.Apertura, estacion.Apertura)
-        elem2 = (estacion.Cierre, estacion.Cierre)
-        listaReserva = [[elem1, elem2] for _ in range(estacion.NroPuesto)]"""
-
-
     # Si se hace un GET renderizamos los estacionamientos con su formulario
     if request.method == 'GET':
         form = EstacionamientoReserva()
