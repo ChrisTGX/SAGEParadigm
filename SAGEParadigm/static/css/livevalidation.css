@@ -5,5 +5,6 @@
     color:rgba(240, 0, 0, 0.75);
 }
 .LV_validation_message{
-    margin:60px 10px 10px 0px;
+    display: block;
+    margin: 3px 0 6px 0;
 }
