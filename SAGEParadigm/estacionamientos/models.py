@@ -80,8 +80,8 @@ class EsquemaTarifario(models.Model):
 	
 class EsquemaDiferenciado(models.Model):
 	EsquemaTarifario = models.ForeignKey(EsquemaTarifario, primary_key = True, unique = True, editable = False)
-	HoraPicoInicio = models.DateField(blank = True, null = True, verbose_name="")
-	HoraPicoFin = models.DateField(blank = True, null = True, verbose_name="")
+	HoraPicoInicio = models.TimeField(blank = True, null = True, verbose_name="")
+	HoraPicoFin = models.TimeField(blank = True, null = True, verbose_name="")
 	TarifaPico = models.DecimalField(max_digits=6, decimal_places=2, blank = True, null = True, verbose_name="")
 
 	def __str__(self):
