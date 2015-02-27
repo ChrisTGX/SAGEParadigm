@@ -3,7 +3,7 @@
 #from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
-#from django.shortcuts import redirect
+import datetime
 from estacionamientos.controller import *
 from estacionamientos.forms import EstacionamientoExtendedForm
 from estacionamientos.forms import EstacionamientoForm, PagarReservaForm
@@ -316,8 +316,8 @@ def pagar_reserva(request, context = None):
 def print_report(request):
     def draw_marquee(x, y):
         p.drawString(x-20, y, '_'*78)
-        p.drawString(x-20, y-320, '_'*78)
-        for i in range(312):
+        p.drawString(x-20, y-330, '_'*78)
+        for i in range(318):
             p.drawString(x-20, y-i-11, '|')
             p.drawString(x+500, y-i-11, '|')
                      
@@ -361,6 +361,9 @@ def print_report(request):
     p.drawString(x, y, 'Número de tarjeta de crédito: ' + 
                  '*'*(len(context_global['pago'].NroTarjeta)-4) +
                   str(context_global['pago'].NroTarjeta[12:]))
+    y = y - 30
+    p.drawString(x, y,datetime.datetime.now().strftime('Fecha del pago: %d/%m/%Y, a las %H:%M:%S'))
+    y = y - 30
     p.showPage()
     p.save()
     return response
