@@ -122,14 +122,6 @@
               
               <form action="." method="post" class="form form-vertical">
               {% csrf_token %}
-              <!--{% for field in form %}
-                <div class="control-group">
-                  <div class="controls">
-                    <input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" id="id_{{field.name}}"><p>
-                    {{ field.errors }}
-                  </div>
-                </div> 
-              {% endfor %}-->
               {{form}}
                 
                 <div class="control-group">

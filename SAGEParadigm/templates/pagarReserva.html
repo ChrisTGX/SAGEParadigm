@@ -89,23 +89,6 @@
 			<p>
 			<form action="./pagar_reserva" method="post" class="form form-vertical">
                 {% csrf_token %}
-                <!--{% for field in form %}
-                	<div class="control-group">
-	                  <div class="controls">
-	                  	<label id="labelid_{{field.name}}" style="color:#777777;">{{field.label}}</label>
-	                  	{% ifequal field.name "ProveedorCred" %}
-	                  		<select class="form-control" name="{{field.name}}" id="id_{{field.name}}">
-								{% for choice in form.ProveedorCred.field.choices %}
-							        <option value="{{choice.0}}">{{choice.1}}</option>
-							    {% endfor %}
-							</select><p>
-	                  	{% else %}
-	                    	<input type="text" class="form-control" name="{{field.name}}" placeholder="{{field.label}}" id="id_{{field.name}}"><p>
-	                    {% endifequal %}
-	                    {{ field.errors }}
-	                  </div>
-	                </div> 
-                {% endfor %}-->
                 {{form}}
                 
 				<div class="control-group">

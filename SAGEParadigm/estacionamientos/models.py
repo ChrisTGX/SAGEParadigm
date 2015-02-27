@@ -45,7 +45,7 @@ PROVCRED_Choices = [("Vista", "Vista"),
 # Models
 
 class Estacionamiento(models.Model):
-	Propietario = models.CharField(max_length = 50, help_text = "Nombre del Propietario", validators = [NAME_Validator], verbose_name="Nombre del Propietario")
+	Propietario = models.CharField(max_length = 50, validators = [NAME_Validator], verbose_name="Nombre del Propietario")
 	Nombre = models.CharField(max_length = 50, verbose_name="Nombre del Estacionamiento")
 	Direccion = models.TextField(max_length = 120, verbose_name="Dirección")
 
