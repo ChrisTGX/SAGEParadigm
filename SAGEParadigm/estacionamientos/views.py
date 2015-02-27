@@ -315,8 +315,11 @@ def pagar_reserva(request, context = None):
 # View to print payment receipts (model Pago)
 def print_report(request):
     def draw_marquee(x, y):
-        p.drawString(x, y, '-'*50)
-        p.drawString(x, y, '-'*50)
+        p.drawString(x-20, y, '_'*78)
+        p.drawString(x-20, y-320, '_'*78)
+        for i in range(312):
+            p.drawString(x-20, y-i-11, '|')
+            p.drawString(x+500, y-i-11, '|')
                      
                      
     global context_global
@@ -326,7 +329,7 @@ def print_report(request):
     p = canvas.Canvas(response)
     y = 800
     x = 100
-    #draw_marquee(100, 900)
+    draw_marquee(70, 820)
     p.drawString(x, y, 'Sistema Automatizado de Gestión de Estacionamientos (SAGE)')
     y = y - 30
     p.drawString(x, y, 'Estacionamiento ' +
