@@ -10,6 +10,8 @@ from estacionamientos.forms import EstacionamientoForm, PagarReservaForm
 from estacionamientos.forms import EstacionamientoReserva
 from estacionamientos.forms import EsquemaTarifarioForm, EsquemaDiferenciadoForm
 from estacionamientos.models import Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado
+from django.http.response import HttpResponse
+from reportlab.pdfgen import canvas
 
 
 listaReserva = []
@@ -288,8 +290,7 @@ def pagar_reserva(request, context = None):
             context['reserva_object'].Pagada = True
             context['reserva_object'].save()
             context['form'] = form
-            
-            obj = Pago(
+            pago = Pago(
                     ID_Pago = context['reserva_object'],
                     NroTarjeta = form.cleaned_data['NroTarjeta'],
                     ProveedorCred = form.cleaned_data['ProveedorCred'],
@@ -297,8 +298,9 @@ def pagar_reserva(request, context = None):
                     NombreTitular = form.cleaned_data['NombreTitular'],
                     Monto = context['total']
             )
-            obj.save()
+            pago.save()
             
+            context_global['pago'] = pago
             context['color'] = 'green'
             context['mensaje'] = 'Reserva pagada satisfactoriamente. Su codigo de pago es %i' % context['reserva_object'].id
             context['reserva_object'].save()
@@ -310,6 +312,55 @@ def pagar_reserva(request, context = None):
 
 
 
+# View to print payment receipts (model Pago)
+def print_report(request):
+    def draw_marquee(x, y):
+        p.drawString(x, y, '-'*50)
+        p.drawString(x, y, '-'*50)
+                     
+                     
+    global context_global
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="ReportePago' + \
+                        str(context_global['pago'].ID_Pago.id) + '.pdf"'
+    p = canvas.Canvas(response)
+    y = 800
+    x = 100
+    #draw_marquee(100, 900)
+    p.drawString(x, y, 'Sistema Automatizado de Gestión de Estacionamientos (SAGE)')
+    y = y - 30
+    p.drawString(x, y, 'Estacionamiento ' +
+                 context_global['pago'].ID_Pago.Estacionamiento.Nombre)
+    y = y - 30
+    p.drawString(x, y, 'Inicio de la reserva:  ' +
+                 str(context_global['pago'].ID_Pago.FechaInicio) +
+                 ', a las ' + str(context_global['pago'].ID_Pago.HoraInicio))
+    y = y - 30
+    p.drawString(x, y, 'Final de la reserva:  ' +
+                 str(context_global['pago'].ID_Pago.FechaFinal) +
+                 ', a las ' + str(context_global['pago'].ID_Pago.HoraFinal))
+    y = y - 30
+    p.drawString(x, y, 'Identificador único de pago: ' + 
+                 str(context_global['pago'].ID_Pago.id))
+    y = y - 30
+    p.drawString(x, y, 'Nombre del tarjetahabiente: ' + 
+                 str(context_global['pago'].NombreTitular))
+    y = y - 30
+    p.drawString(x, y, 'Número de Cédula: ' + 
+                 str(context_global['pago'].CedulaTitular))
+    y = y - 30
+    p.drawString(x, y, 'Total pagado: ' + 
+                 str(context_global['pago'].Monto))
+    y = y - 30
+    p.drawString(x, y, 'Proveedor de crédito: ' + 
+                 str(context_global['pago'].ProveedorCred))
+    y = y - 30
+    p.drawString(x, y, 'Número de tarjeta de crédito: ' + 
+                 '*'*(len(context_global['pago'].NroTarjeta)-4) +
+                  str(context_global['pago'].NroTarjeta[12:]))
+    p.showPage()
+    p.save()
+    return response
 
 
 

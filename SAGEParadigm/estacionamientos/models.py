@@ -71,7 +71,7 @@ class Estacionamiento(models.Model):
 class EsquemaTarifario(models.Model):
 	Estacionamiento = models.ForeignKey(Estacionamiento, primary_key = True, unique = True, editable = False)
 	TipoEsquema = models.CharField(max_length=50, choices = SCHEME_Choices, verbose_name="Tipo de Esquema", null = True)
-	Tarifa = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Tarifa", null = True)
+	Tarifa = models.DecimalField(max_digits=6, decimal_places=2, null = True, verbose_name="")
 	
 	def __str__(self):
 		return "Esquema Tarifario tipo " + str(self.TipoEsquema) + " del estacionamiento " + str(self.Estacionamiento) + " | Tarifa: " + str(self.Tarifa)
@@ -80,9 +80,9 @@ class EsquemaTarifario(models.Model):
 	
 class EsquemaDiferenciado(models.Model):
 	EsquemaTarifario = models.ForeignKey(EsquemaTarifario, primary_key = True, unique = True, editable = False)
-	HoraPicoInicio = models.DateField(blank = True, null = True, verbose_name="Inicio de Hora Pico")
-	HoraPicoFin = models.DateField(blank = True, null = True, verbose_name="Fin de Hora Pico")
-	TarifaPico = models.DecimalField(max_digits=6, decimal_places=2, blank = True, null = True, verbose_name="Tarifa de Hora Pico")
+	HoraPicoInicio = models.DateField(blank = True, null = True, verbose_name="")
+	HoraPicoFin = models.DateField(blank = True, null = True, verbose_name="")
+	TarifaPico = models.DecimalField(max_digits=6, decimal_places=2, blank = True, null = True, verbose_name="")
 
 	def __str__(self):
 		return "Esquema Tarifario Diferenciado " + str(self.EsquemaTarifario) + " | Tarifa Pico: " + str(self.TarifaPico) 
@@ -91,11 +91,11 @@ class EsquemaDiferenciado(models.Model):
 
 class Reserva(models.Model):
 	Estacionamiento = models.ForeignKey(Estacionamiento)
-	Puesto = models.IntegerField()
-	FechaInicio = models.DateField(verbose_name="Fecha de Inicio")
-	HoraInicio = models.TimeField(verbose_name="Hora de Inicio")
-	FechaFinal = models.DateField(verbose_name="Fecha de Fin")
-	HoraFinal = models.TimeField(blank = True, null = True, verbose_name="Hora de Fin")
+	Puesto = models.IntegerField(verbose_name="")
+	FechaInicio = models.DateField(verbose_name="")
+	HoraInicio = models.TimeField(verbose_name="")
+	FechaFinal = models.DateField(verbose_name="")
+	HoraFinal = models.TimeField(blank = True, null = True, verbose_name="")
 	Pagada = models.NullBooleanField(blank = True, null = True)
 
 	def __str__(self):
@@ -105,11 +105,11 @@ class Reserva(models.Model):
 
 class Pago(models.Model):
 	ID_Pago = models.ForeignKey(Reserva, primary_key=True, editable=False)
-	NroTarjeta = models.CharField(max_length=16, null = True, validators=[CREDITCARD_Validator], verbose_name="Número de Tarjeta")
-	NombreTitular = models.CharField(max_length=50, null = True, validators=[NAME_Validator], verbose_name="Nombre del Titular")
-	CedulaTitular = models.CharField(max_length=10, null = True, validators=[IDDOC_Validator], verbose_name="Cédula del Titular")
+	NroTarjeta = models.CharField(max_length=16, null = True, validators=[CREDITCARD_Validator], verbose_name="")
+	NombreTitular = models.CharField(max_length=50, null = True, validators=[NAME_Validator], verbose_name="")
+	CedulaTitular = models.CharField(max_length=10, null = True, validators=[IDDOC_Validator], verbose_name="")
 	ProveedorCred = models.CharField(max_length=10, null = True, choices=PROVCRED_Choices, verbose_name="Proveedor de Crédito")
-	Monto = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Monto", null = True)
+	Monto = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="", null = True)
 	
 	def __str__(self):
 		return "Pago de la " + str(self.ID_Pago)
