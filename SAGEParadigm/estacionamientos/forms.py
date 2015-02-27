@@ -11,6 +11,26 @@ class EstacionamientoForm(ModelForm):
         model = Estacionamiento
         fields = ['Propietario', 'Nombre', 'Direccion', 'Telefono_1', 'Telefono_2', 'Telefono_3',
                   'Email_1', 'Email_2', 'Rif']
+        widgets = {
+            'Propietario': TextInput(attrs={'class':'form-control',
+                                          'placeholder': 'Ej: Pedro Pérez'}),
+            'Nombre': TextInput(attrs={'class':'form-control',
+                                          'placeholder': 'Ej: Mi Estacionamiento'}),
+            'Direccion': TextInput(attrs={'class':'form-control',
+                                          'placeholder': 'Ej: Av. Libertador, etc'}),
+            'Telefono_1': TextInput(attrs={'class':'form-control',
+                                          'placeholder': 'Ej: 0424-1112233'}),
+            'Telefono_2': TextInput(attrs={'class':'form-control',
+                                          'placeholder': 'Ej: 02121234567'}),
+            'Telefono_3': TextInput(attrs={'class':'form-control',
+                                          'placeholder': 'Ej: 0412-1234567'}),
+            'Email_1': TextInput(attrs={'class':'form-control',
+                                          'placeholder': 'Ej: mi_email@mi_dominio.com'}),
+            'Email_2': TextInput(attrs={'class':'form-control',
+                                          'placeholder': 'Ej: mi_email@mi_dominio.com'}),
+            'Rif': TextInput(attrs={'class':'form-control',
+                                          'placeholder': 'Ej: V-123456789'}),
+        }
 
 
 
