@@ -13,26 +13,25 @@ class EstacionamientoForm(ModelForm):
         fields = ['Propietario', 'Nombre', 'Direccion', 'Telefono_1', 'Telefono_2', 'Telefono_3',
                   'Email_1', 'Email_2', 'Rif']
         widgets = {
-            'Propietario': TextInput(attrs={'class':'form-control',
-                                            'placeholder': 'Ej: Pedro Pérez'}),
-            'Nombre': TextInput(attrs={'class':'form-control',
-                                       'placeholder': 'Ej: Mi Estacionamiento'}),
-            'Direccion': TextInput(attrs={'class':'form-control',
-                                          'placeholder': 'Ej: Av. Libertador, etc'}),
-            'Telefono_1': TextInput(attrs={'class':'form-control',
-                                           'placeholder': 'Ej: 0424-1112233'}),
-            'Telefono_2': TextInput(attrs={'class':'form-control',
-                                           'placeholder': 'Ej: 02121234567'}),
-            'Telefono_3': TextInput(attrs={'class':'form-control',
-                                           'placeholder': 'Ej: 0412-1234567'}),
-            'Email_1': TextInput(attrs={'class':'form-control',
-                                        'placeholder': 'Ej: mi_email@mi_dominio.com'}),
-            'Email_2': TextInput(attrs={'class':'form-control',
-                                        'placeholder': 'Ej: mi_email@mi_dominio.com'}),
-            'Rif': TextInput(attrs={'class':'form-control',
-                                    'placeholder': 'Ej: V-123456789'}),
+            'Propietario': TextInput(attrs={'class':'form-control fields_margin',
+                                            'placeholder': 'Propietario (Ej: Pedro Pérez)'}),
+            'Nombre': TextInput(attrs={'class':'form-control fields_margin',
+                                       'placeholder': 'Nombre Estacionamiento (Ej: Bull)'}),
+            'Direccion': TextInput(attrs={'class':'form-control fields_margin',
+                                          'placeholder': 'Dirección (Ej: Av. Libertador, ...)'}),
+            'Telefono_1': TextInput(attrs={'class':'form-control fields_margin',
+                                           'placeholder': 'Teléfono 1 (Ej: 0424-1112233)'}),
+            'Telefono_2': TextInput(attrs={'class':'form-control fields_margin',
+                                           'placeholder': 'Teléfono 2 (Ej: 02121234567)'}),
+            'Telefono_3': TextInput(attrs={'class':'form-control fields_margin',
+                                           'placeholder': 'Teléfono 3 (Ej: 0412-1234567)'}),
+            'Email_1': TextInput(attrs={'class':'form-control fields_margin',
+                                        'placeholder': 'Email 1 (Ej: mail@dominio.com)'}),
+            'Email_2': TextInput(attrs={'class':'form-control fields_margin',
+                                        'placeholder': 'Email 2 (Ej: mail@dominio.com)'}),
+            'Rif': TextInput(attrs={'class':'form-control fields_margin',
+                                    'placeholder': 'RIF (Ej: V-123456789)'}),
         }
-
 
 
 class EstacionamientoExtendedForm(ModelForm):
@@ -40,12 +39,12 @@ class EstacionamientoExtendedForm(ModelForm):
         model = Estacionamiento
         fields = ['NroPuesto', 'Apertura', 'Cierre']
         widgets = {
-                   'NroPuesto': TextInput(attrs={'class':'form-control',
-                                                 'placeholder':'Ej: 10'}),
-                   'Apertura': TextInput(attrs={'class':'form-control',
-                                                'placeholder':'Ej: 5:00'}),
-                   'Cierre': TextInput(attrs={'class':'form-control',
-                                              'placeholder':'Ej: 18:00'}),
+                   'NroPuesto': TextInput(attrs={'class':'form-control fields_margin',
+                                                 'placeholder':'Número de Puestos (Ej: 10)'}),
+                   'Apertura': TextInput(attrs={'class':'form-control fields_margin',
+                                                'placeholder':'Hora de Apertura (Ej: 5:00)'}),
+                   'Cierre': TextInput(attrs={'class':'form-control fields_margin',
+                                              'placeholder':'Hora de Cierre (Ej: 18:00)'}),
                    }
 
 
@@ -56,9 +55,9 @@ class EsquemaTarifarioForm(ModelForm):
         fields = ['TipoEsquema', 'Tarifa']
         widgets = {
             'TipoEsquema': Select(choices=SCHEME_Choices, 
-                                    attrs={'class':'form-control'}),
-            'Tarifa': TextInput(attrs={'class':'form-control',
-                                       'placeholder': 'Ej: 100'}),
+                                    attrs={'class':'form-control fields_margin'}),
+            'Tarifa': TextInput(attrs={'class':'form-control fields_margin',
+                                       'placeholder': 'Tarifa (Ej: 100)'}),
         }
         
         
@@ -68,12 +67,12 @@ class EsquemaDiferenciadoForm(ModelForm):
         model = EsquemaDiferenciado
         fields = ['HoraPicoInicio', 'HoraPicoFin', 'TarifaPico']
         widgets = {
-                   'HoraPicoInicio': TextInput(attrs={'class':'form-control',
-                                                      'placeholder': 'Ej: 15:00'}),
-                   'HoraPicoFin': TextInput(attrs={'class':'form-control',
-                                                   'placeholder': 'Ej: 18:00'}),
-                   'TarifaPico': TextInput(attrs={'class':'form-control',
-                                                  'placeholder': 'Ej: 100'}),
+                   'HoraPicoInicio': TextInput(attrs={'class':'form-control fields_margin',
+                                                      'placeholder': 'Hora Pico Inicio (Ej: 15:00)'}),
+                   'HoraPicoFin': TextInput(attrs={'class':'form-control fields_margin',
+                                                   'placeholder': 'Hora Pico Fin (Ej: 18:00)'}),
+                   'TarifaPico': TextInput(attrs={'class':'form-control fields_margin',
+                                                  'placeholder': 'Tarifa Pico (Ej: 100)'}),
                   }
         
 
@@ -83,13 +82,13 @@ class EstacionamientoReserva(ModelForm):
         model = Reserva
         fields = ['FechaInicio', 'HoraInicio', 'FechaFinal', 'HoraFinal']
         widgets = {
-            'FechaInicio': DateInput(attrs={'class':'datepicker form-control',
+            'FechaInicio': DateInput(attrs={'class':'datepicker form-control fields_margin',
                                             'placeholder': 'Fecha inicial de reserva'}),
-            'FechaFinal': DateInput(attrs={'class':'datepicker form-control',
+            'FechaFinal': DateInput(attrs={'class':'datepicker form-control fields_margin',
                                            'placeholder': 'Fecha final de reserva'}),
-            'HoraInicio': TextInput(attrs={'class':'form-control',
+            'HoraInicio': TextInput(attrs={'class':'form-control fields_margin',
                                            'placeholder': 'Hora inicial de reserva'}),
-            'HoraFinal': TextInput(attrs={'class':'form-control',
+            'HoraFinal': TextInput(attrs={'class':'form-control fields_margin',
                                           'placeholder': 'Hora final de reserva'}),
         }
 
@@ -101,13 +100,13 @@ class PagarReservaForm(ModelForm):
         fields = ['NroTarjeta', 'ProveedorCred', 'CedulaTitular', 'NombreTitular']
         widgets = {
             'ProveedorCred': Select(choices=PROVCRED_Choices, 
-                                    attrs={'class':'form-control'}),
-            'NroTarjeta': DateInput(attrs={'class':'form-control',
-                                           'placeholder': 'Ej: 1111-2222-3333-4444'}),
-            'CedulaTitular': TextInput(attrs={'class':'form-control',
-                                              'placeholder': 'Ej: V-12345678'}),
-            'NombreTitular': TextInput(attrs={'class':'form-control',
-                                              'placeholder': 'Ej: Pedro Pérez'}),
+                                    attrs={'class':'form-control fields_margin'}),
+            'NroTarjeta': DateInput(attrs={'class':'form-control fields_margin',
+                                           'placeholder': 'Tarjeta de Crédito (Ej: 1111-2222-3333-4444)'}),
+            'CedulaTitular': TextInput(attrs={'class':'form-control fields_margin',
+                                              'placeholder': 'Cédula Titular (Ej: V-12345678)'}),
+            'NombreTitular': TextInput(attrs={'class':'form-control fields_margin',
+                                              'placeholder': 'Nombre Titular (Ej: Pedro Pérez)'}),
         }
 
 

@@ -45,23 +45,23 @@ PROVCRED_Choices = [("Vista", "Vista"),
 # Models
 
 class Estacionamiento(models.Model):
-	Propietario = models.CharField(max_length = 50, validators = [NAME_Validator], verbose_name="Nombre del Propietario")
-	Nombre = models.CharField(max_length = 50, verbose_name="Nombre del Estacionamiento")
-	Direccion = models.TextField(max_length = 120, verbose_name="Dirección")
+	Propietario = models.CharField(max_length = 50, validators = [NAME_Validator], verbose_name="")
+	Nombre = models.CharField(max_length = 50, verbose_name="")
+	Direccion = models.TextField(max_length = 120, verbose_name="")
 
-	Telefono_1 = models.CharField(blank = True, null = True, max_length = 30, validators = [PHONE_Validator], verbose_name="Teléfono 1")
-	Telefono_2 = models.CharField(blank = True, null = True, max_length = 30, validators = [PHONE_Validator], verbose_name="Teléfono 2")
-	Telefono_3 = models.CharField(blank = True, null = True, max_length = 30, validators = [PHONE_Validator], verbose_name="Teléfono 3")
+	Telefono_1 = models.CharField(blank = True, null = True, max_length = 30, validators = [PHONE_Validator], verbose_name="")
+	Telefono_2 = models.CharField(blank = True, null = True, max_length = 30, validators = [PHONE_Validator], verbose_name="")
+	Telefono_3 = models.CharField(blank = True, null = True, max_length = 30, validators = [PHONE_Validator], verbose_name="")
 
-	Email_1 = models.EmailField(blank = True, null = True, verbose_name="Email 1")
-	Email_2 = models.EmailField(blank = True, null = True, verbose_name="Email 2")
+	Email_1 = models.EmailField(blank = True, null = True, verbose_name="")
+	Email_2 = models.EmailField(blank = True, null = True, verbose_name="")
 
-	Rif = models.CharField(max_length = 12, validators = [RIF_Validator], verbose_name="RIF")
+	Rif = models.CharField(max_length = 12, validators = [RIF_Validator], verbose_name="")
 	
-	Apertura = models.TimeField(blank = True, null = True, verbose_name="Horario de Apertura")
-	Cierre = models.TimeField(blank = True, null = True, verbose_name="Horario de Cierre")
+	Apertura = models.TimeField(blank = True, null = True, verbose_name="")
+	Cierre = models.TimeField(blank = True, null = True, verbose_name="")
 	
-	NroPuesto = models.PositiveIntegerField(blank = True, null = True, verbose_name="Número de Puestos")
+	NroPuesto = models.PositiveIntegerField(blank = True, null = True, verbose_name="")
 
 	def __str__(self):
 		return "Estacionamiento " + self.Nombre
