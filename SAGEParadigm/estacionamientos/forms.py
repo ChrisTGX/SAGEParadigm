@@ -5,7 +5,6 @@ from django.forms import ModelForm, DateInput
 from estacionamientos.models import Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado,\
     PROVCRED_Choices, SCHEME_Choices
 from django.forms.widgets import TextInput, Select
-from logging import PlaceHolder
 
 
 class EstacionamientoForm(ModelForm):
