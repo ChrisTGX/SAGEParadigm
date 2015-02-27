@@ -46,7 +46,6 @@ class Tarifa:
 			minsini += 1
 			
 		horas_completas = ((estadia.days*24*60) + (estadia.seconds // 60) - mins_pico) // 60
-		#horas_completas = max(horas_completas, 0)
 		horas_pico = mins_pico // 60
 		fraccion_pico = int(mins_pico % 60)
 		fraccion_hora = ((estadia.seconds // 60) - (horas_pico*60 + fraccion_pico)) % 60
