@@ -155,8 +155,6 @@ def validarHorarioReserva(ReservaInicio, ReservaFin, HorarioApertura, HorarioCie
 		return (False, 'La hora de inicio de la reserva debe ser menor a la hora de fin')
 	if ReservaFin - ReservaInicio < datetime.timedelta(0, 3600):
 		return (False, 'El tiempo de la reserva debe ser al menos de 1 hora')
-	if ReservaFin - ReservaInicio > datetime.timedelta(7):
-		return (False, 'El tiempo de la reserva debe ser a lo sumo de 7 días')
 	if ReservaInicio.date() < today.date():
 		return (False, 'La fecha de inicio de la reserva no puede ser anterior al día actual')
 	if ReservaFin.date() > nextweek.date():
@@ -165,5 +163,17 @@ def validarHorarioReserva(ReservaInicio, ReservaFin, HorarioApertura, HorarioCie
 		return (False, 'El horario de fin de la reserva debe estar en un horario válido')
 	if ReservaInicio.time() < HorarioApertura:
 		return (False, 'El horario de inicio de la reserva debe estar en un horario válido')
+	
+	if HorarioApertura <= HorarioCierre: dia = 1
+	else: dia = 2
+	hora1 = datetime.datetime(1,1,1,HorarioApertura.hour,HorarioApertura.minute)
+	hora2 = datetime.datetime(1,1,dia,HorarioCierre.hour,HorarioCierre.minute) + datetime.timedelta(0,60)
+	tiempoFuncionamiento = (hora2 - hora1)
+	if tiempoFuncionamiento.days == 1 and tiempoFuncionamiento.seconds == 0: # Funciona las 24 horas
+		if ReservaFin - ReservaInicio > datetime.timedelta(7):
+			return (False, 'El tiempo de la reserva en un estacionamiento abierto las 24 horas debe ser a lo sumo de 7 días')
+	else:
+		if ReservaFin.date() != ReservaInicio.date():
+			return (False, 'El tiempo de la reserva está fuera del horario de funcionamiento del estacionamiento')
+	
 	return (True, '')
-
