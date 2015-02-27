@@ -17,7 +17,6 @@ class EstacionamientoExtendedForm(ModelForm):
     class Meta:
         model = Estacionamiento
         fields = ['NroPuesto', 'Apertura', 'Cierre']
-#                   'Esquema_tarifario', 'HoraPicoInicio', 'HoraPicoFin', 'Tarifa', 'TarifaPico']
 
 
 
