@@ -1,0 +1,9 @@
+.LV_valid {
+    color:rgba(0, 180, 0, 0.75);
+}
+.LV_invalid {
+    color:rgba(240, 0, 0, 0.75);
+}
+.LV_validation_message{
+    margin:0 0 0 2px;
+}
