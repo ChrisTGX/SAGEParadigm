@@ -2,8 +2,9 @@
 
 #from django import forms
 from django.forms import ModelForm, DateInput
-from estacionamientos.models import Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado
-from django.forms.widgets import TextInput
+from estacionamientos.models import Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado,\
+    PROVCRED_Choices
+from django.forms.widgets import TextInput, Select
 
 
 class EstacionamientoForm(ModelForm):
@@ -77,5 +78,20 @@ class PagarReservaForm(ModelForm):
     class Meta:
         model = Pago
         fields = ['NroTarjeta', 'ProveedorCred', 'CedulaTitular', 'NombreTitular']
+        
+        PROVCRED_Choices = [("Vista", "Vista"),
+                    ("Mister", "Mister"),
+                    ("Xpres", "Xpres")]
+        
+        widgets = {
+            'ProveedorCred': Select(choices=PROVCRED_Choices, 
+                                    attrs={'class':'form-control'}),
+            'NroTarjeta': DateInput(attrs={'class':'form-control',
+                                          'placeholder': 'Ej: 1111-2222-3333-4444'}),
+            'CedulaTitular': TextInput(attrs={'class':'form-control',
+                                          'placeholder': 'Ej: V-12345678'}),
+            'NombreTitular': TextInput(attrs={'class':'form-control',
+                                          'placeholder': 'Ej: Pedro Pérez'}),
+        }
 
 

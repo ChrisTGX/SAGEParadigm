@@ -222,7 +222,7 @@
               {% endfor %}
               
               <!-- Form EsquemaTarifario -->
-              {% for field in formEsquem %}
+              <!--{% for field in formEsquem %}
                 <div class="control-group">
                   <div class="controls">
                   	{% if field.name == "TipoEsquema" %}
@@ -248,7 +248,8 @@
                     {{ field.errors }}
                   </div>
                 </div> 
-              {% endfor %}
+              {% endfor %}->>
+              {{formEsquem}}
               
               <!-- Form EsquemaDiferenciado -->
               {% for field in formDifer %}

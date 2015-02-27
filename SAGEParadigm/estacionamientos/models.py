@@ -45,9 +45,9 @@ PROVCRED_Choices = [("Vista", "Vista"),
 # Models
 
 class Estacionamiento(models.Model):
-	Propietario = models.CharField(max_length = 50, validators = [NAME_Validator], verbose_name="Nombre del Propietario")
+	Propietario = models.CharField(max_length = 50, help_text = "Nombre del Propietario", validators = [NAME_Validator], verbose_name="Nombre del Propietario")
 	Nombre = models.CharField(max_length = 50, verbose_name="Nombre del Estacionamiento")
-	Direccion = models.CharField(max_length = 120, verbose_name="Dirección")
+	Direccion = models.TextField(max_length = 120, verbose_name="Dirección")
 
 	Telefono_1 = models.CharField(blank = True, null = True, max_length = 30, validators = [PHONE_Validator], verbose_name="Teléfono 1")
 	Telefono_2 = models.CharField(blank = True, null = True, max_length = 30, validators = [PHONE_Validator], verbose_name="Teléfono 2")
@@ -80,8 +80,8 @@ class EsquemaTarifario(models.Model):
 	
 class EsquemaDiferenciado(models.Model):
 	EsquemaTarifario = models.ForeignKey(EsquemaTarifario, primary_key = True, unique = True, editable = False)
-	HoraPicoInicio = models.TimeField(blank = True, null = True, verbose_name="Inicio de Hora Pico")
-	HoraPicoFin = models.TimeField(blank = True, null = True, verbose_name="Fin de Hora Pico")
+	HoraPicoInicio = models.DateField(blank = True, null = True, verbose_name="Inicio de Hora Pico")
+	HoraPicoFin = models.DateField(blank = True, null = True, verbose_name="Fin de Hora Pico")
 	TarifaPico = models.DecimalField(max_digits=6, decimal_places=2, blank = True, null = True, verbose_name="Tarifa de Hora Pico")
 
 	def __str__(self):

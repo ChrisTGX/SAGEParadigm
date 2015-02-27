@@ -89,7 +89,7 @@
 			<p>
 			<form action="./pagar_reserva" method="post" class="form form-vertical">
                 {% csrf_token %}
-                {% for field in form %}
+                <!--{% for field in form %}
                 	<div class="control-group">
 	                  <div class="controls">
 	                  	<label id="labelid_{{field.name}}" style="color:#777777;">{{field.label}}</label>
@@ -105,7 +105,8 @@
 	                    {{ field.errors }}
 	                  </div>
 	                </div> 
-                {% endfor %}
+                {% endfor %}-->
+                {{form}}
                 
 				<div class="control-group">
                   <label>
