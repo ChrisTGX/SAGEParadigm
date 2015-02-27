@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 # Archivo con funciones de control para SAGE
+import math
 import datetime
 from decimal import Decimal
 
 
 class Tarifa:
+	
 	def __init__(self, esquema, diferenciado):
 		self.esquema = esquema
 		self.diferenciado = diferenciado
+		self.tarifa = Decimal(self.esquema.Tarifa)
 		if esquema.TipoEsquema == "1":
 			self.costoFraccionHora = self._costoFraccionHoraEsquema1
 		elif esquema.TipoEsquema == "2":
@@ -15,50 +18,81 @@ class Tarifa:
 		elif esquema.TipoEsquema == "3":
 			self.costoFraccionHora = self._costoFraccionHoraEsquema3
 		elif esquema.TipoEsquema == "4":
-			self.costoFraccionHora = self._costoFraccionHoraEsquema4
+			self.costoFraccionHora = self._costoFraccionHoraEsquema4Pico
+			self.calcularCosto = self._calcularCostoEsquema4
+			self.tarifaPico = Decimal(self.diferenciado.TarifaPico)
+			self.horapico_inicio = self.diferenciado.HoraPicoInicio
+			self.horapico_fin = self.diferenciado.HoraPicoFin
 	
 	def _calcularEstadia(self, hora_entrada, hora_salida):
 		estadia = hora_salida - hora_entrada
 		horas_completas = (estadia.days*24) + (estadia.seconds // 3600)
 		fraccion_hora = int(int(estadia.seconds%3600)/60) 
 		return horas_completas, fraccion_hora
+	
+	def _calcularEstadiaEsquema4(self, hora_entrada, hora_salida):
+		estadia = hora_salida - hora_entrada
+		mins_pico = 0
+		for minsini in range((estadia).seconds // 60):
+			if (hora_entrada + datetime.timedelta(0,minsini*60)).time() == self.horapico_inicio:
+				minsfin = 1
+				minssig = (hora_entrada + datetime.timedelta(0,minsini*60) + datetime.timedelta(0,minsfin*60)).time()
+				while minssig <= self.horapico_fin and minssig <= hora_salida.time():
+					mins_pico += 1
+					minsfin += 1
+		horas_completas = (estadia.days*24) + (estadia.seconds // 3600) - math.ceil(mins_pico / 60)
+		horas_pico = mins_pico // 60
+		fraccion_hora = int(int(estadia.seconds%3600)/60)
+		fraccion_pico = int(mins_pico % 60)
+		return horas_completas, horas_pico, fraccion_hora, fraccion_pico
 
-	def _costoHorasCompletas(self, horas,tarifa):
-		return Decimal(horas) * Decimal(tarifa)
+	def _costoHorasCompletas(self, horas):
+		return Decimal(horas) * self.tarifa
+	
+	def _costoHorasCompletasPico(self, horas_pico):
+		return Decimal(horas_pico) * self.tarifaPico 
 	
 	################## Esquemas ####################
 	
 	# Esquema tarifario 1
-	def _costoFraccionHoraEsquema1(self, fraccion, tarifa):
+	def _costoFraccionHoraEsquema1(self, fraccion):
 		if fraccion == 0: return 0
-		return Decimal(tarifa)
+		return Decimal(self.tarifa)
 	
 	# Esquema tarifario 2
-	def _costoFraccionHoraEsquema2(self, fraccion, tarifa):
+	def _costoFraccionHoraEsquema2(self, fraccion):
 		if fraccion == 0: return 0
 		else :
-			if fraccion <= 30: return Decimal(tarifa) / Decimal(2)
-			return Decimal(tarifa)
+			if fraccion <= 30: return Decimal(self.tarifa) / Decimal(2)
+			return Decimal(self.tarifa)
 	
 	# Esquema tarifario 3
-	def _costoFraccionHoraEsquema3(self, fraccion, tarifa):
+	def _costoFraccionHoraEsquema3(self, fraccion):
 		if fraccion == 0: return Decimal(0)
-		return Decimal(fraccion) * (Decimal(tarifa) / Decimal(60))
+		return Decimal(fraccion) * (Decimal(self.tarifa) / Decimal(60))
 	
 	# Esquema tarifario 4
-	def _costoFraccionHoraEsquema4(self, fraccion, tarifa):
-		pass
+	def _costoFraccionHoraEsquema4Pico(self, fraccion_pico):
+		if fraccion_pico == 0: return Decimal(0)
+		return Decimal(fraccion_pico) * (Decimal(self.tarifaPico) / Decimal(60))
 	
 	#######################################################
 	
 	def costoFraccionHora(self, fraccion, tarifa):
 		pass
 	
+	def _calcularCostoEsquema4(self, inicio_reserva, final_reserva):
+		horas_completas,horas_pico,fraccion_hora,fraccion_pico = self._calcularEstadiaEsquema4(inicio_reserva, final_reserva)
+		total = Decimal(self._costoHorasCompletas(horas_completas))
+		total += Decimal(self._costoHorasCompletasPico(horas_pico))
+		total += Decimal(self._costoFraccionHoraEsquema3(fraccion_hora))
+		total += Decimal(self._costoFraccionHoraEsquema4Pico(fraccion_pico))
+		return total
+	
 	def calcularCosto(self, inicio_reserva, final_reserva):
-		tarifa = Decimal(self.esquema.Tarifa)
 		horas_completas,fraccion_hora = self._calcularEstadia(inicio_reserva, final_reserva)
-		total = self._costoHorasCompletas(horas_completas, tarifa)
-		total += self.costoFraccionHora(fraccion_hora, tarifa)
+		total = Decimal(self._costoHorasCompletas(horas_completas))
+		total += Decimal(self.costoFraccionHora(fraccion_hora))
 		return total
 		
 	
