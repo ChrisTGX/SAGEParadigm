@@ -353,7 +353,7 @@ def print_report(request):
                  str(context_global['pago'].CedulaTitular))
     y = y - 30
     p.drawString(x, y, 'Total pagado: ' + 
-                 str(context_global['pago'].Monto))
+                 str(context_global['pago'].Monto.quantize(Decimal('0.01'))))
     y = y - 30
     p.drawString(x, y, 'Proveedor de crédito: ' + 
                  str(context_global['pago'].ProveedorCred))

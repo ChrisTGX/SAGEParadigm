@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 #from django import forms
-from django.forms import ModelForm, DateInput, BooleanField
+from django.forms import ModelForm, DateInput
 from estacionamientos.models import Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado,\
     PROVCRED_Choices, SCHEME_Choices
-from django.forms.widgets import TextInput, Select, CheckboxInput
+from django.forms.widgets import TextInput, Select
 
 
 class EstacionamientoForm(ModelForm):
@@ -83,9 +83,11 @@ class EstacionamientoReserva(ModelForm):
         fields = ['FechaInicio', 'HoraInicio', 'FechaFinal', 'HoraFinal']
         widgets = {
             'FechaInicio': DateInput(attrs={'class':'datepicker form-control fields_margin',
-                                            'placeholder': 'Fecha inicial de reserva'}),
+                                            'placeholder': 'Fecha inicial de reserva',
+                                            'readonly':'readonly'}),
             'FechaFinal': DateInput(attrs={'class':'datepicker form-control fields_margin',
-                                           'placeholder': 'Fecha final de reserva'}),
+                                           'placeholder': 'Fecha final de reserva',
+                                           'readonly':'readonly'}),
             'HoraInicio': TextInput(attrs={'class':'form-control fields_margin',
                                            'placeholder': 'Hora inicial de reserva'}),
             'HoraFinal': TextInput(attrs={'class':'form-control fields_margin',
@@ -102,7 +104,7 @@ class PagarReservaForm(ModelForm):
             'ProveedorCred': Select(choices=PROVCRED_Choices, 
                                     attrs={'class':'form-control fields_margin'}),
             'NroTarjeta': DateInput(attrs={'class':'form-control fields_margin',
-                                           'placeholder': 'Tarjeta de Crédito (Ej: 1111-2222-3333-4444)'}),
+                                           'placeholder': 'Tarjeta de Crédito (Ej: 1111222233334444)'}),
             'CedulaTitular': TextInput(attrs={'class':'form-control fields_margin',
                                               'placeholder': 'Cédula Titular (Ej: V-12345678)'}),
             'NombreTitular': TextInput(attrs={'class':'form-control fields_margin',
