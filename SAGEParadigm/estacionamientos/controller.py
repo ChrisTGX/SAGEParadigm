@@ -33,17 +33,27 @@ class Tarifa:
 	def _calcularEstadiaEsquema4(self, hora_entrada, hora_salida):
 		estadia = hora_salida - hora_entrada
 		mins_pico = 0
-		for minsini in range((estadia).seconds // 60):
-			if (hora_entrada + datetime.timedelta(0,minsini*60)).time() == self.horapico_inicio:
+		minsini = 0
+		while minsini in range((estadia).seconds // 60):
+			print("IF: ",(hora_entrada + datetime.timedelta(0,minsini*60)).time(), self.horapico_inicio)
+				
+			if (hora_entrada + datetime.timedelta(0,minsini*60)).time() == self.horapico_inicio\
+				or self.horapico_inicio < (hora_entrada + datetime.timedelta(0,minsini*60)).time() < self.horapico_fin:
 				minsfin = 1
-				minssig = (hora_entrada + datetime.timedelta(0,minsini*60) + datetime.timedelta(0,minsfin*60)).time()
-				while minssig <= self.horapico_fin and minssig <= hora_salida.time():
+				while (hora_entrada + datetime.timedelta(0,minsini*60) + datetime.timedelta(0,minsfin*60)).time() <= self.horapico_fin\
+				 and (hora_entrada + datetime.timedelta(0,minsini*60) + datetime.timedelta(0,minsfin*60)).time() <= hora_salida.time():
+					print((hora_entrada + datetime.timedelta(0,minsini*60) + datetime.timedelta(0,minsfin*60)).time(),self.horapico_fin,hora_salida.time())
 					mins_pico += 1
 					minsfin += 1
-		horas_completas = (estadia.days*24) + (estadia.seconds // 3600) - math.ceil(mins_pico / 60)
+				minsini = minsini + minsfin
+			minsini += 1
+			
+		horas_completas = ((estadia.days*24*60) + (estadia.seconds // 60) - mins_pico) // 60
+		#horas_completas = max(horas_completas, 0)
 		horas_pico = mins_pico // 60
-		fraccion_hora = int(int(estadia.seconds%3600)/60)
 		fraccion_pico = int(mins_pico % 60)
+		fraccion_hora = ((estadia.seconds // 60) - (horas_pico*60 + fraccion_pico)) % 60
+		print(mins_pico, horas_completas, horas_pico, fraccion_hora, fraccion_pico)
 		return horas_completas, horas_pico, fraccion_hora, fraccion_pico
 
 	def _costoHorasCompletas(self, horas):
@@ -83,6 +93,7 @@ class Tarifa:
 	
 	def _calcularCostoEsquema4(self, inicio_reserva, final_reserva):
 		horas_completas,horas_pico,fraccion_hora,fraccion_pico = self._calcularEstadiaEsquema4(inicio_reserva, final_reserva)
+		print("AQUI")
 		total = Decimal(self._costoHorasCompletas(horas_completas))
 		total += Decimal(self._costoHorasCompletasPico(horas_pico))
 		total += Decimal(self._costoFraccionHoraEsquema3(fraccion_hora))

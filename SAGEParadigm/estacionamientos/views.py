@@ -157,8 +157,11 @@ def estacionamiento_detail(request, _id):
                     diferenciado.save()
                     
                     diferenciado = EsquemaDiferenciado.objects.get(EsquemaTarifario = esquema)
-                    formDifer = EsquemaDiferenciadoForm(instance = diferenciado)
+                    fields_initialDifer = {'TarifaPico': diferenciado.TarifaPico}
+                    if diferenciado.HoraPicoInicio: fields_initialDifer['HoraPicoInicio'] = diferenciado.HoraPicoInicio.strftime('%H:%M')
+                    if diferenciado.HoraPicoFin: fields_initialDifer['HoraPicoFin'] = diferenciado.HoraPicoFin.strftime('%H:%M')
                     
+                    formDifer = EsquemaDiferenciadoForm(initial = fields_initialDifer)
                 else:
                     if diferenciado: diferenciado.delete()
                     formDifer = None
