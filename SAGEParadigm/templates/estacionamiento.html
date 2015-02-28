@@ -263,7 +263,7 @@
                                                 { pattern: /^\d?\d:\d\d$/,
                                                   failureMessage: time_format_message });
         new LiveValidation('id_Tarifa').add(Validate.Format, 
-                                                { pattern: /^\d+([.,]\d{1,2})?$/,
+                                                { pattern: /^\d{1,4}([.,]\d{1,2})?$/,
                                                   failureMessage: "Debe ser un número con máximo 2 decimales y máximo 4 dígitos en su parte entera." });
         new LiveValidation('id_HoraPicoInicio').add(Validate.Format, 
                                                 { pattern: /^\d?\d:\d\d$/, 
