@@ -82,6 +82,10 @@ def estacionamientos_all(request):
                                 Email_1 = formProp.cleaned_data['Email_1'],
                                 Email_2 = formProp.cleaned_data['Email_2'],
                             )
+                        
+                        prop.save()
+                
+                prop = Propietario.objects.get(Rif = formProp.cleaned_data['Rif'])
                 
                 if not obj:
                     obj = Estacionamiento(
@@ -104,6 +108,8 @@ def estacionamientos_all(request):
                 
                 # Recargamos los estacionamientos ya que acabamos de agregar
                 estacionamientos = Estacionamiento.objects.all()
+                formProp = PropietarioForm()
+                formEst = EstacionamientoForm()
     # Si no es un POST es un GET, y mandamos un formulario vacio
     else:
         formProp = PropietarioForm()
