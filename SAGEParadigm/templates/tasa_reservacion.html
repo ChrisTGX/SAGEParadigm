@@ -83,7 +83,9 @@
 		  <ul class="nav nav-tabs" role="tablist">
 		    {% for ocup in ocupacion %}
 		    	{% if ocup.id == 0 %}
-		    	<li role="presentation" class="active"><a href="#{{ocup.id}}" aria-controls="{{ocup.id}}" role="tab" data-toggle="tab">{{ocup.dia}}</a></li>
+		    	<li role="presentation" class="active"><a href="#{{ocup.id}}" aria-controls="{{ocup.id}}" role="tab" data-toggle="tab">Hoy</a></li>
+		    	{% elif ocup.id == 1 %}
+		    	<li role="presentation"><a href="#{{ocup.id}}" aria-controls="{{ocup.id}}" role="tab" data-toggle="tab">Mañana</a></li>
 		    	{% else %}
 		    	<li role="presentation"><a href="#{{ocup.id}}" aria-controls="{{ocup.id}}" role="tab" data-toggle="tab">{{ocup.dia}}</a></li>
 		    	{% endif %}
