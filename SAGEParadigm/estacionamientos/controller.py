@@ -194,7 +194,6 @@ def tasaReservacion(sources, num_puestos):
 		diasIni = (elem[0] - today.date()).days
 		diasFin = (elem[2] - today.date()).days
 		tasa_reser.append([diasIni*10000 + elem[1].hour*100 + elem[1].minute, diasFin*10000 + elem[3].hour*100 + elem[3].minute])
-	tasa_reser = sorted(tasa_reser)
 	
 	reser_active_per_minute = [0]*(7*10000 + 24*100)
 	for elem in tasa_reser:
