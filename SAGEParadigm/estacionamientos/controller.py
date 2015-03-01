@@ -167,6 +167,12 @@ def AceptarReservacion(inicio, final, capacidad, sources):
 
 	tabla = ordenar(tabla)
 	
+	####### TASA RESERVACION #######
+	
+	tasaReservacion(sources, 10)
+	
+	################################
+	
 	best,beststart,bestend = viabilidadReservacion(tabla, inicio, final)
 	
 	if best < capacidad: 
@@ -178,6 +184,42 @@ def AceptarReservacion(inicio, final, capacidad, sources):
 		else:
 			return True
 	return False
+
+
+def tasaReservacion(sources, num_puestos):
+	today = datetime.datetime.today()
+	tasa_reser = []
+	
+	for elem in sources:
+		diasIni = (elem[0] - today.date()).days
+		diasFin = (elem[2] - today.date()).days
+		tasa_reser.append([diasIni*10000 + elem[1].hour*100 + elem[1].minute, diasFin*10000 + elem[3].hour*100 + elem[3].minute])
+	tasa_reser = sorted(tasa_reser)
+	
+	reser_active_per_minute = [0]*(7*10000 + 24*100)
+	for elem in tasa_reser:
+		reser_set = set(range(elem[1])) - set(range(elem[0]))
+		for time in reser_set:
+			minute = time % 100
+			if minute <= 59:
+				hour = (time % 10000 - minute)
+				day = (time - hour - minute)
+				reser_active_per_minute[day + hour + minute] += 1
+				
+	occupation_rate = [0]*(7*24)
+	for day in range(7):
+		for hour in range(24):
+			occupation_rate[day*24 + hour] = Decimal(sum(reser_active_per_minute[(day*10000 + hour*100):(day*10000 + hour*100 + 60)]) / Decimal(60*num_puestos) * Decimal(100)).quantize(Decimal('.01'))
+	
+	### QUITAR:
+	horaActual = 0
+	for hour in range(len(occupation_rate)):
+		if occupation_rate[hour] != 0:
+			print("TASA RESERVACION DIA " + str((today + datetime.timedelta(horaActual // 24)).date()) + ", HORA " + str(horaActual % 24) + ": " + str(occupation_rate[hour]) + "%")
+		horaActual += 1
+	###
+	
+	return occupation_rate
 
 
 def HorarioEstacionamiento(HoraInicio, HoraFin):

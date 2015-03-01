@@ -311,6 +311,38 @@ def pagar_reserva(request, context = None):
                           {'form':form})
 
 
+def tasa_reservacion(request, _id):
+    _id = int(_id)
+    
+    try:
+        estacion = Estacionamiento.objects.get(id = _id)
+        esquema = EsquemaTarifario.objects.get(Estacionamiento = estacion)
+    except ObjectDoesNotExist:
+        return render(request, '404.html')
+    
+    if request.method == 'GET':
+        
+        sources = Reserva.objects.filter(Estacionamiento = estacion).values_list('FechaInicio', 'HoraInicio','FechaFinal', 'HoraFinal','Puesto')
+        ocupacion = tasaReservacion(sources, estacion.NroPuesto)
+        
+        class TempOcup:
+            def __init__(self, id, horas, dia):
+                self.id = id
+                self.horas = horas
+                self.dia = dia
+                
+        template_ocupacion = []
+        today = datetime.datetime.today()
+        for dia in range(7):
+            ocupActual = TempOcup(dia, ocupacion[(dia*24):(dia*24 + 24)], (today + datetime.timedelta(dia)).date().strftime('%a %d/%m'))
+            template_ocupacion.append(ocupActual)
+            
+        
+        return render(request,
+                      'tasa_reservacion.html',
+                      {'estacionamiento': estacion, 'esquema': esquema, 'ocupacion': template_ocupacion})
+        
+
 
 # View to print payment receipts (model Pago)
 def print_report(request):
@@ -320,8 +352,8 @@ def print_report(request):
         for i in range(318):
             p.drawString(x-20, y-i-11, '|')
             p.drawString(x+500, y-i-11, '|')
-                     
-                     
+                       
+                       
     global context_global
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="ReportePago' + \
@@ -367,6 +399,7 @@ def print_report(request):
     p.showPage()
     p.save()
     return response
+    pass
 
 
 
