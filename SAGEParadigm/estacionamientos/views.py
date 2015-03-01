@@ -346,16 +346,17 @@ def tasa_reservacion(request, _id):
         
 
 def login(request, user):
-    form = LoginForm()
-    if request.method == 'GET':
-        return render(request, 
-                      'templateLogin.html',
-                      {'user': user, 'form': form})
-        
-    elif request.method == 'POST':
+    
+    if request.method == 'POST':
+        print("AQUI EN POST")
         form = LoginForm(request.POST)
         if form.is_valid():
             pass
+    else:
+        form = LoginForm()
+    
+    print("AQUI EN " + str(request.method).upper())
+    return render(request, 'templateLogin.html', {'user': user, 'form': form})
 
 
 # View to print payment receipts (model Pago)

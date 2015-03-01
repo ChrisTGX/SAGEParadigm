@@ -74,23 +74,14 @@
     	<br>
     	
     	<div class="col-sm-4">
-			<form action="../" method="post" class="form form-vertical">
+			<form action="." method="post" class="form form-vertical">
 				{% csrf_token %}
-				{% if user == "owner" %}
-					<div class="{{form.fields.ID_Usuario}}">
-						<label for="id_user">RIF</label>
-						<input type="text" class="form-control" id="{{form.fields.ID_Usuario}}" placeholder="RIF (Ej: J-12345678-9)">
-					</div>
-				{% else %}
-					<div class="form-group">
-						<label for="{{form.fields.ID_Usuario}}">Cédula</label>
-						<input type="text" class="form-control" id="{{form.fields.ID_Usuario}}" placeholder="Cédula (Ej: V-12345678)">
-					</div>
-				{% endif %}
-		        {{form.fields.ID_Usuario.errors}}
-		        <div class="form-group">
+				
+		        <div class="control-group">
+		       	  <label>
+		       	  </label>
 		          <div class="controls">
-		            <button type="submit" class="btn btn-default">
+		            <button type="submit" class="btn btn-primary">
 		              Entrar
 		            </button>
 		          </div>
