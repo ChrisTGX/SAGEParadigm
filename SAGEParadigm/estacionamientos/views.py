@@ -341,7 +341,7 @@ def tasa_reservacion(request, _id):
             
         
         return render(request,
-                      'tasa_reservacion.html',
+                      'tasaReservacion.html',
                       {'estacionamiento': estacion, 'esquema': esquema, 'ocupacion': template_ocupacion})
         
 
