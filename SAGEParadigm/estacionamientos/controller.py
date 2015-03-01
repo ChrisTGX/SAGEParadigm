@@ -211,14 +211,6 @@ def tasaReservacion(sources, num_puestos):
 		for hour in range(24):
 			occupation_rate[day*24 + hour] = Decimal(sum(reser_active_per_minute[(day*10000 + hour*100):(day*10000 + hour*100 + 60)]) / Decimal(60*num_puestos) * Decimal(100)).quantize(Decimal('.01'))
 	
-	### QUITAR:
-	horaActual = 0
-	for hour in range(len(occupation_rate)):
-		if occupation_rate[hour] != 0:
-			print("TASA RESERVACION DIA " + str((today + datetime.timedelta(horaActual // 24)).date()) + ", HORA " + str(horaActual % 24) + ": " + str(occupation_rate[hour]) + "%")
-		horaActual += 1
-	###
-	
 	return occupation_rate
 
 
