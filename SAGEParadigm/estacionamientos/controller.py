@@ -50,8 +50,6 @@ class Tarifa:
 		fraccion_pico = int(mins_pico % 60)
 		fraccion_hora = ((estadia.seconds // 60) - (horas_pico*60 + fraccion_pico)) % 60
 		
-		print(mins_pico, horas_completas, horas_pico, fraccion_hora, fraccion_pico)
-		
 		return horas_completas, horas_pico, fraccion_hora, fraccion_pico
 
 	def _costoHorasCompletas(self, horas):

@@ -137,13 +137,7 @@ def estacionamiento_detail(request, _id):
         fields_initialParam = {'NroPuesto': estacion.NroPuesto}
         if estacion.Apertura: fields_initialParam['Apertura'] = estacion.Apertura.strftime('%H:%M')
         if estacion.Cierre: fields_initialParam['Cierre'] = estacion.Cierre.strftime('%H:%M')
-        
-        
-        print(estacion.Propietario.NombreProp)
-        print(estacion.Propietario.Rif)
-        print(estacion.Propietario.Telefono_1)
-        
-        
+            
         formParam = EstacionamientoExtendedForm(initial = fields_initialParam)
 
         formEsquem = EsquemaTarifarioForm(instance = esquema)
