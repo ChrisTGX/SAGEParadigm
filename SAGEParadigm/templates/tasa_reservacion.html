@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load chart_tags %}
 <!DOCTYPE html>
 <html lang="es"><head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -149,10 +150,51 @@
 							    	{% endfor %}
 				    			</tbody>
 				    		</table>
+						    <div class="row">
+							  <div class="col-md-4 col-md-offset-8">
+							  	<a type="button" class="btn btd-default" data-toggle="modal" data-target="#chartModal{{ocup.id}}"><i class="fa fa-line-chart"></i> Ver gráfico</a>
+						    	<p>
+						    	
+						    	
+						    	
+						    	<!-- Modal -->
+								<div class="modal fade" id="chartModal{{ocup.id}}" tabindex="-1" role="dialog" aria-labelledby="chartModelLabel{{ocup.id}}" aria-hidden="true">
+								  <div class="modal-dialog">
+								    <div class="modal-content">
+								      <div class="modal-header">
+								        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								        <h4 class="modal-title" id="chartModalLabel{{ocup.id}}">Gráfico de la tasa de reservación de {{ocup.dia}}</h4>
+								      </div>
+								      <div class="modal-body">
+										{% chart %}
+										     chxr=0,0,100,1,0,23
+										     chxt=x,x,y,y
+										     chxl=1:|Hora+Inicial|3:|Porcentaje
+										     chxp=1,50|3,50
+										     chbh=a
+										     chs=520x220
+										     cht=bvs
+										     chco=4D89F9
+										     chds=0,100
+										     chd=t:{{ ocup.horas|join:',' }}
+										{% endchart %}
+								      </div>
+								      <div class="modal-footer">
+								        <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+								      </div>
+								    </div>
+								  </div>
+								</div>
+						    	
+						    	
+						    	
+							  </div>
+							</div>
 						</div> <!-- column 2 -->
 					</div> <!-- row -->
 		    	</div>
 		    {% endfor %}
+		    <p>
 		  </div>
 		
 		</div> <!-- tabpanel -->

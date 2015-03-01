@@ -30,6 +30,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
+    'chart_tools',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
