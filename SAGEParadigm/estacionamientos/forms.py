@@ -84,6 +84,14 @@ class EsquemaDiferenciadoForm(ModelForm):
                                                   'placeholder': 'Tarifa Pico (Ej: 100)'}),
                   }
         
+class EsquemaDiferenciadoFdsForm(ModelForm):
+    class Meta:
+        model = EsquemaDiferenciado
+        fields = ['TarifaPico']
+        widgets = {
+                   'TarifaPico': TextInput(attrs={'class':'form-control fields_margin',
+                                                  'placeholder': 'Tarifa Fin de Semana (Ej: 200)'}),
+                  }
 
 
 class EstacionamientoReservaForm(ModelForm):

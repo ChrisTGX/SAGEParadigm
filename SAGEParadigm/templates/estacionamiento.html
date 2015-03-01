@@ -169,6 +169,8 @@
         		Por minuto
         	{% elif esquema.TipoEsquema == "4" %}
         		Diferenciado por hora
+          {% elif esquema.TipoEsquema == "5" %}
+            Diferenciado por fin de semana
         	{% endif %}
         </td></tr>
       {% endif %}
@@ -178,6 +180,10 @@
       {% endif %}
       {% if diferenciado.TarifaPico and esquema.TipoEsquema == "4" %}
         <tr><td><b><i class="fa fa-money"></i></i> Tarifa de Hora Pico:</b></td></tr>
+        <tr><td>{{diferenciado.TarifaPico}} Bsf.</td></tr>
+      {% endif %}
+      {% if diferenciado.TarifaPico and esquema.TipoEsquema == "5" %}
+        <tr><td><b><i class="fa fa-money"></i></i> Tarifa de Fin de Semana:</b></td></tr>
         <tr><td>{{diferenciado.TarifaPico}} Bsf.</td></tr>
       {% endif %}
       

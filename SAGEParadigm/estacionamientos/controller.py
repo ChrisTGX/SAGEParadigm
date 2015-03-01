@@ -23,6 +23,14 @@ class Tarifa:
 			self.tarifaPico = Decimal(self.diferenciado.TarifaPico)
 			self.horapico_inicio = self.diferenciado.HoraPicoInicio
 			self.horapico_fin = self.diferenciado.HoraPicoFin
+		elif esquema.TipoEsquema == "5":
+			self.costoFraccionHora = self._costoFraccionHoraEsquema2
+			self.costoTotal = self.calcularCosto
+			self.calcularCosto = self._calcularCostoEsquema5
+			self.tarifaFDS = Decimal(self.diferenciado.TarifaPico)
+
+	def setTarifa(self, tarifa):
+		self.tarifa = Decimal(tarifa)
 	
 	def _calcularEstadia(self, hora_entrada, hora_salida):
 		estadia = hora_salida - hora_entrada
@@ -95,6 +103,13 @@ class Tarifa:
 		total += Decimal(self._costoFraccionHoraEsquema4Pico(fraccion_pico))
 		return total
 	
+	def _calcularCostoEsquema5(self, inicio_reserva, final_reserva):
+		if inicio_reserva.weekday() in range(4,7) and final_reserva.weekday() in range(4,7):
+			self.setTarifa(self.tarifaFDS)
+		if (inicio_reserva.weekday() in range(4) and final_reserva.weekday() in range(4,7)) or (inicio_reserva.weekday() in range(4,7) and final_reserva.weekday() in range(4)):
+			self.setTarifa(max(self.tarifa, self.tarifaFDS))
+		return self.costoTotal(inicio_reserva, final_reserva)
+		
 	def calcularCosto(self, inicio_reserva, final_reserva):
 		horas_completas,fraccion_hora = self._calcularEstadia(inicio_reserva, final_reserva)
 		total = Decimal(self._costoHorasCompletas(horas_completas))

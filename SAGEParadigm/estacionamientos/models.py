@@ -35,7 +35,8 @@ PHONE_Validator = RegexValidator(
 SCHEME_Choices = [("1", "Por hora"),
 					("2", "Por hora y fracción"),
 					("3", "Por minuto"),
-					("4", "Diferenciado por hora")]
+					("4", "Diferenciado por hora"),
+					("5", "Diferenciado por fin de semana"),]
 
 PROVCRED_Choices = [("Vista", "Vista"),
 					("Mister", "Mister"),

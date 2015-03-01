@@ -8,7 +8,7 @@ from django.shortcuts import render
 from estacionamientos.controller import *
 from estacionamientos.forms import EstacionamientoExtendedForm, LoginForm, EstacionamientoForm,\
                                     PagarReservaForm, EstacionamientoReservaForm, EsquemaTarifarioForm,\
-                                    EsquemaDiferenciadoForm, PropietarioForm
+                                    EsquemaDiferenciadoForm, PropietarioForm, EsquemaDiferenciadoFdsForm
 from estacionamientos.models import Propietario, Estacionamiento, Reserva, Pago, EsquemaTarifario,\
                                     EsquemaDiferenciado
 from django.http.response import HttpResponse
@@ -142,14 +142,15 @@ def estacionamiento_detail(request, _id):
 
         formEsquem = EsquemaTarifarioForm(instance = esquema)
         
-        if esquema.TipoEsquema == "4":
+        if esquema.TipoEsquema == "4" or esquema.TipoEsquema == "5":
             diferenciado = EsquemaDiferenciado.objects.get(EsquemaTarifario = esquema)
             
             fields_initialDifer = {'TarifaPico': diferenciado.TarifaPico}
             if diferenciado.HoraPicoInicio: fields_initialDifer['HoraPicoInicio'] = diferenciado.HoraPicoInicio.strftime('%H:%M')
             if diferenciado.HoraPicoFin: fields_initialDifer['HoraPicoFin'] = diferenciado.HoraPicoFin.strftime('%H:%M')
             
-            formDifer = EsquemaDiferenciadoForm(initial = fields_initialDifer)
+            if esquema.TipoEsquema == "4": formDifer = EsquemaDiferenciadoForm(initial = fields_initialDifer)
+            if esquema.TipoEsquema == "5": formDifer = EsquemaDiferenciadoFdsForm(initial = fields_initialDifer)
         else:
             diferenciado = None
             formDifer = None
@@ -158,9 +159,10 @@ def estacionamiento_detail(request, _id):
         # Leemos el formulario
         formParam = EstacionamientoExtendedForm(request.POST)
         formEsquem = EsquemaTarifarioForm(request.POST)
-        if esquema.TipoEsquema == "4":
+        if esquema.TipoEsquema == "4" or esquema.TipoEsquema == "5":
             diferenciado = EsquemaDiferenciado.objects.get(EsquemaTarifario = esquema)
-            formDifer = EsquemaDiferenciadoForm(request.POST)
+            if esquema.TipoEsquema == "4": formDifer = EsquemaDiferenciadoForm(request.POST)
+            if esquema.TipoEsquema == "5": formDifer = EsquemaDiferenciadoFdsForm(request.POST)
         else:
             diferenciado = None
             formDifer = None
@@ -199,12 +201,16 @@ def estacionamiento_detail(request, _id):
                                
                 esquema.save()
                 
-                if formEsquem.cleaned_data['TipoEsquema'] == "4":
+                if formEsquem.cleaned_data['TipoEsquema'] == "4" or formEsquem.cleaned_data['TipoEsquema'] == "5":
                     esquema = EsquemaTarifario.objects.get(Estacionamiento = estacion)
                     
                     if diferenciado:
-                        diferenciado.HoraPicoInicio = formDifer.cleaned_data['HoraPicoInicio']
-                        diferenciado.HoraPicoFin = formDifer.cleaned_data['HoraPicoFin']
+                        if formEsquem.cleaned_data['TipoEsquema'] == "4":
+                            diferenciado.HoraPicoInicio = formDifer.cleaned_data['HoraPicoInicio']
+                            diferenciado.HoraPicoFin = formDifer.cleaned_data['HoraPicoFin']
+                        if formEsquem.cleaned_data['TipoEsquema'] == "5":
+                            diferenciado.HoraPicoInicio = None
+                            diferenciado.HoraPicoFin = None
                         diferenciado.TarifaPico = formDifer.cleaned_data['TarifaPico']
                     else:
                         diferenciado = EsquemaDiferenciado(
@@ -217,7 +223,8 @@ def estacionamiento_detail(request, _id):
                     if diferenciado.HoraPicoInicio: fields_initialDifer['HoraPicoInicio'] = diferenciado.HoraPicoInicio.strftime('%H:%M')
                     if diferenciado.HoraPicoFin: fields_initialDifer['HoraPicoFin'] = diferenciado.HoraPicoFin.strftime('%H:%M')
                     
-                    formDifer = EsquemaDiferenciadoForm(initial = fields_initialDifer)
+                    if formEsquem.cleaned_data['TipoEsquema'] == "4": formDifer = EsquemaDiferenciadoForm(initial = fields_initialDifer)
+                    if formEsquem.cleaned_data['TipoEsquema'] == "5": formDifer = EsquemaDiferenciadoFdsForm(initial = fields_initialDifer)
                 else:
                     if diferenciado: diferenciado.delete()
                     formDifer = None
@@ -243,7 +250,7 @@ def estacionamiento_reserva(request, _id):
     except ObjectDoesNotExist:
         return render(request, '404.html')
     
-    if esquema.TipoEsquema == "4":
+    if esquema.TipoEsquema == "4" or esquema.TipoEsquema == "5":
         diferenciado = EsquemaDiferenciado.objects.get(EsquemaTarifario = esquema)
     else:
         diferenciado = None
