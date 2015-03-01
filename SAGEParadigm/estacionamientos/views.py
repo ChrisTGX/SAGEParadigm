@@ -465,8 +465,9 @@ def login(request, template):
                         reserva = pago.ID_Pago
                         reservas.append(reserva)
                         info_user = pago
+                        
+                    reservas = ordernarPorFechaHora(reservas)
                     
-            
             if not invalid_ID:
                 request.method = "GET"
                 if user == "owner": return render(request, 'ingresos.html', {'user': user, 'info_user': info_user, 'estIngresos': estIngresos, 'totalFinal': totalFinal})

@@ -71,12 +71,14 @@
     	
     	<h4>Introduzca la siguiente información que se le solicita para continuar:</h4>
     	
-    	{% if form.errors or invalid_ID %}
-		    {% if user == "owner" %}
-		    	<p style="color: red;">Número de RIF incorrecto. Por favor, intente de nuevo.</p>
-		   	{% else %}
-		   		<p style="color: red;">Número de cédula incorrecto. Por favor, intente de nuevo.</p>
-		   	{% endif %}
+    	{% if user == "owner" and form.errors %}
+		    <p style="color: red;">Número de RIF incorrecto. Por favor, intente de nuevo.</p>
+		{% elif user == "owner" and invalid_ID %}
+			<p style="color: red;">Usted no se encuentra registrado como propietario en el sistema.<p>
+		{% elif user == "client" and form.errors %}
+		   	<p style="color: red;">Número de cédula incorrecto. Por favor, intente de nuevo.</p>
+		{% elif user == "client" and invalid_ID %}
+			<p style="color: red;">Usted no posee reservaciones registradas.<p>
 		{% endif %}
 		
     	<br>

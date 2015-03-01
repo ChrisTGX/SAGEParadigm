@@ -124,6 +124,12 @@ def ordenar(tabla):
 	
 	return sorted(tabla, key = obtenerClave)
 
+def ordernarPorFechaHora(reservas):
+	def obtenerClave(item):
+		return item.FechaInicio,item.HoraInicio
+	
+	return sorted(reservas, key = obtenerClave)
+
 
 def solapamientoEnRangoReserva(inicio_reserva,fin_reserva,inicio,fin):
 	reserva_range = range(inicio_reserva,fin_reserva)

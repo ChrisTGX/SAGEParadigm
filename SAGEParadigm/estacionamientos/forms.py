@@ -6,6 +6,7 @@ from django.forms import ModelForm, DateInput
 from estacionamientos.models import Propietario, Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado,\
     PROVCRED_Choices, SCHEME_Choices
 from django.forms.widgets import TextInput, Select
+from django.core.validators import RegexValidator
 
 
 class PropietarioForm(ModelForm):
@@ -122,6 +123,10 @@ class PagarReservaForm(ModelForm):
 
 
 class LoginForm(forms.Form):
-    ID_Usuario = forms.CharField(max_length=12, required = True)
+    ID_Usuario = forms.CharField(max_length=12, required = True,
+                                 validators = [RegexValidator(
+                                                regex = '^[JjVvDd]-?\d{8}-?\d?$', 
+                                                message = 'Introduzca un RIF o Cédula con un formato válido.'
+                                                )])
     
     
