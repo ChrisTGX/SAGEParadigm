@@ -34,12 +34,12 @@ class Tarifa:
 		estadia = hora_salida - hora_entrada
 		mins_pico = 0
 		minsini = 0
-		while minsini in range((estadia).seconds // 60):
+		while minsini in range((estadia).days*24*60 + (estadia).seconds//60):
 			if (hora_entrada + datetime.timedelta(0,minsini*60)).time() == self.horapico_inicio\
 				or self.horapico_inicio < (hora_entrada + datetime.timedelta(0,minsini*60)).time() < self.horapico_fin:
 				minsfin = 1
 				while (hora_entrada + datetime.timedelta(0,minsini*60) + datetime.timedelta(0,minsfin*60)).time() <= self.horapico_fin\
-				 and (hora_entrada + datetime.timedelta(0,minsini*60) + datetime.timedelta(0,minsfin*60)).time() <= hora_salida.time():
+				 and (hora_entrada + datetime.timedelta(0,minsini*60) + datetime.timedelta(0,minsfin*60)) <= hora_salida:
 					mins_pico += 1
 					minsfin += 1
 				minsini = minsini + minsfin
@@ -49,6 +49,9 @@ class Tarifa:
 		horas_pico = mins_pico // 60
 		fraccion_pico = int(mins_pico % 60)
 		fraccion_hora = ((estadia.seconds // 60) - (horas_pico*60 + fraccion_pico)) % 60
+		
+		print(mins_pico, horas_completas, horas_pico, fraccion_hora, fraccion_pico)
+		
 		return horas_completas, horas_pico, fraccion_hora, fraccion_pico
 
 	def _costoHorasCompletas(self, horas):
