@@ -54,7 +54,7 @@ class Propietario(models.Model):
 	Email_1 = models.EmailField(blank = True, null = True, verbose_name="")
 	Email_2 = models.EmailField(blank = True, null = True, verbose_name="")
 
-	Rif = models.CharField(max_length = 12, primary_key = True, validators = [RIF_Validator], verbose_name="")
+	Rif = models.CharField(max_length = 12, validators = [RIF_Validator], verbose_name="")
 
 	def __str__(self):
 		return "Propietario " + self.NombreProp + " | " + self.Rif

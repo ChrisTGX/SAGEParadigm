@@ -36,13 +36,13 @@ def estacionamientos_all(request):
             # estacionamientos a 5
             if len(estacionamientos) >= 5:
                     return render(request, 'templateMensaje.html',
-                                  {'color':'red', 'mensaje':'No se pueden agregar más estacionamientos'})
+                                  {'color':'red', 'mensaje':'No se pueden agregar más estacionamientos', 'url': '.'})
 
             # Si el formulario es valido, entonces creamos un objeto con
             # el constructor del modelo
             if formProp.is_valid() and formEst.is_valid():
-                prop = Propietario.objects.filter(Rif = formProp.cleaned_data['Rif'])
-                if not prop or prop.Nombre == formProp.cleaned_data['NombreProp']:
+                try:
+                    prop = Propietario.objects.get(Rif = formProp.cleaned_data['Rif'])
                     if not prop:
                         prop = Propietario(
                             NombreProp = formProp.cleaned_data['NombreProp'],
@@ -53,37 +53,54 @@ def estacionamientos_all(request):
                             Email_1 = formProp.cleaned_data['Email_1'],
                             Email_2 = formProp.cleaned_data['Email_2'],
                         )
-                    else:
+                    elif prop.NombreProp == formProp.cleaned_data['NombreProp']:
                         prop.Telefono_1 = formProp.cleaned_data['Telefono_1']
                         prop.Telefono_2 = formProp.cleaned_data['Telefono_2']
                         prop.Telefono_3 = formProp.cleaned_data['Telefono_3']
                         prop.Email_1 = formProp.cleaned_data['Email_1']
                         prop.Email_2 = formProp.cleaned_data['Email_2']
-                    
+                    elif prop.NombreProp != formProp.cleaned_data['NombreProp']:
+                        request.method = 'GET'
+                        return render(request, 'templateMensaje.html', 
+                                      {'mensaje': 'El propietario ya existe y no coincide el nombre introducido con su RIF.',
+                                       'color': 'red',
+                                       'url': '.'})
+                        
                     prop.save()
                     
                     obj = Estacionamiento.objects.filter(Nombre = formEst.cleaned_data['Nombre'])
                     
-                    prop = Propietario.objects.get(Rif = formProp.cleaned_data['Rif'])
-                    
+                except ObjectDoesNotExist:
+                    obj = Estacionamiento.objects.filter(Nombre = formEst.cleaned_data['Nombre'])
                     if not obj:
-                        obj = Estacionamiento(
-                            Propietario = prop,
-                            Nombre = formEst.cleaned_data['Nombre'],
-                            Direccion = formEst.cleaned_data['Direccion'],
-                        )       
-                                 
-                        obj.save()
-                        
-                        objEsquem = EsquemaTarifario(
-                                Estacionamiento = obj
-                        )
-                        objEsquem.save()
-                    else:                 
-                        pass ## Error: Ya existe el estacionamiento
-                else:
-                    pass ## Error: No coincide el Nombre del propietario con su Rif
-
+                        prop = Propietario(
+                                NombreProp = formProp.cleaned_data['NombreProp'],
+                                Rif = formProp.cleaned_data['Rif'],
+                                Telefono_1 = formProp.cleaned_data['Telefono_1'],
+                                Telefono_2 = formProp.cleaned_data['Telefono_2'],
+                                Telefono_3 = formProp.cleaned_data['Telefono_3'],
+                                Email_1 = formProp.cleaned_data['Email_1'],
+                                Email_2 = formProp.cleaned_data['Email_2'],
+                            )
+                
+                if not obj:
+                    obj = Estacionamiento(
+                        Propietario = prop,
+                        Nombre = formEst.cleaned_data['Nombre'],
+                        Direccion = formEst.cleaned_data['Direccion'],
+                    )       
+                             
+                    obj.save()
+                    
+                    objEsquem = EsquemaTarifario(
+                            Estacionamiento = obj
+                    )
+                    objEsquem.save()
+                else:                 
+                    return render(request, 'templateMensaje.html', 
+                                  {'mensaje': 'Ya existe un estacionamiento con ese nombre.',
+                                   'color': 'red',
+                                   'url': '.'})
                 
                 # Recargamos los estacionamientos ya que acabamos de agregar
                 estacionamientos = Estacionamiento.objects.all()
@@ -162,13 +179,14 @@ def estacionamiento_detail(request, _id):
                     
                     m_validado = HorarioEstacionamiento(hora_in, hora_out)
                     if not m_validado[0]:
-                        return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1]})
+                        return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1], 'url': './'})
                 
                 elif ('Apertura' in formParam.changed_data or 
                     'Cierre' in formParam.changed_data):
                     return render(request, 'templateMensaje.html', 
                                   {'color':'red', 
-                                   'mensaje': 'Deben especificarse juntos los horarios de Apertura y Cierre.'})
+                                   'mensaje': 'Deben especificarse juntos los horarios de Apertura y Cierre.',
+                                   'url': './'})
                 
                 if 'NroPuesto' in formParam.changed_data: estacion.NroPuesto = formParam.cleaned_data['NroPuesto']
                                 
@@ -268,7 +286,7 @@ def estacionamiento_reserva(request, _id):
 
             # Si no es valido devolvemos el request
             if not m_validado[0]:
-                return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1]})
+                return render(request, 'templateMensaje.html', {'color':'red', 'mensaje': m_validado[1], 'url': './reserva'})
 
             # Si esta en un rango valido, procedemos a buscar en la lista
             # el lugar a insertar
@@ -297,7 +315,8 @@ def estacionamiento_reserva(request, _id):
                 return render(request, 
                               'templateMensaje.html', 
                               {'color':'red', 
-                               'mensaje':'No hay un puesto disponible para ese horario'})
+                               'mensaje':'No hay un puesto disponible para ese horario',
+                               'url': './reserva'})
     else:
         form = EstacionamientoReservaForm()
 
@@ -395,6 +414,14 @@ def login(request, template):
     
     invalid_ID = False
     info_user = None
+    estacionamientos = None
+    
+    
+    class Ingreso:
+        def __init__(self, estacionamiento, ingresos):
+            self.estacionamiento = estacionamiento
+            self.ingresos = ingresos
+    
     
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -403,8 +430,24 @@ def login(request, template):
                 try:
                     prop = Propietario.objects.get(Rif = form.cleaned_data['ID_Usuario'])
                     info_user = prop
+                    estIngresos = []
+                    estacionamientos = Estacionamiento.objects.filter(Propietario = prop)
+                    totalFinal = Decimal(0)
+                    for estacion in estacionamientos:
+                        reservas = Reserva.objects.filter(Estacionamiento = estacion)
+                        totalIngresos = Decimal(0)
+                        if reservas:
+                            for reser in reservas:
+                                pago = Pago.objects.get(ID_Pago = reser)
+                                totalIngresos += Decimal(pago.Monto)
+                        totalIngresos = Decimal(totalIngresos).quantize(Decimal('.01'))
+                        totalFinal += totalIngresos
+                        ing = Ingreso(estacion.Nombre, totalIngresos)
+                        estIngresos.append(ing)
+                        
                 except ObjectDoesNotExist:
                     invalid_ID = True
+                
                 
             else:
                 pagos = Pago.objects.filter(CedulaTitular = form.cleaned_data['ID_Usuario'])
@@ -420,7 +463,7 @@ def login(request, template):
             
             if not invalid_ID:
                 request.method = "GET"
-                if user == "owner": return render(request, 'ingresos.html', {'user': user, 'info_user': info_user})
+                if user == "owner": return render(request, 'ingresos.html', {'user': user, 'info_user': info_user, 'estIngresos': estIngresos, 'totalFinal': totalFinal})
                 else: return render(request, 'misReservaciones.html', {'user': user, 'info_user': info_user, 'reservas': reservas})
             
     else:
