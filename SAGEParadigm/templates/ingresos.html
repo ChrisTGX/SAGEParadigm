@@ -67,6 +67,21 @@
     	
    		<h4> Nombre del Propietario: {{info_user.NombreProp}}</h4>
    		<h4> RIF: {{info_user.Rif}}</h4>
+   		
+   		<hr>
+   		
+   		<table class="table table-striped">
+			<thead>
+				<tr><th></th><th>Nombre del Estacionamiento</th><th>Ingresos Totales (BsF.)</th></tr>
+			</thead>
+			<tbody>
+				{% for estIng in estIngresos %}
+					<tr><td>{{forloop.counter}}</td><td>{{estIng.estacionamiento}}</td><td>{{estIng.ingresos}}</td></tr>
+				{% endfor %}
+				<tr><th></th><th></th><th>Total: BsF. {{totalFinal}}</th></tr>
+			</tbody>
+		</table>
+   		
 
     </div>
     
