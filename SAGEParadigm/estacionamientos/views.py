@@ -11,7 +11,7 @@ from estacionamientos.forms import EstacionamientoReserva
 from estacionamientos.forms import EsquemaTarifarioForm, EsquemaDiferenciadoForm
 from estacionamientos.models import Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado
 from django.http.response import HttpResponse
-#from reportlab.pdfgen import canvas
+from reportlab.pdfgen import canvas
 
 
 listaReserva = []
@@ -336,8 +336,7 @@ def tasa_reservacion(request, _id):
         for dia in range(7):
             ocupActual = TempOcup(dia, ocupacion[(dia*24):(dia*24 + 24)], (today + datetime.timedelta(dia)).date().strftime('%a %d/%m'))
             template_ocupacion.append(ocupActual)
-            print(template_ocupacion[dia].id, template_ocupacion[dia].dia, template_ocupacion[dia].horas)
-        
+            
         
         return render(request,
                       'tasa_reservacion.html',

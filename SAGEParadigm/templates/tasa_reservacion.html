@@ -82,14 +82,22 @@
 		  <!-- Nav tabs -->
 		  <ul class="nav nav-tabs" role="tablist">
 		    {% for ocup in ocupacion %}
+		    	{% if ocup.id == 0 %}
+		    	<li role="presentation" class="active"><a href="#{{ocup.id}}" aria-controls="{{ocup.id}}" role="tab" data-toggle="tab">{{ocup.dia}}</a></li>
+		    	{% else %}
 		    	<li role="presentation"><a href="#{{ocup.id}}" aria-controls="{{ocup.id}}" role="tab" data-toggle="tab">{{ocup.dia}}</a></li>
+		    	{% endif %}
 		  	{% endfor %}
 		  </ul>
 		
 		  <!-- Tab panes -->
 		  <div class="tab-content">
 		  	{% for ocup in ocupacion %}
-		    	<div role="tabpanel" class="tab-pane" id="{{ocup.id}}">
+		  		{% if ocup.id == 0 %}
+		  		<div role="tabpanel" class="tab-pane active" id="{{ocup.id}}">
+		  		{% else %}
+		  		<div role="tabpanel" class="tab-pane" id="{{ocup.id}}">
+		  		{% endif %}
 		    		<div class="row">
 						<div class="col-sm-6">
 							<table class="table table-striped">
