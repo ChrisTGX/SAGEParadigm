@@ -400,11 +400,12 @@ def login(request, template):
         form = LoginForm(request.POST)
         if form.is_valid():
             if user == "owner":
-                prop = Propietario.objects.get(Rif = form.cleaned_data['ID_Usuario'])
-                if not prop:
-                    invalid_ID = True
-                else:
+                try:
+                    prop = Propietario.objects.get(Rif = form.cleaned_data['ID_Usuario'])
                     info_user = prop
+                except ObjectDoesNotExist:
+                    invalid_ID = True
+                
             else:
                 pagos = Pago.objects.filter(CedulaTitular = form.cleaned_data['ID_Usuario'])
                 if not pagos:
@@ -412,22 +413,21 @@ def login(request, template):
                 else:
                     reservas = []
                     for pago in pagos:
-                        reserva = Reserva.objects.filter(id = pago.ID_Pago)
+                        reserva = pago.ID_Pago
                         reservas.append(reserva)
-                    info_user = reservas
+                        info_user = pago
                     
             
             if not invalid_ID:
                 request.method = "GET"
-                if user == "owner": return render(request, 'ingresos.html', {'user': user})
-                else: return render(request, 'misReservaciones.html', {'user', user})
+                if user == "owner": return render(request, 'ingresos.html', {'user': user, 'info_user': info_user})
+                else: return render(request, 'misReservaciones.html', {'user': user, 'info_user': info_user, 'reservas': reservas})
             
     else:
         form = LoginForm()
     
     return render(request, 'templateLogin.html', 
-                  {'user': user, 'form': form, 'info_user': info_user, 
-                   'url_form': url_form, 'invalid_ID': invalid_ID})
+                  {'user': user, 'form': form, 'url_form': url_form, 'invalid_ID': invalid_ID})
 
 
 def ingresos(request, context):
@@ -435,6 +435,12 @@ def ingresos(request, context):
         pass
     
     return render(request, 'ingresos.html')
+
+def reservaciones(request, context):
+    if request.method == "GET":
+        pass
+    
+    return render(request, 'misReservaciones.html')
 
 # View to print payment receipts (model Pago)
 def print_report(request):
