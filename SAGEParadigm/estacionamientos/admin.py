@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 from estacionamientos.models import Estacionamiento, Reserva, Pago,\
-    EsquemaTarifario, EsquemaDiferenciado
+    EsquemaTarifario, EsquemaDiferenciado, Propietario
 
 admin.site.register(Estacionamiento)
 
@@ -17,3 +17,4 @@ admin.site.register(Reserva, ReservaAdmin)
 
 admin.site.register(EsquemaTarifario)
 admin.site.register(EsquemaDiferenciado)
+admin.site.register(Propietario)

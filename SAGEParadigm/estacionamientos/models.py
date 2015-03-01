@@ -44,11 +44,9 @@ PROVCRED_Choices = [("Vista", "Vista"),
 
 # Models
 
-class Estacionamiento(models.Model):
-	Propietario = models.CharField(max_length = 50, validators = [NAME_Validator], verbose_name="")
-	Nombre = models.CharField(max_length = 50, verbose_name="")
-	Direccion = models.TextField(max_length = 120, verbose_name="")
-
+class Propietario(models.Model):
+	NombreProp = models.CharField(max_length = 50, validators = [NAME_Validator], verbose_name="")
+	
 	Telefono_1 = models.CharField(blank = True, null = True, max_length = 30, validators = [PHONE_Validator], verbose_name="")
 	Telefono_2 = models.CharField(blank = True, null = True, max_length = 30, validators = [PHONE_Validator], verbose_name="")
 	Telefono_3 = models.CharField(blank = True, null = True, max_length = 30, validators = [PHONE_Validator], verbose_name="")
@@ -56,8 +54,18 @@ class Estacionamiento(models.Model):
 	Email_1 = models.EmailField(blank = True, null = True, verbose_name="")
 	Email_2 = models.EmailField(blank = True, null = True, verbose_name="")
 
-	Rif = models.CharField(max_length = 12, validators = [RIF_Validator], verbose_name="")
+	Rif = models.CharField(max_length = 12, primary_key = True, validators = [RIF_Validator], verbose_name="")
+
+	def __str__(self):
+		return "Propietario " + self.NombreProp + " | " + self.Rif
 	
+
+
+class Estacionamiento(models.Model):
+	Propietario = models.ForeignKey(Propietario, editable = False)
+	Nombre = models.CharField(max_length = 50, verbose_name="")
+	Direccion = models.TextField(max_length = 120, verbose_name="")
+
 	Apertura = models.TimeField(blank = True, null = True, verbose_name="")
 	Cierre = models.TimeField(blank = True, null = True, verbose_name="")
 	
