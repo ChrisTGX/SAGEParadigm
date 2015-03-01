@@ -4,6 +4,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 import datetime
+import locale
 from estacionamientos.controller import *
 from estacionamientos.forms import EstacionamientoExtendedForm
 from estacionamientos.forms import EstacionamientoForm, PagarReservaForm
@@ -330,11 +331,12 @@ def tasa_reservacion(request, _id):
                 self.id = id
                 self.horas = horas
                 self.dia = dia
-                
+        
+        locale.setlocale(locale.LC_ALL, 'es_VE.UTF-8')
         template_ocupacion = []
         today = datetime.datetime.today()
         for dia in range(7):
-            ocupActual = TempOcup(dia, ocupacion[(dia*24):(dia*24 + 24)], (today + datetime.timedelta(dia)).date().strftime('%a %d/%m'))
+            ocupActual = TempOcup(dia, ocupacion[(dia*24):(dia*24 + 24)], (today + datetime.timedelta(dia)).date().strftime('%a %d/%m').capitalize())
             template_ocupacion.append(ocupActual)
             
         
