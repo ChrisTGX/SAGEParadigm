@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #from django import forms
+from django import forms
 from django.forms import ModelForm, DateInput
 from estacionamientos.models import Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado,\
     PROVCRED_Choices, SCHEME_Choices
@@ -112,3 +113,8 @@ class PagarReservaForm(ModelForm):
         }
 
 
+
+class LoginForm(forms.Form):
+    ID_Usuario = forms.CharField(max_length=12, required = True)
+    
+    

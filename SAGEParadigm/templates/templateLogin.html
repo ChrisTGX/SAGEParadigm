@@ -53,25 +53,52 @@
               </a>
             </li>
           </ul>
-
-          <br>
-          {% if estacionamiento.Cierre and estacionamiento.NroPuesto and esquema.TipoEsquema and esquema.Tarifa %}
-            <ul class="nav nav-stacked">
-              <li>
-                <a href="./reserva">
-                  <i class="fa fa-pencil-square-o"></i>
-                  Reservar
-                </a>
-              </li>
-            </ul>
-          {% endif %}
+          
       <hr>
       
     </div><!-- /span-3 -->
     
     
     <div class="col-sm-10">
-    
+    	
+    	{% if user == "owner" %}
+    		<h3>SAGE - Ingresos por Estacionamientos</h3>
+    	{% else %}
+    		<h3>SAGE - Mis Reservaciones</h3>
+    	{% endif %}
+    	
+    	<hr>
+    	
+    	<h4>Introduzca la información que se le solicita a continuación para continuar:</h4>
+    	
+    	<br>
+    	
+    	<div class="col-sm-4">
+			<form action="../" method="post" class="form form-vertical">
+				{% csrf_token %}
+				{% if user == "owner" %}
+					<div class="{{form.fields.ID_Usuario}}">
+						<label for="id_user">RIF</label>
+						<input type="text" class="form-control" id="{{form.fields.ID_Usuario}}" placeholder="RIF (Ej: J-12345678-9)">
+					</div>
+				{% else %}
+					<div class="form-group">
+						<label for="{{form.fields.ID_Usuario}}">Cédula</label>
+						<input type="text" class="form-control" id="{{form.fields.ID_Usuario}}" placeholder="Cédula (Ej: V-12345678)">
+					</div>
+				{% endif %}
+		        {{form.fields.ID_Usuario.errors}}
+		        <div class="form-group">
+		          <div class="controls">
+		            <button type="submit" class="btn btn-default">
+		              Entrar
+		            </button>
+		          </div>
+		        </div>
+		        
+		        
+			</form>
+    	</div> <!-- column1 -->
     </div>
     
     

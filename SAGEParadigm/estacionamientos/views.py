@@ -6,7 +6,7 @@ from django.shortcuts import render
 import datetime
 import locale
 from estacionamientos.controller import *
-from estacionamientos.forms import EstacionamientoExtendedForm
+from estacionamientos.forms import EstacionamientoExtendedForm, LoginForm
 from estacionamientos.forms import EstacionamientoForm, PagarReservaForm
 from estacionamientos.forms import EstacionamientoReserva
 from estacionamientos.forms import EsquemaTarifarioForm, EsquemaDiferenciadoForm
@@ -346,13 +346,16 @@ def tasa_reservacion(request, _id):
         
 
 def login(request, user):
+    form = LoginForm()
     if request.method == 'GET':
         return render(request, 
                       'templateLogin.html',
-                      {'user': user})
+                      {'user': user, 'form': form})
         
     elif request.method == 'POST':
-        pass
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            pass
 
 
 # View to print payment receipts (model Pago)
