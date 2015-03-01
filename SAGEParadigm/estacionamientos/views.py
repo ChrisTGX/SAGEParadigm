@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 
 #from django.core.urlresolvers import reverse
+import locale
+import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
-import datetime
-import locale
 from estacionamientos.controller import *
-from estacionamientos.forms import EstacionamientoExtendedForm, LoginForm
-from estacionamientos.forms import EstacionamientoForm, PagarReservaForm
-from estacionamientos.forms import EstacionamientoReserva
-from estacionamientos.forms import EsquemaTarifarioForm, EsquemaDiferenciadoForm
-from estacionamientos.models import Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado
+from estacionamientos.forms import EstacionamientoExtendedForm, LoginForm, EstacionamientoForm,\
+                                    PagarReservaForm, EstacionamientoReservaForm, EsquemaTarifarioForm,\
+                                    EsquemaDiferenciadoForm, PropietarioForm
+from estacionamientos.models import Propietario, Estacionamiento, Reserva, Pago, EsquemaTarifario,\
+                                    EsquemaDiferenciado
 from django.http.response import HttpResponse
 from reportlab.pdfgen import canvas
 
@@ -29,7 +29,8 @@ def estacionamientos_all(request):
     
     if request.method == 'POST':
             # Creamos un formulario con los datos que recibimos
-            form = EstacionamientoForm(request.POST)
+            formProp = PropietarioForm(request.POST)
+            formEst = EstacionamientoForm(request.POST)
 
             # Parte de la entrega era limitar la cantidad maxima de
             # estacionamientos a 5
@@ -39,31 +40,59 @@ def estacionamientos_all(request):
 
             # Si el formulario es valido, entonces creamos un objeto con
             # el constructor del modelo
-            if form.is_valid():
-                obj = Estacionamiento(
-                        Propietario = form.cleaned_data['Propietario'],
-                        Nombre = form.cleaned_data['Nombre'],
-                        Direccion = form.cleaned_data['Direccion'],
-                        Rif = form.cleaned_data['Rif'],
-                        Telefono_1 = form.cleaned_data['Telefono_1'],
-                        Telefono_2 = form.cleaned_data['Telefono_2'],
-                        Telefono_3 = form.cleaned_data['Telefono_3'],
-                        Email_1 = form.cleaned_data['Email_1'],
-                        Email_2 = form.cleaned_data['Email_2']
-                )
-                obj.save()
+            if formProp.is_valid() and formEst.is_valid():
+                prop = Propietario.objects.filter(Rif = formProp.cleaned_data['Rif'])
+                if not prop or prop.Nombre == formProp.cleaned_data['NombreProp']:
+                    if not prop:
+                        prop = Propietario(
+                            NombreProp = formProp.cleaned_data['NombreProp'],
+                            Rif = formProp.cleaned_data['Rif'],
+                            Telefono_1 = formProp.cleaned_data['Telefono_1'],
+                            Telefono_2 = formProp.cleaned_data['Telefono_2'],
+                            Telefono_3 = formProp.cleaned_data['Telefono_3'],
+                            Email_1 = formProp.cleaned_data['Email_1'],
+                            Email_2 = formProp.cleaned_data['Email_2'],
+                        )
+                    else:
+                        prop.Telefono_1 = formProp.cleaned_data['Telefono_1']
+                        prop.Telefono_2 = formProp.cleaned_data['Telefono_2']
+                        prop.Telefono_3 = formProp.cleaned_data['Telefono_3']
+                        prop.Email_1 = formProp.cleaned_data['Email_1']
+                        prop.Email_2 = formProp.cleaned_data['Email_2']
+                    
+                    prop.save()
+                    
+                    obj = Estacionamiento.objects.filter(Nombre = formEst.cleaned_data['Nombre'])
+                    
+                    prop = Propietario.objects.get(Rif = formProp.cleaned_data['Rif'])
+                    
+                    if not obj:
+                        obj = Estacionamiento(
+                            Propietario = prop,
+                            Nombre = formEst.cleaned_data['Nombre'],
+                            Direccion = formEst.cleaned_data['Direccion'],
+                        )       
+                                 
+                        obj.save()
+                        
+                        objEsquem = EsquemaTarifario(
+                                Estacionamiento = obj
+                        )
+                        objEsquem.save()
+                    else:                 
+                        pass ## Error: Ya existe el estacionamiento
+                else:
+                    pass ## Error: No coincide el Nombre del propietario con su Rif
+
                 
-                objEsquem = EsquemaTarifario(
-                        Estacionamiento = obj
-                )
-                objEsquem.save()
                 # Recargamos los estacionamientos ya que acabamos de agregar
                 estacionamientos = Estacionamiento.objects.all()
     # Si no es un POST es un GET, y mandamos un formulario vacio
     else:
-        form = EstacionamientoForm()
+        formProp = PropietarioForm()
+        formEst = EstacionamientoForm()
 
-    return render(request, 'base.html', {'form': form, 'estacionamientos': estacionamientos})
+    return render(request, 'base.html', {'formProp': formProp, 'formEst': formEst, 'estacionamientos': estacionamientos})
 
 
 
@@ -85,6 +114,12 @@ def estacionamiento_detail(request, _id):
         fields_initialParam = {'NroPuesto': estacion.NroPuesto}
         if estacion.Apertura: fields_initialParam['Apertura'] = estacion.Apertura.strftime('%H:%M')
         if estacion.Cierre: fields_initialParam['Cierre'] = estacion.Cierre.strftime('%H:%M')
+        
+        
+        print(estacion.Propietario.NombreProp)
+        print(estacion.Propietario.Rif)
+        print(estacion.Propietario.Telefono_1)
+        
         
         formParam = EstacionamientoExtendedForm(initial = fields_initialParam)
 
@@ -199,7 +234,7 @@ def estacionamiento_reserva(request, _id):
 
     # Si se hace un GET renderizamos los estacionamientos con su formulario
     if request.method == 'GET':
-        form = EstacionamientoReserva()
+        form = EstacionamientoReservaForm()
         return render(request, 
                       'estacionamientoReserva.html',
                       {'form': form, 
@@ -207,7 +242,7 @@ def estacionamiento_reserva(request, _id):
 
     # Si es un POST estan mandando un request
     elif request.method == 'POST':
-        form = EstacionamientoReserva(request.POST)
+        form = EstacionamientoReservaForm(request.POST)
         # Verificamos si es valido con los validadores del formulario
         if form.is_valid():
             # Inicio Reserva
@@ -264,7 +299,7 @@ def estacionamiento_reserva(request, _id):
                               {'color':'red', 
                                'mensaje':'No hay un puesto disponible para ese horario'})
     else:
-        form = EstacionamientoReserva()
+        form = EstacionamientoReservaForm()
 
     return render(request, 
                   'estacionamientoReserva.html', 
@@ -323,6 +358,11 @@ def tasa_reservacion(request, _id):
     
     if request.method == 'GET':
         
+        # Si aun no se ha parametrizado el estacionamiento, asignamos un NroPuesto arbitrariamente
+        # Este no se guardara
+        if not estacion.NroPuesto:
+            estacion.NroPuesto = 1
+            
         sources = Reserva.objects.filter(Estacionamiento = estacion).values_list('FechaInicio', 'HoraInicio','FechaFinal', 'HoraFinal','Puesto')
         ocupacion = tasaReservacion(sources, estacion.NroPuesto)
         
@@ -345,19 +385,56 @@ def tasa_reservacion(request, _id):
                       {'estacionamiento': estacion, 'esquema': esquema, 'ocupacion': template_ocupacion})
         
 
-def login(request, user):
+def login(request, template):
+    if template == "ingresos": 
+        user = "owner"
+        url_form = "./ingresos"
+    elif template == "reservaciones": 
+        user = "client"
+        url_form = "./reservaciones"
+    
+    invalid_ID = False
+    info_user = None
     
     if request.method == 'POST':
-        print("AQUI EN POST")
         form = LoginForm(request.POST)
         if form.is_valid():
-            pass
+            if user == "owner":
+                prop = Propietario.objects.get(Rif = form.cleaned_data['ID_Usuario'])
+                if not prop:
+                    invalid_ID = True
+                else:
+                    info_user = prop
+            else:
+                pagos = Pago.objects.filter(CedulaTitular = form.cleaned_data['ID_Usuario'])
+                if not pagos:
+                    invalid_ID = True
+                else:
+                    reservas = []
+                    for pago in pagos:
+                        reserva = Reserva.objects.filter(id = pago.ID_Pago)
+                        reservas.append(reserva)
+                    info_user = reservas
+                    
+            
+            if not invalid_ID:
+                request.method = "GET"
+                if user == "owner": return render(request, 'ingresos.html', {'user': user})
+                else: return render(request, 'misReservaciones.html', {'user', user})
+            
     else:
         form = LoginForm()
     
-    print("AQUI EN " + str(request.method).upper())
-    return render(request, 'templateLogin.html', {'user': user, 'form': form})
+    return render(request, 'templateLogin.html', 
+                  {'user': user, 'form': form, 'info_user': info_user, 
+                   'url_form': url_form, 'invalid_ID': invalid_ID})
 
+
+def ingresos(request, context):
+    if request.method == "GET":
+        pass
+    
+    return render(request, 'ingresos.html')
 
 # View to print payment receipts (model Pago)
 def print_report(request):

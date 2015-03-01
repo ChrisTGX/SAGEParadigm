@@ -69,14 +69,37 @@
     	
     	<hr>
     	
-    	<h4>Introduzca la información que se le solicita a continuación para continuar:</h4>
+    	<h4>Introduzca la siguiente información que se le solicita para continuar:</h4>
     	
+    	{% if form.errors or invalid_ID %}
+		    {% if user == "owner" %}
+		    	<p style="color: red;">Número de RIF incorrecto. Por favor, intente de nuevo.</p>
+		   	{% else %}
+		   		<p style="color: red;">Número de cédula incorrecto. Por favor, intente de nuevo.</p>
+		   	{% endif %}
+		{% endif %}
+		
     	<br>
     	
     	<div class="col-sm-4">
-			<form action="." method="post" class="form form-vertical">
+    		<form action="{{url_form}}" method="post" class="form form-vertical">
 				{% csrf_token %}
-				
+				{% for field in form %}
+	                <div class="control-group">
+	                  <div class="controls">
+	                  	{% if user == "owner" %}
+		                  	<label for="id_{{field.name}}">RIF</label>
+		                    <input type="text" class="form-control" name="{{field.name}}" placeholder="RIF (Ej: J-12345678-9)" for="id_{{field.name}}">
+	                    {% else %}
+	                  		<label for="id_{{field.name}}">Cédula</label>
+		                    <input type="text" class="form-control" name="{{field.name}}" placeholder="Cédula (Ej: V-12345678)" for="id_{{field.name}}">
+	                  	{% endif %}
+	                  	<p>
+	                  	{{ field.errors }}
+	                  </div>
+	                </div> 
+              	{% endfor %}
+              	
 		        <div class="control-group">
 		       	  <label>
 		       	  </label>
@@ -86,7 +109,6 @@
 		            </button>
 		          </div>
 		        </div>
-		        
 		        
 			</form>
     	</div> <!-- column1 -->

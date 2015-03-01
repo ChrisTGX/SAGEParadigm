@@ -88,39 +88,39 @@
 			<tr><td>{{estacionamiento.Nombre}}</td></tr>
 
 			<tr><td><b><i class="fa fa-user"></i> Nombre del Propietario:</b></td></tr>
-			<tr><td>{{estacionamiento.Propietario}}</td></tr>
+			<tr><td>{{estacionamiento.Propietario.NombreProp}}</td></tr>
 
 			<tr><td><b><i class="fa fa-home"></i> Dirección:</b></td></tr>
 			<tr><td>{{estacionamiento.Direccion}}</td></tr>
 
-			{% if estacionamiento.Telefono_1 %}
+			{% if estacionamiento.Propietario.Telefono_1 %}
 				<tr><td><b><i class="fa fa-phone"></i> Teléfono:</b></td></tr>
-				<tr><td>{{estacionamiento.Telefono_1}}</td></tr>
+				<tr><td>{{estacionamiento.Propietario.Telefono_1}}</td></tr>
 			{% endif %}
 
-			{% if estacionamiento.Telefono_2 %}
+			{% if estacionamiento.Propietario.Telefono_2 %}
 				<tr><td><b><i class="fa fa-phone"></i> Teléfono:</b></td></tr>
-				<tr><td>{{estacionamiento.Telefono_2}}</td></tr>
+				<tr><td>{{estacionamiento.Propietario.Telefono_2}}</td></tr>
 			{% endif %}
 
-			 {% if estacionamiento.Telefono_3 %}
+			 {% if estacionamiento.Propietario.Telefono_3 %}
 				<tr><td><b><i class="fa fa-phone"></i> Teléfono:</b></td></tr>
-				<tr><td>{{estacionamiento.Telefono_3}}</td></tr>
+				<tr><td>{{estacionamiento.Propietario.Telefono_3}}</td></tr>
 			{% endif %}
 
-			{% if estacionamiento.Email_1 %}
+			{% if estacionamiento.Propietario.Email_1 %}
 				<tr><td><b><i class="fa fa-at"></i> Correo Electrónico:</b></td></tr>
-				<tr><td>{{estacionamiento.Email_1}}</td></tr>
+				<tr><td>{{estacionamiento.Propietario.Email_1}}</td></tr>
 			{% endif %}
 
-			{% if estacionamiento.Email_2 %}
+			{% if estacionamiento.Propietario.Email_2 %}
 			<tr><td><b><i class="fa fa-at"></i> Correo Electrónico:</b></td></tr>
-			<tr><td>{{estacionamiento.Email_2}}</td></tr>
+			<tr><td>{{estacionamiento.Propietario.Email_2}}</td></tr>
 			{% endif %}
 
 
 			<tr><td><b><i class="fa fa-circle"></i> RIF:</b></td></tr>
-			<tr><td>{{estacionamiento.Rif}}</td></tr>
+			<tr><td>{{estacionamiento.Propietario.Rif}}</td></tr>
 			
 			
           

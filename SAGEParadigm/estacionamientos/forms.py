@@ -3,23 +3,18 @@
 #from django import forms
 from django import forms
 from django.forms import ModelForm, DateInput
-from estacionamientos.models import Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado,\
+from estacionamientos.models import Propietario, Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado,\
     PROVCRED_Choices, SCHEME_Choices
 from django.forms.widgets import TextInput, Select
 
 
-class EstacionamientoForm(ModelForm):
+class PropietarioForm(ModelForm):
     class Meta:
-        model = Estacionamiento
-        fields = ['Propietario', 'Nombre', 'Direccion', 'Telefono_1', 'Telefono_2', 'Telefono_3',
-                  'Email_1', 'Email_2', 'Rif']
+        model = Propietario
+        fields = ['NombreProp', 'Telefono_1', 'Telefono_2', 'Telefono_3', 'Email_1', 'Email_2', 'Rif']
         widgets = {
-            'Propietario': TextInput(attrs={'class':'form-control fields_margin',
-                                            'placeholder': 'Propietario (Ej: Pedro Pérez)'}),
-            'Nombre': TextInput(attrs={'class':'form-control fields_margin',
-                                       'placeholder': 'Nombre Estacionamiento (Ej: Bull)'}),
-            'Direccion': TextInput(attrs={'class':'form-control fields_margin',
-                                          'placeholder': 'Dirección (Ej: Av. Libertador, ...)'}),
+            'NombreProp': TextInput(attrs={'class':'form-control fields_margin',
+                                       'placeholder': 'Nombre Propietario (Ej: Pedro Pérez)'}),
             'Telefono_1': TextInput(attrs={'class':'form-control fields_margin',
                                            'placeholder': 'Teléfono 1 (Ej: 0424-1112233)'}),
             'Telefono_2': TextInput(attrs={'class':'form-control fields_margin',
@@ -32,6 +27,18 @@ class EstacionamientoForm(ModelForm):
                                         'placeholder': 'Email 2 (Ej: mail@dominio.com)'}),
             'Rif': TextInput(attrs={'class':'form-control fields_margin',
                                     'placeholder': 'RIF (Ej: V-123456789)'}),
+        }
+
+
+class EstacionamientoForm(ModelForm):
+    class Meta:
+        model = Estacionamiento
+        fields = ['Nombre', 'Direccion']
+        widgets = {
+            'Nombre': TextInput(attrs={'class':'form-control fields_margin',
+                                       'placeholder': 'Nombre Estacionamiento (Ej: Bull)'}),
+            'Direccion': TextInput(attrs={'class':'form-control fields_margin',
+                                          'placeholder': 'Dirección (Ej: Av. Libertador, ...)'}),
         }
 
 
@@ -78,7 +85,7 @@ class EsquemaDiferenciadoForm(ModelForm):
         
 
 
-class EstacionamientoReserva(ModelForm):
+class EstacionamientoReservaForm(ModelForm):
     class Meta:
         model = Reserva
         fields = ['FechaInicio', 'HoraInicio', 'FechaFinal', 'HoraFinal']
