@@ -345,6 +345,15 @@ def tasa_reservacion(request, _id):
                       {'estacionamiento': estacion, 'esquema': esquema, 'ocupacion': template_ocupacion})
         
 
+def login(request, user):
+    if request.method == 'GET':
+        return render(request, 
+                      'templateLogin.html',
+                      {'user': user})
+        
+    elif request.method == 'POST':
+        pass
+
 
 # View to print payment receipts (model Pago)
 def print_report(request):
