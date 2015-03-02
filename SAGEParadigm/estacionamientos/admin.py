@@ -15,6 +15,10 @@ class ReservaAdmin(admin.ModelAdmin):
 
 admin.site.register(Reserva, ReservaAdmin)
 
+class PropietarioAdmin(admin.ModelAdmin):
+    list_display = ['Rif', 'NombreProp', 'Telefono_1', 'Email_1']
+    
+admin.site.register(Propietario, PropietarioAdmin)
+
 admin.site.register(EsquemaTarifario)
 admin.site.register(EsquemaDiferenciado)
-admin.site.register(Propietario)
