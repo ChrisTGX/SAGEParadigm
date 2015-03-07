@@ -309,9 +309,8 @@ def estacionamiento_reserva(request, _id):
                                     HoraFinal = datetime.time(final_reserva.hour, final_reserva.minute),
                                     Pagada = False
                                 )
-
-                esquemaTar = Tarifa(esquema, diferenciado)
-                total = esquemaTar.calcularCosto(inicio_reserva, final_reserva)
+                
+                total = calcularCostoReserva(esquema, diferenciado, inicio_reserva, final_reserva)
                  
                 request.method = 'GET'
                 return pagar_reserva(request, 
