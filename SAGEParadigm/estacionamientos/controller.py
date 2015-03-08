@@ -60,13 +60,19 @@ class Diferenciado(Esquema):
 		self.horaPicoFin = horaPicoFin
 	
 	def _calcularEstadia(self, hora_entrada, hora_salida):
+		# Este algoritmo calcula la estadia en minutos, tanto de las horas normales
+		# como las horas pico, iterando por todos los minutos que dura la reserva
 		estadia = hora_salida - hora_entrada
 		mins_pico = 0
 		minsini = 0
+		
+		# Recorre los minutos de la reserva hasta que consigue y los va sumando al contador de minutos
 		while minsini in range((estadia).days*24*60 + (estadia).seconds//60):
 			if (hora_entrada + datetime.timedelta(0,minsini*60)).time() == self.horaPicoInicio\
 				or self.horaPicoInicio < (hora_entrada + datetime.timedelta(0,minsini*60)).time() < self.horaPicoFin:
 				minsfin = 1
+				# Cuando el minuto actual se encuentra entre el inicio y el final de una hora pico,
+				# ambos incluidos, suma dichos minutos al contador de minutos pico
 				while (hora_entrada + datetime.timedelta(0,minsini*60) + datetime.timedelta(0,minsfin*60)).time() <= self.horaPicoFin\
 				 and (hora_entrada + datetime.timedelta(0,minsini*60) + datetime.timedelta(0,minsfin*60)) <= hora_salida:
 					mins_pico += 1
