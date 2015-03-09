@@ -1,26 +1,23 @@
 # -*- coding: utf-8 -*-
 
-#from django.core.urlresolvers import reverse
 import locale
-import datetime
+from datetime import datetime
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
-from estacionamientos.controller import *
-from estacionamientos.forms import EstacionamientoExtendedForm, LoginForm, EstacionamientoForm,\
-                                    PagarReservaForm, EstacionamientoReservaForm, EsquemaTarifarioForm,\
-                                    EsquemaDiferenciadoForm, PropietarioForm, EsquemaDiferenciadoFdsForm
-from estacionamientos.models import Propietario, Estacionamiento, Reserva, Pago, EsquemaTarifario,\
-                                    EsquemaDiferenciado
 from django.http.response import HttpResponse
 from reportlab.pdfgen import canvas
 
+from estacionamientos.controller import *
+from estacionamientos.forms import *
+from estacionamientos.models import *
 
 listaReserva = []
 context_global = {}
 
 
-# Usamos esta vista para procesar todos los estacionamientos
 def estacionamientos_all(request):
+    # Usamos esta vista para procesar todos los estacionamientos
     global listaReserva
     listaReserva = []
     # Si se hace un POST a esta vista implica que se quiere agregar un nuevo
@@ -156,7 +153,7 @@ def estacionamiento_detail(request, _id):
             formDifer = None
         
     elif request.method == 'POST':
-        # Leemos el formulario
+        # Leemos los formularios
         formParam = EstacionamientoExtendedForm(request.POST)
         formEsquem = EsquemaTarifarioForm(request.POST)
         if esquema.TipoEsquema == "4" or esquema.TipoEsquema == "5":
@@ -167,7 +164,7 @@ def estacionamiento_detail(request, _id):
             diferenciado = None
             formDifer = None
             
-        # Si el formulario
+        # Determina si los 3 formularios son validos
         if formParam.is_valid() and formEsquem.is_valid() and (len(formParam.changed_data) > 0 or len(formEsquem.changed_data) > 0):
             if not formDifer or formDifer.is_valid():
                 if ('Apertura' in formParam.changed_data and 
@@ -240,7 +237,6 @@ def estacionamiento_detail(request, _id):
 
 
 
-
 def estacionamiento_reserva(request, _id):
     _id = int(_id)
     # Verificamos que el objeto exista antes de continuar
@@ -310,6 +306,7 @@ def estacionamiento_reserva(request, _id):
                                     Pagada = False
                                 )
                 
+                # Llama a la funcion del controller que escoge la estrategia a utilizar para el calculo
                 total = calcularCostoReserva(esquema, diferenciado, inicio_reserva, final_reserva)
                  
                 request.method = 'GET'
@@ -372,6 +369,7 @@ def pagar_reserva(request, context = None):
                           {'form':form})
 
 
+
 def tasa_reservacion(request, _id):
     _id = int(_id)
     
@@ -387,15 +385,18 @@ def tasa_reservacion(request, _id):
         # Este no se guardara
         if not estacion.NroPuesto:
             estacion.NroPuesto = 1
-            
+        
+        # Obtiene la lista de todas las reservaciones de ese estacionamiento y llama a tasaReservacion
         sources = Reserva.objects.filter(Estacionamiento = estacion).values_list('FechaInicio', 'HoraInicio','FechaFinal', 'HoraFinal','Puesto')
         ocupacion = tasaReservacion(sources, estacion.NroPuesto)
         
+        
         class TempOcup:
-            def __init__(self, id, horas, dia):
-                self.id = id
+            def __init__(self, Id, horas, dia):
+                self.Id = Id
                 self.horas = horas
                 self.dia = dia
+        
         
         locale.setlocale(locale.LC_ALL, 'es_VE.UTF-8')
         template_ocupacion = []
@@ -410,7 +411,9 @@ def tasa_reservacion(request, _id):
                       {'estacionamiento': estacion, 'esquema': esquema, 'ocupacion': template_ocupacion})
         
 
+
 def login(request, template):
+    # Determina el tipo de usuario dado el url accedido
     if template == "ingresos": 
         user = "owner"
         url_form = "./ingresos"
@@ -433,7 +436,11 @@ def login(request, template):
         form = LoginForm(request.POST)
         if form.is_valid():
             if user == "owner":
+                # Si el usuario es 'owner' entonces se estan solicitando los ingresos por estacionamiento.
                 try:
+                    # Se consulta en la base de datos todos los estacionamientos asociados al propietario
+                    # con el RIF dado y luego se suma el monto total de todas las reservaciones asociadas
+                    # a cada uno de los estacionamientos.
                     prop = Propietario.objects.get(Rif = form.cleaned_data['ID_Usuario'])
                     info_user = prop
                     estIngresos = []
@@ -456,6 +463,9 @@ def login(request, template):
                 
                 
             else:
+                # Si el usuario es 'client' entonces se estan solicitando las reservaciones del cliente.
+                # Se consulta en la base de datos los datos de las reservaciones asociadas a cada uno de
+                # los pagos realizados por el cliente con la Cedula dada.
                 pagos = Pago.objects.filter(CedulaTitular = form.cleaned_data['ID_Usuario'])
                 if not pagos:
                     invalid_ID = True
@@ -480,20 +490,9 @@ def login(request, template):
                   {'user': user, 'form': form, 'url_form': url_form, 'invalid_ID': invalid_ID})
 
 
-def ingresos(request, context):
-    if request.method == "GET":
-        pass
-    
-    return render(request, 'ingresos.html')
 
-def reservaciones(request, context):
-    if request.method == "GET":
-        pass
-    
-    return render(request, 'misReservaciones.html')
-
-# View to print payment receipts (model Pago)
 def print_report(request):
+    # Vista para imprimir los recibos de pago (model Pago)
     def draw_marquee(x, y):
         p.drawString(x-20, y, '_'*78)
         p.drawString(x-20, y-330, '_'*78)
@@ -548,15 +547,3 @@ def print_report(request):
     p.save()
     return response
     pass
-
-
-
-
-
-
-
-
-
-
-
-

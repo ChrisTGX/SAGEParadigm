@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-#from django import forms
 from django import forms
 from django.forms import ModelForm, DateInput
-from estacionamientos.models import Propietario, Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado,\
-    PROVCRED_Choices, SCHEME_Choices
 from django.forms.widgets import TextInput, Select
 from django.core.validators import RegexValidator
+
+from estacionamientos.models import Propietario, Estacionamiento, Reserva, Pago, EsquemaTarifario, EsquemaDiferenciado,\
+                                    PROVCRED_Choices, SCHEME_Choices
+
 
 
 class PropietarioForm(ModelForm):
@@ -31,6 +32,7 @@ class PropietarioForm(ModelForm):
         }
 
 
+
 class EstacionamientoForm(ModelForm):
     class Meta:
         model = Estacionamiento
@@ -41,6 +43,7 @@ class EstacionamientoForm(ModelForm):
             'Direccion': TextInput(attrs={'class':'form-control fields_margin',
                                           'placeholder': 'Dirección (Ej: Av. Libertador, ...)'}),
         }
+
 
 
 class EstacionamientoExtendedForm(ModelForm):
@@ -83,7 +86,9 @@ class EsquemaDiferenciadoForm(ModelForm):
                    'TarifaPico': TextInput(attrs={'class':'form-control fields_margin',
                                                   'placeholder': 'Tarifa Pico (Ej: 100)'}),
                   }
-        
+   
+   
+     
 class EsquemaDiferenciadoFdsForm(ModelForm):
     class Meta:
         model = EsquemaDiferenciado
@@ -92,6 +97,7 @@ class EsquemaDiferenciadoFdsForm(ModelForm):
                    'TarifaPico': TextInput(attrs={'class':'form-control fields_margin',
                                                   'placeholder': 'Tarifa Fin de Semana (Ej: 200)'}),
                   }
+
 
 
 class EstacionamientoReservaForm(ModelForm):
@@ -136,5 +142,3 @@ class LoginForm(forms.Form):
                                                 regex = '^[JjVvDd]-?\d{8}-?\d?$', 
                                                 message = 'Introduzca un RIF o Cédula con un formato válido.'
                                                 )])
-    
-    

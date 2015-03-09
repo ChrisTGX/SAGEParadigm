@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # Archivo con funciones de control para SAGE
+
 import datetime
 from decimal import Decimal
 
@@ -220,12 +221,6 @@ def AceptarReservacion(inicio, final, capacidad, sources):
 
 	tabla = ordenar(tabla)
 	
-	####### TASA RESERVACION #######
-	
-	tasaReservacion(sources, 10)
-	
-	################################
-	
 	best,beststart,bestend = viabilidadReservacion(tabla, inicio, final)
 	
 	if best < capacidad: 
@@ -240,14 +235,19 @@ def AceptarReservacion(inicio, final, capacidad, sources):
 
 
 def tasaReservacion(sources, num_puestos):
+	# Dada una lista 'sources' de todas las reservaciones de ese estacionamiento y su numero de puestos,
+	# devuelve un arreglo con la tasa o porcentaja de ocupacion con granularidad fija Por Hora.
 	today = datetime.datetime.today()
 	tasa_reser = []
 	
+	# Crea una lista donde cada elemento es una lista que contiene la hora inicial y final en cada reserva.
 	for elem in sources:
 		diasIni = (elem[0] - today.date()).days
 		diasFin = (elem[2] - today.date()).days
 		tasa_reser.append([diasIni*10000 + elem[1].hour*100 + elem[1].minute, diasFin*10000 + elem[3].hour*100 + elem[3].minute])
 	
+	# Crea un arreglo de minutos en 7 dias desde el dia actual y suma 1 a la posicion especifica de cada
+	# minuto por cada puesto ocupado que haya en el estacionamiento en ese minuto.
 	reser_active_per_minute = [0]*(7*10000 + 24*100)
 	for elem in tasa_reser:
 		reser_set = set(range(elem[1])) - set(range(elem[0]))
@@ -257,11 +257,14 @@ def tasaReservacion(sources, num_puestos):
 				hour = (time % 10000 - minute)
 				day = (time - hour - minute)
 				reser_active_per_minute[day + hour + minute] += 1
-				
+	
+	# Crea un arreglo de horas el cual contiene la tasa o porcentaje de ocupacion por hora, calculado como
+	# el promedio de puestos ocupados por minuto en esa hora, es decir,
+	# ocupation_rate[hora] = 100 * (sum(puestos_ocupados_por_minuto)) / ((minutos_por_hora)*(num_puestos))
 	occupation_rate = [0]*(7*24)
 	for day in range(7):
 		for hour in range(24):
-			occupation_rate[day*24 + hour] = Decimal(sum(reser_active_per_minute[(day*10000 + hour*100):(day*10000 + hour*100 + 60)]) / Decimal(60*num_puestos) * Decimal(100)).quantize(Decimal('.01'))
+			occupation_rate[day*24 + hour] = Decimal(100 * sum(reser_active_per_minute[(day*10000 + hour*100):(day*10000 + hour*100 + 60)]) / Decimal(60*num_puestos)).quantize(Decimal('.01'))
 	
 	return occupation_rate
 
