@@ -81,6 +81,11 @@ def estacionamientos_all(request):
                             )
                         
                         prop.save()
+                    else:
+                        return render(request, 'templateMensaje.html', 
+                                  {'mensaje': 'Ya existe un estacionamiento con ese nombre.',
+                                   'color': 'red',
+                                   'url': '.'})
                 
                 prop = Propietario.objects.get(Rif = formProp.cleaned_data['Rif'])
                 
