@@ -142,9 +142,11 @@
         <tr><td><b><i class="fa fa-car"></i> Número de Puestos:</b></td></tr>
         <tr><td>{{estacionamiento.NroPuesto}}</td></tr>
       {% endif %}
+      <tr><td><b><i class="fa fa-clock-o"></i> Horario de Apertura:</b></td></tr>
       {% if estacionamiento.Apertura %}
-        <tr><td><b><i class="fa fa-clock-o"></i> Horario de Apertura:</b></td></tr>
         <tr><td>{{estacionamiento.Apertura}}</td></tr>
+      {% else %}
+      	<tr><td>00:00</td></tr>
       {% endif %}
       {% if estacionamiento.Cierre %}
         <tr><td><b><i class="fa fa-clock-o"></i> Horario de Cierre:</b></td></tr>

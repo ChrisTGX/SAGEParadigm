@@ -106,7 +106,7 @@
         </thead>
         <tbody>
         {% for obj in estacionamientos %}
-          <tr><td><a href="./{{obj.id}}/tasa_reservacion" ><i class="fa fa-line-chart" data-toggle="tooltip" data-placement="top" title="Tasa de Reservación"></i></a></td><td>{{forloop.counter}}</td><td>{{obj.Propietario.Nombre}}</td><td>{{obj.Nombre}}</td><td>{{obj.Propietario.Rif}}</td><td><a href="./{{obj.id}}"><i class="fa fa-search" data-toggle="tooltip" data-placement="top" title="Detalle"></i></a></td></tr>
+          <tr><td><a href="./{{obj.id}}/tasa_reservacion" ><i class="fa fa-line-chart" data-toggle="tooltip" data-placement="top" title="Tasa de Reservación"></i></a></td><td>{{forloop.counter}}</td><td>{{obj.Propietario.NombreProp}}</td><td>{{obj.Nombre}}</td><td>{{obj.Propietario.Rif}}</td><td><a href="./{{obj.id}}"><i class="fa fa-search" data-toggle="tooltip" data-placement="top" title="Detalle"></i></a></td></tr>
         {% endfor %}
         </tbody>
         {% else %}
