@@ -208,11 +208,13 @@ def estacionamiento_detail(request, _id):
                     
                     if diferenciado:
                         if formEsquem.cleaned_data['TipoEsquema'] == "4":
-                            diferenciado.HoraPicoInicio = formDifer.cleaned_data['HoraPicoInicio']
-                            diferenciado.HoraPicoFin = formDifer.cleaned_data['HoraPicoFin']
+                            if 'HoraPicoInicio' in formDifer.cleaned_data:
+                                diferenciado.HoraPicoInicio = formDifer.cleaned_data['HoraPicoInicio']
+                            if 'HoraPicoFin' in formDifer.cleaned_data:
+                                diferenciado.HoraPicoFin = formDifer.cleaned_data['HoraPicoFin']
                         if formEsquem.cleaned_data['TipoEsquema'] == "5":
-                            diferenciado.HoraPicoInicio = None
-                            diferenciado.HoraPicoFin = None
+                            diferenciado.HoraPicoInicio = datetime.time(0,0)
+                            diferenciado.HoraPicoFin = datetime.time(0,0)
                         diferenciado.TarifaPico = formDifer.cleaned_data['TarifaPico']
                     else:
                         diferenciado = EsquemaDiferenciado(
