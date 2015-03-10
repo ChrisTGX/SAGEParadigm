@@ -125,16 +125,23 @@
 
 </div><!--/container-->
 
-
     <script type="text/javascript" src="{% static 'js/jquery-2.1.1.min.js'%}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js'%}"></script>
     <script type="text/javascript" src="{% static 'js/livevalidation_standalone.js'%}"></script>
+    
     <script type="text/javascript">
-        new LiveValidation('id_ID_Usuario').add(Validate.Format, 
-                            { pattern: /^[JjVvDd]-?\d{8}-?\d$/, 
-                              failureMessage: "Introduzca un RIF con un formato válido." 
-                              });
+    	if ("{{user}}" == "owner") {
+			new LiveValidation('id_ID_Usuario').add(Validate.Format, 
+	                        { pattern: /^[JjVvDd]-?\d{8}-?\d$/, 
+	                          failureMessage: "Introduzca un RIF con un formato válido." 
+	                          });
+	    } else {
+	    	new LiveValidation('id_ID_Usuario').add(Validate.Format, 
+	                                            { pattern: /^[VvEe]-?\d{1,8}$/,
+	                                              failureMessage: "Introduzca un número de cédula con formato válido." });
+	    }
     </script>
+        
 </body>
 
 </html>
