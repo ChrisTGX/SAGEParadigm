@@ -36,7 +36,6 @@ class PorHora(Esquema):
 		return Decimal(tarifa)
 
 	
-	
 class PorHoraFraccion(Esquema):
 	def _costoFraccionHora(self, fraccion, tarifa):
 		if fraccion == 0: return 0
@@ -118,11 +117,24 @@ class FinSemana(Esquema):
 		
 	def calcularCosto(self, inicio_reserva, final_reserva):
 		(horas_completas,fraccion_hora) = self._calcularEstadia(inicio_reserva, final_reserva)
-		total = Decimal(self._costoHorasCompletas(horas_completas))
-		if inicio_reserva.weekday() in range(4,7) and final_reserva.weekday() in range(4,7):
-			total += Decimal(self._costoFraccionHora(fraccion_hora, self.tarifaDFS))
-		if (inicio_reserva.weekday() in range(4) and final_reserva.weekday() in range(4,7)) or (inicio_reserva.weekday() in range(4,7) and final_reserva.weekday() in range(4)):
+		if inicio_reserva.weekday() == final_reserva.weekday() and inicio_reserva.day != final_reserva.day:
+			total = Decimal(horas_completas*max(self.tarifa, self.tarifaFDS))
 			total += Decimal(self._costoFraccionHora(fraccion_hora, max(self.tarifa, self.tarifaFDS)))
+			return total
+		elif inicio_reserva.weekday() > final_reserva.weekday() and ((inicio_reserva.weekday() in range(4) and final_reserva.weekday() in range(4)) or (inicio_reserva.weekday() in range(4,7) and final_reserva.weekday() in range(4,7))):
+			total = Decimal(horas_completas*max(self.tarifa, self.tarifaFDS))
+			total += Decimal(self._costoFraccionHora(fraccion_hora, max(self.tarifa, self.tarifaFDS)))
+			return total
+		else:
+			if inicio_reserva.weekday() in range(4,7) and final_reserva.weekday() in range(4,7):
+				total = Decimal(horas_completas*self.tarifaFDS)
+				total += Decimal(self._costoFraccionHora(fraccion_hora, self.tarifaFDS))
+			elif (inicio_reserva.weekday() in range(4) and final_reserva.weekday() in range(4,7)) or (inicio_reserva.weekday() in range(4,7) and final_reserva.weekday() in range(4)):
+				total = Decimal(horas_completas*max(self.tarifa, self.tarifaFDS))
+				total += Decimal(self._costoFraccionHora(fraccion_hora, max(self.tarifa, self.tarifaFDS)))
+			else:
+				total = Decimal(self._costoHorasCompletas(horas_completas))
+				total += Decimal(self._costoFraccionHora(fraccion_hora, self.tarifa))
 		return total
 	
 	
