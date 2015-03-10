@@ -176,7 +176,7 @@
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js'%}"></script>
     <script type="text/javascript" src="{% static 'js/livevalidation_standalone.js'%}"></script>
     <script type="text/javascript">
-        new LiveValidation('id_Propietario').add(Validate.Format, { pattern: /^[a-zA-ZáéíóúñÑÁÉÍÓÚ ]+$/, failureMessage: "Sólo debe contener letras." });
+        new LiveValidation('id_NombreProp').add(Validate.Format, { pattern: /^[a-zA-ZáéíóúñÑÁÉÍÓÚ ]+$/, failureMessage: "Sólo debe contener letras." });
         new LiveValidation('id_Nombre').add(Validate.Format, { pattern: /^.+$/, failureMessage: "Inválido." });
         new LiveValidation('id_Direccion').add(Validate.Format, { pattern: /^.+$/, failureMessage: "Inválido." });
         new LiveValidation('id_Telefono_1').add(Validate.Format, { pattern: /^((0?212)|(0?412)|(0?416)|(0?414)|(0?424)|(0?426))-?\d{7}$/, failureMessage: "Debe introducir un formato válido." });
