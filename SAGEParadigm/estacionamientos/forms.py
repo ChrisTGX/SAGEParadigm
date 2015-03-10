@@ -139,6 +139,6 @@ class PagarReservaForm(ModelForm):
 class LoginForm(forms.Form):
     ID_Usuario = forms.CharField(max_length=12, required = True,
                                  validators = [RegexValidator(
-                                                regex = '^[JjVvDd]-?\d{8}-?\d?$', 
+                                                regex = '^[JjVvDd]-?\d{1,8}-?\d?$', 
                                                 message = 'Introduzca un RIF o Cédula con un formato válido.'
                                                 )])
