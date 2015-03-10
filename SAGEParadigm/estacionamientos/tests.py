@@ -75,49 +75,6 @@ class SimpleFormTestCase(TestCase):
         form = EstacionamientoForm(data = form_data)
         self.assertEqual(form.is_valid(), True)
 
-    # malicia
-    def test_PropietarioInvalidoDigitos(self):
-        form_data = {
-            'Propietario': 'Pedro132',
-            'Nombre': 'Orinoco',
-            'Direccion': 'Caracas',
-            'Rif': 'V123456789'
-        }
-        form = EstacionamientoForm(data = form_data)
-        self.assertEqual(form.is_valid(), False)
-
-    # malicia
-    def test_PropietarioInvalidoSimbolos(self):
-        form_data = {
-            'Propietario': 'Pedro!',
-            'Nombre': 'Orinoco',
-            'Direccion': 'Caracas',
-            'Rif': 'V123456789'
-        }
-        form = EstacionamientoForm(data = form_data)
-        self.assertEqual(form.is_valid(), False)
-
-    # caso borde
-    def test_RIFtamanoinvalido(self):
-        form_data = {
-            'Propietario': 'Pedro132',
-            'Nombre': 'Orinoco',
-            'Direccion': 'Caracas',
-            'Rif': 'V1234567'
-        }
-        form = EstacionamientoForm(data = form_data)
-        self.assertEqual(form.is_valid(), False)
-
-    # malicia
-    def test_RIFformatoinvalido(self):
-        form_data = {
-            'Propietario': 'Pedro132',
-            'Nombre': 'Orinoco',
-            'Direccion': 'Caracas',
-            'Rif': 'Kaa123456789'
-        }
-        form = EstacionamientoForm(data = form_data)
-        self.assertEqual(form.is_valid(), False)
 
     # malicia
     def test_AgregarTLFs(self):
@@ -173,20 +130,6 @@ class SimpleFormTestCase(TestCase):
         form = EstacionamientoForm(data = form_data)
         self.assertEqual(form.is_valid(), True)
 
-    # malicia
-    def test_CorreoInvalido(self):
-        form_data = {
-            'Propietario': 'Pedro',
-            'Nombre': 'Orinoco',
-            'Direccion': 'Caracas',
-            'Rif': 'V123456789',
-            'Telefono_1': '02129322878',
-            'Telefono_2': '04149322878',
-            'Telefono_3': '04129322878',
-            'Email_1': 'adminsitrador@a@dmin.com'
-        }
-        form = EstacionamientoForm(data = form_data)
-        self.assertEqual(form.is_valid(), False)
 
 ###################################################################
 # ESTACIONAMIENTO_EXTENDED_FORM
@@ -270,16 +213,6 @@ class SimpleFormTestCase(TestCase):
         form = EstacionamientoExtendedForm(data = form_data)
         self.assertEqual(form.is_valid(), True) 
 
-    def test_EstacionamientoExtendedForm_EsquemaTarifarioInexsitente(self):
-        form_data = { 'Puestos': 2,
-                                'Apertura': datetime.time(6, 0),
-                                'Cierre': datetime.time(19, 0),
-                                'Reservas_Inicio': datetime.time(7, 0),
-                                'Reservas_Cierre': datetime.time(7, 0),
-                                'Tarifa': '12',
-                                'Esquema_tarifario': '1000000'}
-        form = EstacionamientoExtendedForm(data = form_data)
-        self.assertEqual(form.is_valid(), False)
 
     # malicia
     def test_EstacionamientoExtendedForm_StringEnPuesto(self):
@@ -352,14 +285,80 @@ class SimpleFormTestCase(TestCase):
         self.assertEqual(form.is_valid(), False)
 
     # malicia
-    def test_EstacionamientoExtendedForm_listaEnHoraReserva(self):
-        form_data = { 'Puestos': 2,
-                                'Apertura': datetime.time(6, 0),
-                                'Cierre': datetime.time(19, 0),
-                                'Reservas_Inicio': datetime.time(7, 0),
-                                'Reservas_Cierre': [datetime.time(14, 0)],
-                                'Tarifa': 12}
+    def test_EstacionamientoExtendedForm_AbiretoTodoElDia(self):
+        form_data = { 'NroPuesto': 2,
+                                'Apertura': datetime.time(0, 0),
+                                'Cierre': datetime.time(23, 59),}
         form = EstacionamientoExtendedForm(data = form_data)
+        self.assertEqual(form.is_valid(), True)
+        
+        
+###################################################################
+# PROPIETARIO FORM
+###################################################################
+
+    # caso borde
+    def test_RIFtamanoinvalido(self):
+        form_data = {
+            'NombreProp': 'Pedro Jose',
+            'Telefono_1': '0424-2223456',
+            'Email_1': 'bla@bla.bla',
+            'Rif': 'V123'
+        }
+        form = PropietarioForm(data = form_data)
+        self.assertEqual(form.is_valid(), False)
+
+    # malicia
+    def test_RIFformatoinvalido(self):
+        form_data = {
+            'NombreProp': 'Pedro Jose',
+            'Telefono_1': '0424-2223456',
+            'Email_1': 'bla@bla.bla',
+            'Rif': 'Kaa123456789'
+        }
+        form = PropietarioForm(data = form_data)
+        self.assertEqual(form.is_valid(), False)
+
+    # malicia
+    def test_PropietarioInvalidoSimbolos(self):
+        form_data = {
+            'NombreProp': 'Pedro!',
+            'Telefono_1': '0424-2223456',
+            'Email_1': 'bla@bla.bla',
+            'Rif': 'V123456789'
+        }
+        form = EstacionamientoForm(data = form_data)
+        self.assertEqual(form.is_valid(), False)
+        
+    # malicia
+    def test_PropietarioInvalidoDigitos(self):
+        form_data = {
+            'NombreProp': 'Pedro123',
+            'Telefono_1': '0424-2223456',
+            'Email_1': 'bla@bla.bla',
+            'Rif': 'V123456789'
+        }
+        form = PropietarioForm(data = form_data)
+        self.assertEqual(form.is_valid(), False)
+        
+    # malicia
+    def test_CorreoInvalido(self):
+        form_data = {
+            'NombreProp': 'Pedro Jimenez',
+            'Telefono_1': '0424-2223456',
+            'Email_1': 'bla@bla.b@la',
+            'Rif': 'V123456789'
+        }
+        form = PropietarioForm(data = form_data)
+        self.assertEqual(form.is_valid(), False)
+
+######################################################################
+# ESQUEMA TARIFARIO FORM
+###################################################################
+
+    def test_EsquemaTarifarioForm_EsquemaTarifarioInexsitente(self):
+        form_data = { 'TipoEsquema':'1000', 'Tarifa':'100'}
+        form = EsquemaTarifarioForm(data = form_data)
         self.assertEqual(form.is_valid(), False)
 
 ######################################################################
@@ -422,7 +421,7 @@ class SimpleFormTestCase(TestCase):
 
     # normal
     def test_EstacionamientoReserva_TodosCamposBien(self):
-        form_data = {'InicioReserva':datetime.time(6, 0), 'FinalReserva':datetime.time(12, 0)}
+        form_data = {'FechaInicio':datetime.date(2015,1,1),'HoraInicio':datetime.time(6, 0),'FechaFinal':datetime.date(2015,1,1), 'HoraFinal':datetime.time(12, 0)}
         form = EstacionamientoReservaForm(data = form_data)
         self.assertEqual(form.is_valid(), True)
 
@@ -483,13 +482,11 @@ class SimpleFormTestCase(TestCase):
         self.assertEqual(x, (False, 'La hora de inicio de la reserva debe ser menor a la hora de fin'))
 
     # caso borde
-    def test_HorarioReservaInvalido_TiempoTotalMenor1h(self):
-        ReservaInicio = datetime.datetime(year = 2015, month = 10, day = 25,hour = 13, minute = 0, second = 0)
-        ReservaFin = datetime.datetime(year = 2015, month = 10, day = 25,hour = 13, minute = 59, second = 59)
-        HoraApertura = datetime.datetime(year = 2015, month = 10, day = 25,hour = 12, minute = 0, second = 0)
-        HoraCierre = datetime.datetime(year = 2015, month = 10, day = 25,hour = 18, minute = 0, second = 0)
-        x = validarHorarioReserva(ReservaInicio, ReservaFin, HoraApertura, HoraCierre)
-        self.assertEqual(x, (False, 'El tiempo de la reserva debe ser al menos de 1 hora'))
+    def test_HorarioReservaInvalido_TiempoTotalMenor15min(self):
+        ReservaInicio = datetime.datetime.today()
+        ReservaFin = ReservaInicio + datetime.timedelta(minutes = 14)
+        x = validarHorarioReserva(ReservaInicio, ReservaFin, None, None)
+        self.assertEqual(x, (False, 'El tiempo de la reserva debe ser al menos de 15 minutos'))
 
     # malicia
     def test_Reservacion_CamposVacios(self):
@@ -805,7 +802,7 @@ class EsquemasTarifariosTests(unittest.TestCase):
         global esq5_difer
         esquema5.Tarifa = 100
         esq5_difer.TarifaPico = 200
-        self.assertEqual(Decimal(calcularCostoReserva(esquema5,esq5_difer,datetime.datetime(2015,1,1,23,59), datetime.datetime(2015,1,2,0,1))).quantize(Decimal(".01")), Decimal(200/2)).quantize(Decimal(".01"))
+        self.assertEqual(Decimal(calcularCostoReserva(esquema5,esq5_difer,datetime.datetime(2015,1,1,23,59), datetime.datetime(2015,1,2,0,1))).quantize(Decimal(".01")), Decimal(200/2).quantize(Decimal(".01")))
         
     def testcostoFraccionHoraEsquema5TarifaAltaMediaHoraRegular(self):
         global esquema5
@@ -825,7 +822,7 @@ class EsquemasTarifariosTests(unittest.TestCase):
         global esq5_difer
         esquema5.Tarifa = (2**30)//2
         esq5_difer.TarifaPico = 2**30
-        self.assertEqual(Decimal(calcularCostoReserva(esquema5,esq5_difer,datetime.datetime(2015,1,1,23,59), datetime.datetime(2015,1,2,0,1))).quantize(Decimal(".01")), Decimal((2**30)/2)).quantize(Decimal(".01"))
+        self.assertEqual(Decimal(calcularCostoReserva(esquema5,esq5_difer,datetime.datetime(2015,1,1,23,59), datetime.datetime(2015,1,2,0,1))), Decimal((2**30)/2).quantize(Decimal(".01")))
 
 
     ## RESERVA DE SIETE DIAS POR ESQUEMA ##

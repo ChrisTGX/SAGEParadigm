@@ -17,7 +17,7 @@ class Esquema:
 		return (horas_completas, fraccion_hora)
 
 	def _costoHorasCompletas(self, horas):
-		return Decimal(horas) * self.tarifa
+		return Decimal(horas) * Decimal(self.tarifa)
 
 	def _costoFraccionHora(self, fraccion, tarifa):
 		pass
