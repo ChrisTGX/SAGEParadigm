@@ -266,10 +266,10 @@
                                                 { pattern: /^\d\d?\/\d\d?\/\d\d\d\d$/ , 
                                                   failureMessage: date_format_message });
         new LiveValidation('id_HoraInicio').add(Validate.Format, 
-                                                { pattern: /^\d?\d:\d\d$/ ,
+                                                { pattern: /^([01]?[0-9]|2[0-3]):[0-5]\d$/ ,
                                                   failureMessage: time_format_message });
         new LiveValidation('id_HoraFinal').add(Validate.Format, 
-                                                { pattern: /^\d?\d:\d\d$/ ,
+                                                { pattern: /^([01]?[0-9]|2[0-3]):[0-5]\d$/ ,
                                                   failureMessage: time_format_message });
         
     </script>
