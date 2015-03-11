@@ -393,8 +393,11 @@ def tasa_reservacion(request, _id):
         if not estacion.NroPuesto:
             estacion.NroPuesto = 1
         
+        today = datetime.datetime.today()
+        
         # Obtiene la lista de todas las reservaciones de ese estacionamiento y llama a tasaReservacion
-        sources = Reserva.objects.filter(Estacionamiento = estacion).values_list('FechaInicio', 'HoraInicio','FechaFinal', 'HoraFinal','Puesto')
+        sources = Reserva.objects.filter(Estacionamiento = estacion).filter(FechaInicio__range = [today.date(), today.date() + datetime.timedelta(7)]).values_list('FechaInicio', 'HoraInicio','FechaFinal', 'HoraFinal','Puesto')
+        print("AQUI", len(sources))
         ocupacion = tasaReservacion(sources, estacion.NroPuesto)
         
         
@@ -407,7 +410,6 @@ def tasa_reservacion(request, _id):
         
         locale.setlocale(locale.LC_ALL, 'es_VE.UTF-8')
         template_ocupacion = []
-        today = datetime.datetime.today()
         for dia in range(7):
             ocupActual = TempOcup(dia, ocupacion[(dia*24):(dia*24 + 24)], (today + datetime.timedelta(dia)).date().strftime('%a %d/%m').capitalize())
             template_ocupacion.append(ocupActual)
